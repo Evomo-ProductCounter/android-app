@@ -8,6 +8,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -15,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.evomo.productcounterapp.databinding.ActivityMainBinding
 import com.evomo.productcounterapp.utils.createTempFile
+import org.opencv.android.OpenCVLoader
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
@@ -29,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 //          Silakan gunakan kode ini jika mengalami perubahan rotasi
 //                rotateFile(file)
                 getFile = file
-                binding.previewImageView.setImageBitmap(BitmapFactory.decodeFile(file.path))
+//                binding.previewImageView.setImageBitmap(BitmapFactory.decodeFile(file.path))
             }
         }
     }
@@ -78,7 +80,13 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        binding.cameraButton.setOnClickListener { startTakePhoto() }
+        if (OpenCVLoader.initDebug()) Log.d("LOADED", "success")
+        else Log.d("LOADED", "error")
+
+        binding.cameraButton.setOnClickListener {
+            val intent = Intent(this, CameraActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun startTakePhoto() {
