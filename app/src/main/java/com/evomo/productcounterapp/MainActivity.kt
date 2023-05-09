@@ -8,6 +8,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -15,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.evomo.productcounterapp.databinding.ActivityMainBinding
 import com.evomo.productcounterapp.utils.createTempFile
+import org.opencv.android.OpenCVLoader
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
@@ -77,6 +79,9 @@ class MainActivity : AppCompatActivity() {
                 REQUEST_CODE_PERMISSIONS
             )
         }
+
+        if (OpenCVLoader.initDebug()) Log.d("LOADED", "success")
+        else Log.d("LOADED", "error")
 
         binding.cameraButton.setOnClickListener { startTakePhoto() }
     }
