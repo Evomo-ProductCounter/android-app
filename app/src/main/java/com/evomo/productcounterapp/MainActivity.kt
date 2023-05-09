@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 //          Silakan gunakan kode ini jika mengalami perubahan rotasi
 //                rotateFile(file)
                 getFile = file
-                binding.previewImageView.setImageBitmap(BitmapFactory.decodeFile(file.path))
+//                binding.previewImageView.setImageBitmap(BitmapFactory.decodeFile(file.path))
             }
         }
     }
@@ -83,7 +83,10 @@ class MainActivity : AppCompatActivity() {
         if (OpenCVLoader.initDebug()) Log.d("LOADED", "success")
         else Log.d("LOADED", "error")
 
-        binding.cameraButton.setOnClickListener { startTakePhoto() }
+        binding.cameraButton.setOnClickListener {
+            val intent = Intent(this, CameraActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun startTakePhoto() {
