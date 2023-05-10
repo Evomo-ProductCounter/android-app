@@ -17,13 +17,20 @@ import com.evomo.productcounterapp.databinding.ActivityCameraBinding;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfDouble;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.videoio.VideoCapture;
+import org.opencv.videoio.Videoio;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -31,10 +38,16 @@ import java.util.List;
 public class CameraActivity extends org.opencv.android.CameraActivity {
 
     CameraBridgeViewBase cameraBridgeViewBase;
-    Mat curr_gray, prev_gray, rgb, diff;
-    List<MatOfPoint> cnts;
+    Mat grayFrame, blurFrame, rgbFrame, outFrame;
+    List<MatOfPoint> pointsList = new ArrayList<>();
+    ArrayList<Boolean> parkingStatus = new ArrayList<>(1);
+    ArrayList<Long> parkingBuffer = new ArrayList<>(1);
+    ArrayList<Rect> parkingBoundingRect = new ArrayList<>();
     boolean is_init;
     private ActivityCameraBinding binding;
+    private int counter;
+    private Rect roi;
+    private Rect rectRoi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,18 +59,35 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
         getPermission();
 
-        is_init = false;
-
         cameraBridgeViewBase = binding.cameraView;
 
         cameraBridgeViewBase.setCvCameraViewListener(new CameraBridgeViewBase.CvCameraViewListener2() {
             @Override
             public void onCameraViewStarted(int width, int height) {
-                curr_gray = new Mat();
-                prev_gray = new Mat();
-                rgb = new Mat();
-                diff = new Mat();
-                cnts = new ArrayList<MatOfPoint>();
+                rgbFrame = new Mat();
+                blurFrame = new Mat();
+                grayFrame = new Mat();
+                outFrame = new Mat();
+                int counter = 0;
+
+                roi = new Rect(300, 400, 400, 150);
+
+                // Get the edge points of the ROI rectangle
+                Point tl = roi.tl();
+                Point tr = new Point(roi.x + roi.width, roi.y);
+                Point bl = new Point(roi.x, roi.y + roi.height);
+                Point br = roi.br();
+
+                MatOfPoint contour = new MatOfPoint();
+                contour.fromArray(tr, tl, bl, br);
+                pointsList.add(contour);
+
+                rectRoi = Imgproc.boundingRect(contour);
+                parkingBoundingRect.add(rectRoi);
+                System.out.print("Parking Bounding Rect: " + parkingBoundingRect);
+
+                parkingStatus.add(false);
+                parkingBuffer.add(null);
             }
 
             @Override
@@ -67,31 +97,58 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
             @Override
             public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-                if(!is_init) {
-                    prev_gray = inputFrame.gray();
-                    is_init = true;
+                // Initialize frame
+                rgbFrame = inputFrame.rgba();
 
-                    return prev_gray;
+                long videoFrames = System.currentTimeMillis();
+                System.out.println("Video Frames: " + videoFrames);
+
+                Imgproc.GaussianBlur(rgbFrame.clone(), blurFrame, new Size(3, 3), 0);
+                Imgproc.cvtColor(blurFrame, grayFrame, Imgproc.COLOR_BGR2GRAY);
+                outFrame = rgbFrame.clone();
+
+                Rect rect = parkingBoundingRect.get(0);
+                System.out.println("Rect[0]: " + rect);
+
+                Mat roiGray = grayFrame.submat(rect);
+                MatOfDouble meandev = new MatOfDouble();
+                MatOfDouble stddev = new MatOfDouble();
+                Core.meanStdDev(roiGray, meandev, stddev);
+
+                double stdev = stddev.get(0, 0)[0];
+//                double std = Core.meanStdDev(roiGray).stddev[0];
+                double mean = Core.mean(roiGray).val[0];
+                boolean status = (stdev < 22 && mean > 53);
+
+                if (status != parkingStatus.get(0) && parkingBuffer.get(0) == null) {
+                    parkingBuffer.set(0, videoFrames);
+                }
+                else if (status != parkingStatus.get(0) && parkingBuffer.get(0) != null){
+                    if (videoFrames - parkingBuffer.get(0) > 0.001) {
+                        if (status == false) {
+                            counter = counter + 1;
+                        }
+                        parkingStatus.set(0, status);
+                        parkingBuffer.set(0, null);
+                    }
+                }
+                else if (status == parkingStatus.get(0) && parkingBuffer.get(0) != null){
+                    parkingBuffer.set(0, null);
                 }
 
-                rgb = inputFrame.rgba();
-                curr_gray = inputFrame.gray();
+                Scalar color;
 
-                Core.absdiff(curr_gray, prev_gray, diff);
-                Imgproc.threshold(diff, diff, 40, 255, Imgproc.THRESH_BINARY);
-                Imgproc.findContours(diff, cnts, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-
-                Imgproc.drawContours(rgb, cnts, -1, new Scalar(255,0,0), 4);
-
-                for(MatOfPoint m: cnts) {
-                    Rect r = Imgproc.boundingRect(m);
-                    Imgproc.rectangle(rgb, r, new Scalar(0,0,255), 3);
+                if (parkingStatus.get(0)) {
+                    color = new Scalar(0, 255, 0);
+                } else {
+                    color = new Scalar(255, 0, 0);
                 }
 
-                cnts.clear();
+                Imgproc.drawContours(outFrame, pointsList, -1, color, 4, Imgproc.LINE_8);
+                String counterStr = "Object Counted: " + counter;
+                Imgproc.putText(outFrame, counterStr, new Point(10, 40), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 0, 0), 2, Imgproc.LINE_AA);
 
-                prev_gray = curr_gray.clone();
-                return rgb;
+                return outFrame;
             }
         });
 
