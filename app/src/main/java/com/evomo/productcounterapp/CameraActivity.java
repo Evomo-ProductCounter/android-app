@@ -6,11 +6,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.evomo.productcounterapp.databinding.ActivityCameraBinding;
 
@@ -48,6 +50,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     private int counter;
     private Rect roi;
     private Rect rectRoi;
+    public static String lastCount = "test";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +73,8 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 outFrame = new Mat();
                 int counter = 0;
 
-                roi = new Rect(300, 400, 400, 150);
+
+                roi = new Rect(300, 600, 400, 150);
 
                 // Get the edge points of the ROI rectangle
                 Point tl = roi.tl();
@@ -127,6 +131,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     if (videoFrames - parkingBuffer.get(0) > 0.001) {
                         if (status == false) {
                             counter = counter + 1;
+
                         }
                         parkingStatus.set(0, status);
                         parkingBuffer.set(0, null);
@@ -145,8 +150,10 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 }
 
                 Imgproc.drawContours(outFrame, pointsList, -1, color, 4, Imgproc.LINE_8);
-                String counterStr = "Object Counted: " + counter;
-                Imgproc.putText(outFrame, counterStr, new Point(10, 40), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 0, 0), 2, Imgproc.LINE_AA);
+                String counterStr = "Last Object Counted: " + counter;
+//                binding.countText.setText(counterStr);
+                setText(binding.countText, counterStr);
+//                Imgproc.putText(outFrame, counterStr, new Point(10, 40), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 0, 0), 2, Imgproc.LINE_AA);
 
                 return outFrame;
             }
@@ -155,6 +162,30 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
         if (OpenCVLoader.initDebug()) {
             cameraBridgeViewBase.enableView();
         }
+
+        binding.stopCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lastCount = "Object Counted: " + counter;
+//                Intent resultIntent = new Intent();
+//                resultIntent.putExtra(lastCount, counter);
+//                resultIntent.putExtra(EXTRA_SELECTED_VALUE, value)
+//                Intent main = new Intent(CameraActivity.this, MainActivity.class);
+//                main.putExtra("last", counter);
+//                startActivity(main);
+                finish();
+
+            }
+        });
+    }
+
+    private void setText(final TextView text, final String value){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                text.setText(value);
+            }
+        });
     }
 
     @Override
