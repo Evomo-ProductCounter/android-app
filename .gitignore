@@ -2,6 +2,9 @@
 .gradle/
 build/
 
+# OpenCV files
+OpenCV/
+
 # Local configuration file (sdk path, etc)
 local.properties
 
