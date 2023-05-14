@@ -73,8 +73,9 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 outFrame = new Mat();
                 int counter = 0;
 
-
-                roi = new Rect(300, 600, 400, 150);
+                Point center = new Point(width / 2, height / 2);
+                roi = new Rect((int) (center.x - 200), (int) (center.y - 75), 400, 150);
+//                roi = new Rect(300, 600, 400, 150);
 
                 // Get the edge points of the ROI rectangle
                 Point tl = roi.tl();
