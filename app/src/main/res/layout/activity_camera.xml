@@ -11,31 +11,28 @@
         android:layout_width="match_parent"
         android:layout_height="600dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/countText"
+        app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-    </org.opencv.android.JavaCameraView>
+        app:layout_constraintTop_toTopOf="parent"></org.opencv.android.JavaCameraView>
 
     <TextView
         android:id="@+id/countText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cameraView"
-        tools:text="Counted Object">
-
-    </TextView>
+        tools:text="@string/counted_object"></TextView>
 
     <Button
         android:id="@+id/stopCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Stop Count"
+        android:text="@string/stop_camera"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></Button>
+        app:layout_constraintTop_toBottomOf="@+id/countText"></Button>
 </androidx.constraintlayout.widget.ConstraintLayout>

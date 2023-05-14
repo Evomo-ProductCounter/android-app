@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">ProductCounterApp</string>
-    <string name="camera">Kamera</string>
+    <string name="camera">Start Count</string>
+    <string name="stop_camera">Stop Count</string>
+    <string name="counted_object">Counted Object: %s</string>
+    <string name="last_count">Last Count</string>
 </resources>
