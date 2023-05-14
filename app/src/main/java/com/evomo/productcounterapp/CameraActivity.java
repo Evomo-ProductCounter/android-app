@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -55,7 +56,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_camera);
+
         binding = ActivityCameraBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
@@ -151,8 +152,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 }
 
                 Imgproc.drawContours(outFrame, pointsList, -1, color, 4, Imgproc.LINE_8);
-                String counterStr = "Last Object Counted: " + counter;
-//                binding.countText.setText(counterStr);
+                String counterStr = getResources().getString(R.string.counted_object, String.valueOf(counter));
                 setText(binding.countText, counterStr);
 //                Imgproc.putText(outFrame, counterStr, new Point(10, 40), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 0, 0), 2, Imgproc.LINE_AA);
 
@@ -168,14 +168,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             @Override
             public void onClick(View v) {
                 lastCount = "Object Counted: " + counter;
-//                Intent resultIntent = new Intent();
-//                resultIntent.putExtra(lastCount, counter);
-//                resultIntent.putExtra(EXTRA_SELECTED_VALUE, value)
-//                Intent main = new Intent(CameraActivity.this, MainActivity.class);
-//                main.putExtra("last", counter);
-//                startActivity(main);
                 finish();
-
             }
         });
     }
