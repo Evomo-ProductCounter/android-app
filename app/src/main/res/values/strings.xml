@@ -4,4 +4,7 @@
     <string name="stop_camera">Stop Count</string>
     <string name="counted_object">Counted Object: %s</string>
     <string name="last_count">Last Count</string>
+    <string name="large">Large</string>
+    <string name="medium">Medium</string>
+    <string name="small">Small</string>
 </resources>
