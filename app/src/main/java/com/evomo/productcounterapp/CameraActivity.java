@@ -12,6 +12,8 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.TextView;
 
@@ -46,12 +48,15 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     ArrayList<Boolean> parkingStatus = new ArrayList<>(1);
     ArrayList<Long> parkingBuffer = new ArrayList<>(1);
     ArrayList<Rect> parkingBoundingRect = new ArrayList<>();
-    boolean is_init;
     private ActivityCameraBinding binding;
     private int counter;
     private Rect roi;
     private Rect rectRoi;
-    public static String lastCount = "test";
+    public static String lastCount = "";
+    public static int cameraWidth = 0;
+    public static int cameraHeight = 0;
+    public static int centerX = 0;
+    public static int centerY = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +80,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 int counter = 0;
 
                 Point center = new Point(width / 2, height / 2);
-                roi = new Rect((int) (center.x - 200), (int) (center.y - 75), 400, 150);
+                roi = new Rect((int) (center.x - centerX), (int) (center.y - centerY), cameraWidth, cameraHeight);
 //                roi = new Rect(300, 600, 400, 150);
 
                 // Get the edge points of the ROI rectangle
@@ -171,6 +176,13 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 finish();
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.option_menu, menu);
+        return true;
     }
 
     private void setText(final TextView text, final String value){
