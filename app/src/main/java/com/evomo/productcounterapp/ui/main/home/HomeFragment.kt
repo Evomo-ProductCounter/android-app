@@ -1,28 +1,19 @@
-package com.evomo.productcounterapp
+package com.evomo.productcounterapp.ui.main.home
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
-import android.util.Log
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
-import androidx.core.provider.FontsContractCompat.Columns.RESULT_CODE
-import com.evomo.productcounterapp.databinding.ActivityMainBinding
-//import com.evomo.productcounterapp.utils.createTempFile
-import org.opencv.android.OpenCVLoader
-import java.io.File
+import com.evomo.productcounterapp.R
+import com.evomo.productcounterapp.databinding.FragmentHomeBinding
+import com.evomo.productcounterapp.ui.camera.CameraActivity
 
-class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+class HomeFragment : Fragment() {
+    private lateinit var binding: FragmentHomeBinding
 
     private val resultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -32,14 +23,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    }
 
-        if (OpenCVLoader.initDebug()) Log.d("LOADED", "success")
-        else Log.d("LOADED", "error")
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.cameraButton.setOnClickListener{
-            val popupMenu = PopupMenu(this@MainActivity, binding.cameraButton)
+            val popupMenu = PopupMenu(requireContext(), binding.cameraButton)
 
             popupMenu.menuInflater.inflate(R.menu.option_menu, popupMenu.menu)
             popupMenu.setOnMenuItemClickListener { menuItem ->
@@ -50,7 +48,7 @@ class MainActivity : AppCompatActivity() {
                         CameraActivity.cameraHeight = 80
                         CameraActivity.centerX = 100
                         CameraActivity.centerY = 35
-                        val intent = Intent(this, CameraActivity::class.java)
+                        val intent = Intent(activity, CameraActivity::class.java)
                         resultLauncher.launch(intent)
                         true
                     }
@@ -59,7 +57,7 @@ class MainActivity : AppCompatActivity() {
                         CameraActivity.cameraHeight = 150
                         CameraActivity.centerX = 200
                         CameraActivity.centerY = 75
-                        val intent = Intent(this, CameraActivity::class.java)
+                        val intent = Intent(activity, CameraActivity::class.java)
                         resultLauncher.launch(intent)
                         true
                     }
@@ -68,7 +66,7 @@ class MainActivity : AppCompatActivity() {
                         CameraActivity.cameraHeight = 300
                         CameraActivity.centerX = 400
                         CameraActivity.centerY = 150
-                        val intent = Intent(this, CameraActivity::class.java)
+                        val intent = Intent(activity, CameraActivity::class.java)
                         resultLauncher.launch(intent)
                         true
                     }
@@ -79,5 +77,16 @@ class MainActivity : AppCompatActivity() {
             }
             popupMenu.show()
         }
+    }
+
+    companion object {
+//        @JvmStatic
+//        fun newInstance(param1: String, param2: String) =
+//            HomeFragment().apply {
+//                arguments = Bundle().apply {
+//                    putString(ARG_PARAM1, param1)
+//                    putString(ARG_PARAM2, param2)
+//                }
+//            }
     }
 }
