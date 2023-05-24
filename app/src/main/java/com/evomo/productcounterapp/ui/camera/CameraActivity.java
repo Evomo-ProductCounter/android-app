@@ -1,4 +1,4 @@
-package com.evomo.productcounterapp;
+package com.evomo.productcounterapp.ui.camera;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import com.evomo.productcounterapp.R;
 import com.evomo.productcounterapp.databinding.ActivityCameraBinding;
 
 import org.opencv.android.CameraBridgeViewBase;
@@ -176,13 +177,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 finish();
             }
         });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.option_menu, menu);
-        return true;
     }
 
     private void setText(final TextView text, final String value){
