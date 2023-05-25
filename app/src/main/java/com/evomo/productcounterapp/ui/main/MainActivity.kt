@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportActionBar?.hide() //hide title bar
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
