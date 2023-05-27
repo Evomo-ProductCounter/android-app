@@ -27,13 +27,17 @@
     <TextView
         android:id="@+id/user_name"
         style="@style/PageTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
+        android:layout_marginEnd="64dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:text="@string/title_profile"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:layout_constraintTop_toBottomOf="@+id/user_photo"
-        app:layout_constraintStart_toStartOf="@+id/view" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/view"
+        app:layout_constraintTop_toBottomOf="@+id/user_photo" />
 
     <ImageView
         android:layout_width="wrap_content"
