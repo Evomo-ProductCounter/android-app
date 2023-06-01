@@ -18,7 +18,7 @@ class HomeFragment : Fragment() {
     private val resultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        binding.lastCount.text = CameraActivity.lastCount
+        binding.titleMesin.text = CameraActivity.lastCount
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
