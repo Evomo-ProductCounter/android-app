@@ -43,151 +43,27 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/titleMesin"
+            android:id="@+id/lastCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/title_mesin"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/dropdownMesin"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent"></TextView>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/dropdownMesin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:hint="@string/select"
-            app:layout_constraintBottom_toTopOf="@+id/titleParameter"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleMesin"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-            <AutoCompleteTextView
-                android:id="@+id/autocomplete_mesin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="none" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/titleParameter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/title_parameter"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/dropdownParameter"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dropdownMesin">
-        </TextView>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/dropdownParameter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:hint="@string/select"
-            app:layout_constraintBottom_toTopOf="@+id/titleUkuran"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleParameter"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-            <AutoCompleteTextView
-                android:id="@+id/autocomplete_parameter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="none" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/titleUkuran"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="20dp"
-            android:text="@string/title_ukuran"
-            android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@+id/dropdownParameter"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="parent">
-        </TextView>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/dropdownUkuran"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:hint="@string/select"
-            app:layout_constraintBottom_toTopOf="@+id/picture"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleUkuran"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-            <AutoCompleteTextView
-                android:id="@+id/autocomplete_ukuran"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="none" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <ImageView
-            android:id="@+id/picture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:src="@drawable/evomo_logo"
-            android:background="#000000"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="16dp"
+            android:text="@string/last_count"
+            app:layout_constraintBottom_toTopOf="@+id/cameraButton"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dropdownUkuran" />
-
-        <TextView
-            android:id="@+id/countedObject"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="@string/counted_object"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/startButton"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/picture">
+            app:layout_constraintStart_toStartOf="parent">
         </TextView>
 
         <Button
-            android:id="@+id/startButton"
+            android:id="@+id/cameraButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:text="@string/camera"
-            app:layout_constraintBottom_toTopOf="@+id/needHelp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/countedObject" />
-
-        <TextView
-            android:id="@+id/needHelp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/need_help"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/startButton">
-        </TextView>
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
