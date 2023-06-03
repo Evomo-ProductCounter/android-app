@@ -11,15 +11,20 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.evomo.productcounterapp.R
 import com.evomo.productcounterapp.databinding.FragmentHomeBinding
 import com.evomo.productcounterapp.ui.camera.CameraActivity
+import com.evomo.productcounterapp.utils.DateHelper
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
+    private lateinit var auth: FirebaseAuth
 
-    private val resultLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        binding.lastCount.text = CameraActivity.lastCount
-    }
+//    private val resultLauncher = registerForActivityResult(
+//        ActivityResultContracts.StartActivityForResult()
+//    ) { result ->
+//        binding.lastCount.text = CameraActivity.lastCount
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,48 +41,22 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        auth = Firebase.auth
+        val firebaseUser = auth.currentUser
+        var name = ""
+
+        if (firebaseUser != null) {
+            name = firebaseUser.displayName.toString()
+        }
+
+        binding.titleWelcome.text = resources.getString(R.string.title_welcome, name.split(" ").firstOrNull())
+
+        binding.date.text = DateHelper.getCurrentDateNoTime()
+
         binding.cameraButton.setOnClickListener{
-//            val popupMenu = PopupMenu(requireContext(), binding.cameraButton)
-//
-//            popupMenu.menuInflater.inflate(R.menu.option_menu, popupMenu.menu)
-//            popupMenu.setOnMenuItemClickListener { menuItem ->
-//
-//                when (menuItem.itemId) {
-//                    R.id.small_type -> {
-//                        CameraActivity.cameraWidth = 200
-//                        CameraActivity.cameraHeight = 80
-//                        CameraActivity.centerX = 100
-//                        CameraActivity.centerY = 35
-//                        val intent = Intent(activity, CameraActivity::class.java)
-//                        resultLauncher.launch(intent)
-//                        true
-//                    }
-//                    R.id.medium_type -> {
-//                        CameraActivity.cameraWidth = 400
-//                        CameraActivity.cameraHeight = 150
-//                        CameraActivity.centerX = 200
-//                        CameraActivity.centerY = 75
-//                        val intent = Intent(activity, CameraActivity::class.java)
-//                        resultLauncher.launch(intent)
-//                        true
-//                    }
-//                    R.id.large_type -> {
-//                        CameraActivity.cameraWidth = 800
-//                        CameraActivity.cameraHeight = 300
-//                        CameraActivity.centerX = 400
-//                        CameraActivity.centerY = 150
-//                        val intent = Intent(activity, CameraActivity::class.java)
-//                        resultLauncher.launch(intent)
-//                        true
-//                    }
-//                    else -> {
-//                        super.onOptionsItemSelected(menuItem)
-//                    }
-//                }
-//            }
-//            popupMenu.show()
             val intent = Intent(activity, CameraActivity::class.java)
-            resultLauncher.launch(intent)
+            startActivity(intent)
+//            resultLauncher.launch(intent)
         }
     }
 

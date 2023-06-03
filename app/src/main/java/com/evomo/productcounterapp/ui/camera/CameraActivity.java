@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -86,6 +87,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
         startCamera();
         machineTextView = binding.autocompleteMesin;
+        machineTextView.setInputType(InputType.TYPE_NULL);
         machineAdapterItems = new ArrayAdapter<String>(this, R.layout.dropdown_items, machineOptions);
         machineTextView.setAdapter(machineAdapterItems);
         machineTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -98,6 +100,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
         });
 
         parameterTextView = binding.autocompleteParameter;
+        parameterTextView.setInputType(InputType.TYPE_NULL);
         parameterAdapterItems = new ArrayAdapter<String>(this, R.layout.dropdown_items, parameterOptions);
         parameterTextView.setAdapter(parameterAdapterItems);
         parameterTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -110,6 +113,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
         });
 
         sizeTextView = binding.autocompleteUkuran;
+        sizeTextView.setInputType(InputType.TYPE_NULL);
         sizeAdapterItems = new ArrayAdapter<String>(this, R.layout.dropdown_items, sizeOptions);
         sizeTextView.setAdapter(sizeAdapterItems);
         sizeTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

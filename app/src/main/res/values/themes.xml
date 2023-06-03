@@ -66,4 +66,5 @@
         <item name="fontFamily">@font/poppins_semibold</item>
         <item name="android:layout_weight">1</item>
     </style>
+
 </resources>

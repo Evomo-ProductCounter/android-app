@@ -21,6 +21,7 @@
     <string name="title_home">Home</string>
     <string name="title_history">History</string>
     <string name="title_profile">Profile</string>
+    <string name="title_welcome">Welcome, %s</string>
 
     <string name="title_machine_overview">Machine Overview</string>
 

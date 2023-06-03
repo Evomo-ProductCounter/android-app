@@ -4,18 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.MainActivity">
-
-<!--    <TextView-->
-<!--        android:id="@+id/titleMesin"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="20dp"-->
-<!--        android:layout_marginTop="20dp"-->
-<!--        android:text="@string/title_mesin"-->
-<!--        android:textStyle="bold"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"></TextView>-->
+    tools:context=".ui.camera.CameraActivity">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/dropdownMesin"
@@ -34,21 +23,10 @@
             android:id="@+id/autocomplete_mesin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins"
             android:inputType="none" />
 
     </com.google.android.material.textfield.TextInputLayout>
-
-<!--    <TextView-->
-<!--        android:id="@+id/titleParameter"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="20dp"-->
-<!--        android:layout_marginTop="20dp"-->
-<!--        android:text="@string/title_parameter"-->
-<!--        android:textStyle="bold"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/dropdownMesin"-->
-<!--        app:layout_constraintStart_toStartOf="parent">-->
-<!--    </TextView>-->
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/dropdownParameter"
@@ -69,21 +47,10 @@
             android:id="@+id/autocomplete_parameter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins"
             android:inputType="none" />
 
     </com.google.android.material.textfield.TextInputLayout>
-
-<!--    <TextView-->
-<!--        android:id="@+id/titleUkuran"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="20dp"-->
-<!--        android:text="@string/title_size"-->
-<!--        android:textStyle="bold"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/titleParameter"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/titleParameter">-->
-<!--    </TextView>-->
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/dropdownUkuran"
@@ -102,6 +69,7 @@
             android:id="@+id/autocomplete_ukuran"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins"
             android:inputType="none" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -130,20 +98,24 @@
         android:id="@+id/stopCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minWidth="250dp"
         android:text="@string/camera"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/countText"></Button>
+        app:layout_constraintTop_toBottomOf="@+id/countText"
+        android:backgroundTint="@color/green_500"
+        android:textColor="@color/white"
+        ></Button>
 
-    <TextView
-        android:id="@+id/needHelp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/need_help"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/stopCount">
-    </TextView>
+<!--    <TextView-->
+<!--        android:id="@+id/needHelp"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginBottom="16dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:text="@string/need_help"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/stopCount">-->
+<!--    </TextView>-->
 </androidx.constraintlayout.widget.ConstraintLayout>
