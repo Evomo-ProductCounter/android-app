@@ -7,9 +7,9 @@
     <string name="need_help">Butuh bantuan?</string>
     <string name="select">Select item</string>
 
-    <string name="title_mesin">Mesin</string>
+    <string name="title_machine">Machine</string>
     <string name="title_parameter">Parameter</string>
-    <string name="title_ukuran">Ukuran</string>
+    <string name="title_size">Size</string>
 
     <string name="in">In</string>
     <string name="out">Out</string>

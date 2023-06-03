@@ -37,45 +37,47 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.cameraButton.setOnClickListener{
-            val popupMenu = PopupMenu(requireContext(), binding.cameraButton)
-
-            popupMenu.menuInflater.inflate(R.menu.option_menu, popupMenu.menu)
-            popupMenu.setOnMenuItemClickListener { menuItem ->
-
-                when (menuItem.itemId) {
-                    R.id.small_type -> {
-                        CameraActivity.cameraWidth = 200
-                        CameraActivity.cameraHeight = 80
-                        CameraActivity.centerX = 100
-                        CameraActivity.centerY = 35
-                        val intent = Intent(activity, CameraActivity::class.java)
-                        resultLauncher.launch(intent)
-                        true
-                    }
-                    R.id.medium_type -> {
-                        CameraActivity.cameraWidth = 400
-                        CameraActivity.cameraHeight = 150
-                        CameraActivity.centerX = 200
-                        CameraActivity.centerY = 75
-                        val intent = Intent(activity, CameraActivity::class.java)
-                        resultLauncher.launch(intent)
-                        true
-                    }
-                    R.id.large_type -> {
-                        CameraActivity.cameraWidth = 800
-                        CameraActivity.cameraHeight = 300
-                        CameraActivity.centerX = 400
-                        CameraActivity.centerY = 150
-                        val intent = Intent(activity, CameraActivity::class.java)
-                        resultLauncher.launch(intent)
-                        true
-                    }
-                    else -> {
-                        super.onOptionsItemSelected(menuItem)
-                    }
-                }
-            }
-            popupMenu.show()
+//            val popupMenu = PopupMenu(requireContext(), binding.cameraButton)
+//
+//            popupMenu.menuInflater.inflate(R.menu.option_menu, popupMenu.menu)
+//            popupMenu.setOnMenuItemClickListener { menuItem ->
+//
+//                when (menuItem.itemId) {
+//                    R.id.small_type -> {
+//                        CameraActivity.cameraWidth = 200
+//                        CameraActivity.cameraHeight = 80
+//                        CameraActivity.centerX = 100
+//                        CameraActivity.centerY = 35
+//                        val intent = Intent(activity, CameraActivity::class.java)
+//                        resultLauncher.launch(intent)
+//                        true
+//                    }
+//                    R.id.medium_type -> {
+//                        CameraActivity.cameraWidth = 400
+//                        CameraActivity.cameraHeight = 150
+//                        CameraActivity.centerX = 200
+//                        CameraActivity.centerY = 75
+//                        val intent = Intent(activity, CameraActivity::class.java)
+//                        resultLauncher.launch(intent)
+//                        true
+//                    }
+//                    R.id.large_type -> {
+//                        CameraActivity.cameraWidth = 800
+//                        CameraActivity.cameraHeight = 300
+//                        CameraActivity.centerX = 400
+//                        CameraActivity.centerY = 150
+//                        val intent = Intent(activity, CameraActivity::class.java)
+//                        resultLauncher.launch(intent)
+//                        true
+//                    }
+//                    else -> {
+//                        super.onOptionsItemSelected(menuItem)
+//                    }
+//                }
+//            }
+//            popupMenu.show()
+            val intent = Intent(activity, CameraActivity::class.java)
+            resultLauncher.launch(intent)
         }
     }
 

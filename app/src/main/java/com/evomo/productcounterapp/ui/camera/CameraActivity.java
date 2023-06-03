@@ -15,7 +15,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.evomo.productcounterapp.R;
 import com.evomo.productcounterapp.databinding.ActivityCameraBinding;
@@ -54,10 +58,24 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     private Rect roi;
     private Rect rectRoi;
     public static String lastCount = "";
-    public static int cameraWidth = 0;
-    public static int cameraHeight = 0;
-    public static int centerX = 0;
-    public static int centerY = 0;
+    public static int cameraWidth = 200;
+    public static int cameraHeight = 80;
+    public static int centerX = 20;
+    public static int centerY = 20;
+
+    String[] machineOptions = {"This Device"};
+    String[] parameterOptions = {"In", "Out", "Reject"};
+    String[] sizeOptions = {"Small", "Medium", "Large"};
+
+    AutoCompleteTextView machineTextView;
+    AutoCompleteTextView parameterTextView;
+    AutoCompleteTextView sizeTextView;
+
+    ArrayAdapter<String> machineAdapterItems;
+    ArrayAdapter<String> parameterAdapterItems;
+    ArrayAdapter<String> sizeAdapterItems;
+
+    private boolean startCount = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +86,82 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
         setContentView(view);
 
         getPermission();
-
         cameraBridgeViewBase = binding.cameraView;
+
+//        startCamera();
+        machineTextView = binding.autocompleteMesin;
+        machineAdapterItems = new ArrayAdapter<String>(this, R.layout.dropdown_items, machineOptions);
+        machineTextView.setAdapter(machineAdapterItems);
+        machineTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String item = parent.getItemAtPosition(position).toString();
+                Toast.makeText(CameraActivity.this, item, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        parameterTextView = binding.autocompleteParameter;
+        parameterAdapterItems = new ArrayAdapter<String>(this, R.layout.dropdown_items, parameterOptions);
+        parameterTextView.setAdapter(parameterAdapterItems);
+        parameterTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String item = parent.getItemAtPosition(position).toString();
+                Toast.makeText(CameraActivity.this, item, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        sizeTextView = binding.autocompleteUkuran;
+        sizeAdapterItems = new ArrayAdapter<String>(this, R.layout.dropdown_items, sizeOptions);
+        sizeTextView.setAdapter(sizeAdapterItems);
+        sizeTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String item = parent.getItemAtPosition(position).toString();
+                if (item == "Small") {
+                    cameraWidth = 200;
+                    cameraHeight = 80;
+                    centerX = 100;
+                    centerY = 35;
+//                    startCamera();
+                }
+                else if (item == "Medium") {
+                    cameraWidth = 400;
+                    cameraHeight = 150;
+                    centerX = 200;
+                    centerY = 75;
+//                    startCamera();
+                } else {
+                    cameraWidth = 800;
+                    cameraHeight = 300;
+                    centerX = 400;
+                    centerY = 150;
+//                    startCamera();
+                }
+                cameraBridgeViewBase.disableView();
+
+//                recreate();
+//                finish();
+//                startActivity(getIntent());
+//                cameraBridgeViewBase = binding.cameraView;
+                startCamera();
+                Toast.makeText(CameraActivity.this, item, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        binding.stopCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startCount = true;
+//                lastCount = "Object Counted: " + counter;
+//                finish();
+            }
+        });
+    }
+
+    private void startCamera() {
+//        outFrame.release();
+//        cameraBridgeViewBase.
 
         cameraBridgeViewBase.setCvCameraViewListener(new CameraBridgeViewBase.CvCameraViewListener2() {
             @Override
@@ -104,79 +196,81 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
             @Override
             public void onCameraViewStopped() {
-
+//                outFrame.release();
+                outFrame.release();
+//                grayFrame.release();
+//                blurFrame.release();
+//                rgbFrame.release();
+                outFrame= null;
+//                grayFrame= null;
+//                blurFrame= null;
+//                rgbFrame= null;
+                cameraBridgeViewBase.invalidate();
             }
 
             @Override
             public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-                // Initialize frame
-                rgbFrame = inputFrame.rgba();
+//                if (startCount == true) {
+                    // Initialize frame
+                    rgbFrame = inputFrame.rgba();
 
-                long videoFrames = System.currentTimeMillis();
-                System.out.println("Video Frames: " + videoFrames);
+                    long videoFrames = System.currentTimeMillis();
+                    System.out.println("Video Frames: " + videoFrames);
 
-                Imgproc.GaussianBlur(rgbFrame.clone(), blurFrame, new Size(3, 3), 0);
-                Imgproc.cvtColor(blurFrame, grayFrame, Imgproc.COLOR_BGR2GRAY);
-                outFrame = rgbFrame.clone();
+                    Imgproc.GaussianBlur(rgbFrame.clone(), blurFrame, new Size(3, 3), 0);
+                    Imgproc.cvtColor(blurFrame, grayFrame, Imgproc.COLOR_BGR2GRAY);
+                    outFrame = rgbFrame.clone();
 
-                Rect rect = parkingBoundingRect.get(0);
-                System.out.println("Rect[0]: " + rect);
+                    Rect rect = parkingBoundingRect.get(0);
+                    System.out.println("Rect[0]: " + rect);
 
-                Mat roiGray = grayFrame.submat(rect);
-                MatOfDouble meandev = new MatOfDouble();
-                MatOfDouble stddev = new MatOfDouble();
-                Core.meanStdDev(roiGray, meandev, stddev);
+                    Mat roiGray = grayFrame.submat(rect);
+                    MatOfDouble meandev = new MatOfDouble();
+                    MatOfDouble stddev = new MatOfDouble();
+                    Core.meanStdDev(roiGray, meandev, stddev);
 
-                double stdev = stddev.get(0, 0)[0];
+                    double stdev = stddev.get(0, 0)[0];
 //                double std = Core.meanStdDev(roiGray).stddev[0];
-                double mean = Core.mean(roiGray).val[0];
-                boolean status = (stdev < 22 && mean > 53);
+                    double mean = Core.mean(roiGray).val[0];
+                    boolean status = (stdev < 22 && mean > 53);
 
-                if (status != parkingStatus.get(0) && parkingBuffer.get(0) == null) {
-                    parkingBuffer.set(0, videoFrames);
-                }
-                else if (status != parkingStatus.get(0) && parkingBuffer.get(0) != null){
-                    if (videoFrames - parkingBuffer.get(0) > 0.001) {
-                        if (status == false) {
-                            counter = counter + 1;
+                    if (status != parkingStatus.get(0) && parkingBuffer.get(0) == null) {
+                        parkingBuffer.set(0, videoFrames);
+                    } else if (status != parkingStatus.get(0) && parkingBuffer.get(0) != null) {
+                        if (videoFrames - parkingBuffer.get(0) > 0.001) {
+                            if (status == false) {
+                                counter = counter + 1;
 
+                            }
+                            parkingStatus.set(0, status);
+                            parkingBuffer.set(0, null);
                         }
-                        parkingStatus.set(0, status);
+                    } else if (status == parkingStatus.get(0) && parkingBuffer.get(0) != null) {
                         parkingBuffer.set(0, null);
                     }
-                }
-                else if (status == parkingStatus.get(0) && parkingBuffer.get(0) != null){
-                    parkingBuffer.set(0, null);
-                }
 
-                Scalar color;
+                    Scalar color;
 
-                if (parkingStatus.get(0)) {
-                    color = new Scalar(0, 255, 0);
-                } else {
-                    color = new Scalar(255, 0, 0);
-                }
+                    if (parkingStatus.get(0)) {
+                        color = new Scalar(0, 255, 0);
+                    } else {
+                        color = new Scalar(255, 0, 0);
+                    }
 
-                Imgproc.drawContours(outFrame, pointsList, -1, color, 4, Imgproc.LINE_8);
-                String counterStr = getResources().getString(R.string.counted_object, String.valueOf(counter));
-                setText(binding.countText, counterStr);
+                    Imgproc.drawContours(outFrame, pointsList, -1, color, 4, Imgproc.LINE_8);
+                    String counterStr = getResources().getString(R.string.counted_object, String.valueOf(counter));
+                    setText(binding.countText, counterStr);
 //                Imgproc.putText(outFrame, counterStr, new Point(10, 40), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 0, 0), 2, Imgproc.LINE_AA);
 
-                return outFrame;
-            }
+                    return outFrame;
+                }
+//                return null;
+//            }
         });
 
         if (OpenCVLoader.initDebug()) {
             cameraBridgeViewBase.enableView();
         }
-
-        binding.stopCount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                lastCount = "Object Counted: " + counter;
-                finish();
-            }
-        });
     }
 
     private void setText(final TextView text, final String value){

@@ -6,89 +6,101 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.MainActivity">
 
-    <TextView
-        android:id="@+id/titleMesin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="30dp"
-        android:text="@string/title_mesin"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></TextView>
+<!--    <TextView-->
+<!--        android:id="@+id/titleMesin"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="20dp"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:text="@string/title_mesin"-->
+<!--        android:textStyle="bold"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"></TextView>-->
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/dropdownMesin"
-        android:layout_width="wrap_content"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:hint="@string/select"
-        app:layout_constraintTop_toBottomOf="@+id/titleMesin"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="20dp"
+        android:hint="@string/title_machine"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        app:layout_constraintTop_toTopOf="parent">
 
         <AutoCompleteTextView
             android:id="@+id/autocomplete_mesin"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="none" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/titleParameter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/title_parameter"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@+id/dropdownMesin"
-        app:layout_constraintStart_toStartOf="parent">
-    </TextView>
+<!--    <TextView-->
+<!--        android:id="@+id/titleParameter"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="20dp"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:text="@string/title_parameter"-->
+<!--        android:textStyle="bold"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/dropdownMesin"-->
+<!--        app:layout_constraintStart_toStartOf="parent">-->
+<!--    </TextView>-->
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/dropdownParameter"
-        android:layout_width="wrap_content"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent=".4"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:hint="@string/select"
-        app:layout_constraintTop_toBottomOf="@+id/titleParameter"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="10dp"
+        android:hint="@string/title_parameter"
+        app:layout_constraintEnd_toStartOf="@+id/dropdownUkuran"
         app:layout_constraintStart_toStartOf="parent"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        app:layout_constraintTop_toBottomOf="@+id/dropdownMesin"
+        >
 
         <AutoCompleteTextView
             android:id="@+id/autocomplete_parameter"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="none" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/titleUkuran"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="@string/title_ukuran"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/titleParameter"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/titleParameter">
-    </TextView>
+<!--    <TextView-->
+<!--        android:id="@+id/titleUkuran"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="20dp"-->
+<!--        android:text="@string/title_size"-->
+<!--        android:textStyle="bold"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/titleParameter"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/titleParameter">-->
+<!--    </TextView>-->
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/dropdownUkuran"
-        android:layout_width="wrap_content"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="0dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent=".4"
         android:layout_height="wrap_content"
-        android:hint="@string/select"
-        app:layout_constraintStart_toStartOf="@+id/titleUkuran"
-        app:layout_constraintTop_toBottomOf="@+id/titleUkuran"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        android:hint="@string/title_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/dropdownParameter"
+        app:layout_constraintTop_toBottomOf="@+id/dropdownMesin">
 
         <AutoCompleteTextView
             android:id="@+id/autocomplete_ukuran"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="none" />
 
@@ -97,7 +109,7 @@
     <org.opencv.android.JavaCameraView
         android:id="@+id/cameraView"
         android:layout_width="370dp"
-        android:layout_height="320dp"
+        android:layout_height="450dp"
         app:layout_constraintBottom_toBottomOf="@+id/dropdownUkuran"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -128,7 +140,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/need_help"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
