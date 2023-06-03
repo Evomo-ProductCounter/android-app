@@ -2,7 +2,6 @@
     <string name="app_name">ProductCounterApp</string>
     <string name="camera">Start Count</string>
     <string name="stop_camera">Stop Count</string>
-    <string name="last_count">Last Count</string>
     <string name="counted_object">Counted Object: %s</string>
     <string name="need_help">Butuh bantuan?</string>
     <string name="select">Select item</string>
@@ -20,7 +19,7 @@
     <string name="small">Small</string>
 
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
+    <string name="title_history">History</string>
     <string name="title_profile">Profile</string>
 
     <string name="title_machine_overview">Machine Overview</string>
@@ -34,6 +33,18 @@
 
     <string name="modal_logout_title">Warning</string>
     <string name="modal_logout_desc">Are you sure you want to leave?</string>
+
+    <string name="last_count">Last Count: %s</string>
+    <string name="no_counted">No Object Counted</string>
+
+    <string name="error_start">Please choose all of the requirements!</string>
+
+    <string name="date">Date</string>
+    <string name="machine">Machine</string>
+    <string name="parameter">Parameter</string>
+    <string name="count">Count</string>
+
+    <string name="colon">%s:</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

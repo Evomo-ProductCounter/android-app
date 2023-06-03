@@ -1,19 +1,11 @@
 package com.evomo.productcounterapp.ui.camera;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,12 +14,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.evomo.productcounterapp.R;
+import com.evomo.productcounterapp.data.db.CountObject;
 import com.evomo.productcounterapp.databinding.ActivityCameraBinding;
+import com.evomo.productcounterapp.utils.DateHelper;
 
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
 import org.opencv.core.MatOfPoint;
@@ -36,12 +29,8 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.videoio.VideoCapture;
-import org.opencv.videoio.Videoio;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -58,12 +47,12 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     private Rect roi;
     private Rect rectRoi;
     public static String lastCount = "";
-    public static int cameraWidth = 200;
-    public static int cameraHeight = 80;
-    public static int centerX = 20;
-    public static int centerY = 20;
+    public static int cameraWidth;
+    public static int cameraHeight;
+    public static int centerX;
+    public static int centerY;
 
-    String[] machineOptions = {"This Device"};
+    String[] machineOptions = {"Mesin 1", "Mesin 2", "Mesin 3", "Mesin 4"};
     String[] parameterOptions = {"In", "Out", "Reject"};
     String[] sizeOptions = {"Small", "Medium", "Large"};
 
@@ -75,7 +64,14 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     ArrayAdapter<String> parameterAdapterItems;
     ArrayAdapter<String> sizeAdapterItems;
 
+    private String selectedMachine;
+    private String selectedParameter;
+    private String selectedSize;
+
     private boolean startCount = false;
+
+    private CameraViewModel cameraViewModel;
+    private CountObject countObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +84,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
         getPermission();
         cameraBridgeViewBase = binding.cameraView;
 
-//        startCamera();
+        startCamera();
         machineTextView = binding.autocompleteMesin;
         machineAdapterItems = new ArrayAdapter<String>(this, R.layout.dropdown_items, machineOptions);
         machineTextView.setAdapter(machineAdapterItems);
@@ -96,6 +92,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
+                selectedMachine = item;
                 Toast.makeText(CameraActivity.this, item, Toast.LENGTH_SHORT).show();
             }
         });
@@ -107,6 +104,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
+                selectedParameter = item;
                 Toast.makeText(CameraActivity.this, item, Toast.LENGTH_SHORT).show();
             }
         });
@@ -123,46 +121,64 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     cameraHeight = 80;
                     centerX = 100;
                     centerY = 35;
-//                    startCamera();
                 }
                 else if (item == "Medium") {
                     cameraWidth = 400;
                     cameraHeight = 150;
                     centerX = 200;
                     centerY = 75;
-//                    startCamera();
                 } else {
                     cameraWidth = 800;
                     cameraHeight = 300;
                     centerX = 400;
                     centerY = 150;
-//                    startCamera();
                 }
+                selectedSize = item;
                 cameraBridgeViewBase.disableView();
-
-//                recreate();
-//                finish();
-//                startActivity(getIntent());
-//                cameraBridgeViewBase = binding.cameraView;
+                pointsList.clear();
                 startCamera();
                 Toast.makeText(CameraActivity.this, item, Toast.LENGTH_SHORT).show();
             }
         });
 
+//        cameraViewModel = obtainViewModel(this);
+//        CameraViewModelFactory viewModelFactory = new CameraViewModelFactory(getApplication());
+//        cameraViewModel = new ViewModelProvider(this, viewModelFactory).get(CameraViewModel.class)
+
+        CameraViewModelFactory viewModelFactory = new CameraViewModelFactory(getApplication());
+        cameraViewModel = viewModelFactory.create(CameraViewModel.class);
+
         binding.stopCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startCount = true;
-//                lastCount = "Object Counted: " + counter;
-//                finish();
+                if (startCount == true) {
+                    countObject = new CountObject();
+                    countObject.setMachine(selectedMachine);
+                    countObject.setParameter(selectedParameter);
+                    countObject.setCount(counter);
+                    countObject.setDate(DateHelper.INSTANCE.getCurrentDate());
+                    cameraViewModel.insert(countObject);
+                    lastCount = getResources().getString(R.string.last_count, String.valueOf(counter));
+                    finish();
+                } else {
+                    if (selectedMachine == null || selectedSize == null || selectedParameter == null) {
+                        Toast.makeText(CameraActivity.this, getResources().getString(R.string.error_start), Toast.LENGTH_SHORT).show();
+                    } else {
+                        binding.stopCount.setText(getResources().getString(R.string.stop_camera));
+                        startCount = true;
+                    }
+                }
             }
         });
     }
 
-    private void startCamera() {
-//        outFrame.release();
-//        cameraBridgeViewBase.
+//    @NonNull
+//    private static CameraViewModel obtainViewModel(CameraActivity activity) {
+//        CameraViewModelFactory factory = CameraViewModelFactory.getInstance(activity.getApplication());
+//        return new ViewModelProvider(activity, factory).get(CameraViewModel.class);
+//    }
 
+    private void startCamera() {
         cameraBridgeViewBase.setCvCameraViewListener(new CameraBridgeViewBase.CvCameraViewListener2() {
             @Override
             public void onCameraViewStarted(int width, int height) {
@@ -197,20 +213,13 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             @Override
             public void onCameraViewStopped() {
 //                outFrame.release();
-                outFrame.release();
-//                grayFrame.release();
-//                blurFrame.release();
-//                rgbFrame.release();
-                outFrame= null;
-//                grayFrame= null;
-//                blurFrame= null;
-//                rgbFrame= null;
-                cameraBridgeViewBase.invalidate();
+//                outFrame= null;
+//                cameraBridgeViewBase.invalidate();
             }
 
             @Override
             public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-//                if (startCount == true) {
+                if (startCount == true) {
                     // Initialize frame
                     rgbFrame = inputFrame.rgba();
 
@@ -264,8 +273,17 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
                     return outFrame;
                 }
-//                return null;
-//            }
+                else {
+                    // Initialize frame
+                    rgbFrame = inputFrame.rgba();
+                    outFrame = rgbFrame.clone();
+
+                    // Draw the preview rectangle
+                    Imgproc.rectangle(outFrame, roi.tl(), roi.br(), new Scalar(0, 255, 0), 4);
+
+                    return outFrame;
+                }
+            }
         });
 
         if (OpenCVLoader.initDebug()) {
