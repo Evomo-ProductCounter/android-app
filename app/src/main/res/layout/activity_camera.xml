@@ -105,6 +105,8 @@
         app:layout_constraintTop_toBottomOf="@+id/countText"
         android:backgroundTint="@color/green_500"
         android:textColor="@color/white"
+        android:fontFamily="@font/poppins_semibold"
+        android:textAllCaps="false"
         ></Button>
 
     <View

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import com.evomo.productcounterapp.data.db.CountObject
 import com.evomo.productcounterapp.data.db.CountObjectDao
 import com.evomo.productcounterapp.data.db.CountObjectRoomDb
+import com.evomo.productcounterapp.data.db.MachineInfo
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -17,6 +18,8 @@ class CountRepository (application: Application) {
         mCountObjectDao = db.countObjectDao()
     }
     fun getAllCount(): LiveData<List<CountObject>> = mCountObjectDao.getAllCountByDate()
+
+    fun getMachineInfo(machineName : String): LiveData<List<MachineInfo>> = mCountObjectDao.getMachineInfo(machineName)
 
     fun insert(countObject: CountObject) {
         executorService.execute { mCountObjectDao.insert(countObject) }

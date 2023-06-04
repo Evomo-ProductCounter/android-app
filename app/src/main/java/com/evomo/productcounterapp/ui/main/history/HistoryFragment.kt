@@ -51,7 +51,7 @@ class HistoryFragment : Fragment() {
 
     private fun obtainViewModel(activity: AppCompatActivity): HistoryViewModel {
         val factory = ViewModelFactory.getInstance(activity.application)
-        return ViewModelProvider(activity, factory).get(HistoryViewModel::class.java)
+        return ViewModelProvider(activity, factory)[HistoryViewModel::class.java]
     }
 
     companion object {

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Product Counter</string>
-    <string name="camera">Start Count</string>
+    <string name="camera">Start New Count</string>
     <string name="stop_camera">Stop Count</string>
     <string name="counted_object">Counted Object: %s</string>
     <string name="need_help">Butuh bantuan?</string>
@@ -49,6 +49,11 @@
     <string name="timer">0</string>
 
     <string name="colon">%s:</string>
+
+    <string name="info">Information</string>
+    <string name="total_count">Total Count</string>
+    <string name="in_out">In &amp; Out</string>
+    <string name="dummy_number">100000</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
