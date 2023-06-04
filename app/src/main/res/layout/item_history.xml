@@ -27,7 +27,8 @@
                 android:layout_marginBottom="8dp"
                 android:gravity="start"
                 android:text="@string/date"
-                android:textSize="12sp" />
+                style="@style/HistoryDate"/>
+
             <TextView
                 android:id="@+id/item_machine"
                 android:layout_width="match_parent"
@@ -35,46 +36,18 @@
                 android:layout_marginBottom="4dp"
                 android:gravity="start"
                 android:text="@string/machine"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                style="@style/HistoryMachine"
+                />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/item_parameter"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/item_parameter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="start"
-                    android:text="@string/parameter"
-                    android:textSize="14sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-<!--                <TextView-->
-<!--                    android:id="@+id/item_parameter"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:gravity="start"-->
-<!--                    android:text="@string/parameter"-->
-<!--                    android:textSize="14sp"-->
-<!--                    app:layout_constraintEnd_toStartOf="@+id/item_count"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/item_count"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="8dp"-->
-<!--                    android:gravity="start"-->
-<!--                    android:text="@string/count"-->
-<!--                    android:textSize="14sp"-->
-<!--                    app:layout_constraintStart_toEndOf="@+id/item_parameter"-->
-<!--                    app:layout_constraintTop_toTopOf="parent" />-->
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                android:gravity="start"
+                android:text="@string/parameter"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                style="@style/HistoryInfo"/>
 
             <TextView
                 android:id="@+id/item_operator"
@@ -84,7 +57,8 @@
                 android:text="@string/operator"
                 android:textSize="14sp"
                 app:layout_constraintStart_toEndOf="@+id/item_parameter"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                style="@style/HistoryInfo"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>
