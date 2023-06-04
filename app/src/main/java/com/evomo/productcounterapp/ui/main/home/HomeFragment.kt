@@ -54,6 +54,10 @@ class HomeFragment : Fragment() {
         binding.date.text = DateHelper.getCurrentDateNoTime()
 
         binding.cameraButton.setOnClickListener{
+            CameraActivity.cameraWidth = 0
+            CameraActivity.cameraHeight = 0
+            CameraActivity.centerX = 0
+            CameraActivity.centerY = 0
             val intent = Intent(activity, CameraActivity::class.java)
             startActivity(intent)
 //            resultLauncher.launch(intent)

@@ -51,7 +51,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     private int counter;
     private Rect roi;
     private Rect rectRoi;
-    public static String lastCount = "";
     public static int cameraWidth;
     public static int cameraHeight;
     public static int centerX;
@@ -163,9 +162,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     countObject.setCount(counter);
                     countObject.setDate(DateHelper.INSTANCE.getCurrentDate());
                     cameraViewModel.insert(countObject);
-                    lastCount = getResources().getString(R.string.last_count, String.valueOf(counter));
-//                    cameraBridgeViewBase.disableView();
-//                    pointsList.clear();
+
                     finish();
                 } else {
                     if (selectedMachine == null || selectedSize == null || selectedParameter == null) {
