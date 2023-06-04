@@ -22,6 +22,9 @@ data class CountObject (
     @ColumnInfo(name = "count")
     var count: Int? = null,
 
+    @ColumnInfo(name = "operator")
+    var operator: String? = null,
+
     @ColumnInfo(name = "date")
     var date: String? = null
 ) : Parcelable

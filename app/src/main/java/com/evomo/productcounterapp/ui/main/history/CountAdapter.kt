@@ -42,6 +42,7 @@ class CountAdapter : RecyclerView.Adapter<CountAdapter.CountViewHolder>() {
                 itemCount.text = count.count.toString()
                 itemParameter.text = "${count.parameter}:"
                 itemDate.text = count.date
+                itemOperator.text = String.format(itemView.context.getString(R.string.operator), count.operator);
             }
         }
     }

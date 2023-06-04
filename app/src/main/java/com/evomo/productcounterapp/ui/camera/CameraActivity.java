@@ -20,6 +20,8 @@ import com.evomo.productcounterapp.R;
 import com.evomo.productcounterapp.data.db.CountObject;
 import com.evomo.productcounterapp.databinding.ActivityCameraBinding;
 import com.evomo.productcounterapp.utils.DateHelper;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.OpenCVLoader;
@@ -56,7 +58,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     public static int centerX;
     public static int centerY;
 
-    String[] machineOptions = {"Mesin 1", "Mesin 2", "Mesin 3", "Mesin 4"};
+    String[] machineOptions = {"Machine 1", "Machine 2", "Machine 3", "Machine 4"};
     String[] parameterOptions = {"In", "Out", "Reject"};
     String[] sizeOptions = {"Small", "Medium", "Large"};
 
@@ -76,6 +78,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
     private CameraViewModel cameraViewModel;
     private CountObject countObject;
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,8 +164,14 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     countObject.setParameter(selectedParameter);
                     countObject.setCount(counter);
                     countObject.setDate(DateHelper.INSTANCE.getCurrentDate());
-                    cameraViewModel.insert(countObject);
 
+                    auth = FirebaseAuth.getInstance();
+                    FirebaseUser firebaseUser = auth.getCurrentUser();
+                    if (firebaseUser != null){
+                        countObject.setOperator(String.valueOf(firebaseUser.getDisplayName()));
+                    }
+
+                    cameraViewModel.insert(countObject);
                     finish();
                 } else {
                     if (selectedMachine == null || selectedSize == null || selectedParameter == null) {
@@ -334,21 +343,9 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
         if (requestCode == 101) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 recreate();
-                // Permission granted
-                // Proceed with your task
             } else {
                 getPermission();
-                // Permission denied
-                // Handle the denied permission or show a message to the user
             }
         }
     }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        if(grantResults.length>0 && grantResults[0]!= PackageManager.PERMISSION_GRANTED) {
-//            getPermission();
-//        }
-//    }
 }

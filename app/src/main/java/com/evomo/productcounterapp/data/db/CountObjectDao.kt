@@ -16,4 +16,7 @@ interface CountObjectDao {
 
     @Query("SELECT * from countObject ORDER BY id ASC")
     fun getAllCount(): LiveData<List<CountObject>>
+
+    @Query("SELECT * from countObject ORDER BY date DESC")
+    fun getAllCountByDate(): LiveData<List<CountObject>>
 }

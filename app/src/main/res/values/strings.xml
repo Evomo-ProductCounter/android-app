@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ProductCounterApp</string>
+    <string name="app_name">Product Counter</string>
     <string name="camera">Start Count</string>
     <string name="stop_camera">Stop Count</string>
     <string name="counted_object">Counted Object: %s</string>
@@ -44,6 +44,7 @@
     <string name="machine">Machine</string>
     <string name="parameter">Parameter</string>
     <string name="count">Count</string>
+    <string name="operator">Operated by %s</string>
     <string name="timer">0</string>
 
     <string name="colon">%s:</string>

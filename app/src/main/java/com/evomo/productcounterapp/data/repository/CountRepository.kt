@@ -16,7 +16,7 @@ class CountRepository (application: Application) {
         val db = CountObjectRoomDb.getDatabase(application)
         mCountObjectDao = db.countObjectDao()
     }
-    fun getAllCount(): LiveData<List<CountObject>> = mCountObjectDao.getAllCount()
+    fun getAllCount(): LiveData<List<CountObject>> = mCountObjectDao.getAllCountByDate()
 
     fun insert(countObject: CountObject) {
         executorService.execute { mCountObjectDao.insert(countObject) }
