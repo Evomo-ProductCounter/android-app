@@ -39,10 +39,11 @@ class CountAdapter : RecyclerView.Adapter<CountAdapter.CountViewHolder>() {
         fun bind(count: CountObject) {
             with(binding) {
                 itemMachine.text = count.machine
-                itemCount.text = count.count.toString()
-                itemParameter.text = "${count.parameter}:"
+//                itemCount.text = count.count.toString()
+//                itemParameter.text = "${count.parameter}:"
+                itemParameter.text = String.format(itemView.context.getString(R.string.parameter_value), count.parameter, count.count.toString())
                 itemDate.text = count.date
-                itemOperator.text = String.format(itemView.context.getString(R.string.operator), count.operator);
+                itemOperator.text = String.format(itemView.context.getString(R.string.operator), count.operator)
             }
         }
     }
