@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
@@ -31,6 +33,8 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -83,9 +87,10 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
         setContentView(view);
 
         getPermission();
-        cameraBridgeViewBase = binding.cameraView;
 
+        cameraBridgeViewBase = binding.cameraView;
         startCamera();
+
         machineTextView = binding.autocompleteMesin;
         machineTextView.setInputType(InputType.TYPE_NULL);
         machineAdapterItems = new ArrayAdapter<String>(this, R.layout.dropdown_items, machineOptions);
@@ -95,7 +100,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
                 selectedMachine = item;
-                Toast.makeText(CameraActivity.this, item, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(CameraActivity.this, item, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -108,7 +113,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
                 selectedParameter = item;
-                Toast.makeText(CameraActivity.this, item, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(CameraActivity.this, item, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -141,13 +146,9 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 cameraBridgeViewBase.disableView();
                 pointsList.clear();
                 startCamera();
-                Toast.makeText(CameraActivity.this, item, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(CameraActivity.this, item, Toast.LENGTH_SHORT).show();
             }
         });
-
-//        cameraViewModel = obtainViewModel(this);
-//        CameraViewModelFactory viewModelFactory = new CameraViewModelFactory(getApplication());
-//        cameraViewModel = new ViewModelProvider(this, viewModelFactory).get(CameraViewModel.class)
 
         CameraViewModelFactory viewModelFactory = new CameraViewModelFactory(getApplication());
         cameraViewModel = viewModelFactory.create(CameraViewModel.class);
@@ -163,24 +164,20 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     countObject.setDate(DateHelper.INSTANCE.getCurrentDate());
                     cameraViewModel.insert(countObject);
                     lastCount = getResources().getString(R.string.last_count, String.valueOf(counter));
+//                    cameraBridgeViewBase.disableView();
+//                    pointsList.clear();
                     finish();
                 } else {
                     if (selectedMachine == null || selectedSize == null || selectedParameter == null) {
                         Toast.makeText(CameraActivity.this, getResources().getString(R.string.error_start), Toast.LENGTH_SHORT).show();
                     } else {
                         binding.stopCount.setText(getResources().getString(R.string.stop_camera));
-                        startCount = true;
+                        startTimer();
                     }
                 }
             }
         });
     }
-
-//    @NonNull
-//    private static CameraViewModel obtainViewModel(CameraActivity activity) {
-//        CameraViewModelFactory factory = CameraViewModelFactory.getInstance(activity.getApplication());
-//        return new ViewModelProvider(activity, factory).get(CameraViewModel.class);
-//    }
 
     private void startCamera() {
         cameraBridgeViewBase.setCvCameraViewListener(new CameraBridgeViewBase.CvCameraViewListener2() {
@@ -216,9 +213,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
             @Override
             public void onCameraViewStopped() {
-//                outFrame.release();
-//                outFrame= null;
-//                cameraBridgeViewBase.invalidate();
+
             }
 
             @Override
@@ -295,6 +290,26 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
         }
     }
 
+    private void startTimer() {
+        binding.blurBackground.setVisibility(View.VISIBLE);
+        binding.timerCount.setVisibility(View.VISIBLE);
+        binding.stopCount.setVisibility(View.INVISIBLE);
+
+        new CountDownTimer(6000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                int sec = (int) ((millisUntilFinished / 1000) % 60);
+                binding.timerCount.setText(String.valueOf(sec));
+            }
+
+            public void onFinish() {
+                binding.blurBackground.setVisibility(View.INVISIBLE);
+                binding.timerCount.setVisibility(View.INVISIBLE);
+                binding.stopCount.setVisibility(View.VISIBLE);
+                startCount = true;
+            }
+        }.start();
+    }
+
     private void setText(final TextView text, final String value){
         runOnUiThread(new Runnable() {
             @Override
@@ -319,9 +334,24 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(grantResults.length>0 && grantResults[0]!= PackageManager.PERMISSION_GRANTED) {
-            getPermission();
+        if (requestCode == 101) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                recreate();
+                // Permission granted
+                // Proceed with your task
+            } else {
+                getPermission();
+                // Permission denied
+                // Handle the denied permission or show a message to the user
+            }
         }
     }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if(grantResults.length>0 && grantResults[0]!= PackageManager.PERMISSION_GRANTED) {
+//            getPermission();
+//        }
+//    }
 }

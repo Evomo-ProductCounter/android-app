@@ -38,12 +38,13 @@
     <string name="last_count">Last Count: %s</string>
     <string name="no_counted">No Object Counted</string>
 
-    <string name="error_start">Please choose all of the requirements!</string>
+    <string name="error_start">Please fill all fields!</string>
 
     <string name="date">Date</string>
     <string name="machine">Machine</string>
     <string name="parameter">Parameter</string>
     <string name="count">Count</string>
+    <string name="timer">0</string>
 
     <string name="colon">%s:</string>
 
