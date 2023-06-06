@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -159,20 +162,45 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             @Override
             public void onClick(View v) {
                 if (startCount == true) {
-                    countObject = new CountObject();
-                    countObject.setMachine(selectedMachine);
-                    countObject.setParameter(selectedParameter);
-                    countObject.setCount(counter);
-                    countObject.setDate(DateHelper.INSTANCE.getCurrentDate());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(CameraActivity.this, R.style.LogoutDialog);
+                    builder.setTitle(R.string.modal_logout_title)
+                            .setMessage(R.string.modal_stop_desc)
+                            .setNegativeButton(R.string.btn_cancel, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.cancel();
+                                }
+                            })
+                            .setPositiveButton(R.string.btn_stop, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    countObject = new CountObject();
+                                    countObject.setMachine(selectedMachine);
+                                    countObject.setParameter(selectedParameter);
+                                    countObject.setCount(counter);
+                                    countObject.setDate(DateHelper.INSTANCE.getCurrentDate());
 
-                    auth = FirebaseAuth.getInstance();
-                    FirebaseUser firebaseUser = auth.getCurrentUser();
-                    if (firebaseUser != null){
-                        countObject.setOperator(String.valueOf(firebaseUser.getDisplayName()));
-                    }
+                                    auth = FirebaseAuth.getInstance();
+                                    FirebaseUser firebaseUser = auth.getCurrentUser();
+                                    if (firebaseUser != null){
+                                        countObject.setOperator(String.valueOf(firebaseUser.getDisplayName()));
+                                    }
 
-                    cameraViewModel.insert(countObject);
-                    finish();
+                                    cameraViewModel.insert(countObject);
+                                    finish();
+                                }
+                            })
+                            .setIcon(R.drawable.ic_baseline_warning_24_yellow);
+
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+
+                    Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                    positiveButton.setAllCaps(false);
+                    positiveButton.setTextColor(getResources().getColor(R.color.red));
+
+                    Button negativeButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+                    negativeButton.setAllCaps(false);
+                    negativeButton.setTextColor(getResources().getColor(R.color.black));
+
                 } else {
                     if (selectedMachine == null || selectedSize == null || selectedParameter == null) {
                         Toast.makeText(CameraActivity.this, getResources().getString(R.string.error_start), Toast.LENGTH_SHORT).show();
