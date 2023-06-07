@@ -162,6 +162,10 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             @Override
             public void onClick(View v) {
                 if (startCount == true) {
+//                    machineTextView.setDropDownHeight(0);
+//                    sizeTextView.setDropDownHeight(0);
+//                    parameterTextView.setDropDownHeight(0);
+
                     AlertDialog.Builder builder = new AlertDialog.Builder(CameraActivity.this, R.style.LogoutDialog);
                     builder.setTitle(R.string.modal_logout_title)
                             .setMessage(R.string.modal_stop_desc)
@@ -200,12 +204,14 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     Button negativeButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
                     negativeButton.setAllCaps(false);
                     negativeButton.setTextColor(getResources().getColor(R.color.black));
-
                 } else {
                     if (selectedMachine == null || selectedSize == null || selectedParameter == null) {
                         Toast.makeText(CameraActivity.this, getResources().getString(R.string.error_start), Toast.LENGTH_SHORT).show();
                     } else {
                         binding.stopCount.setText(getResources().getString(R.string.stop_camera));
+                        binding.dropdownMesin.setEnabled(false);
+                        binding.dropdownParameter.setEnabled(false);
+                        binding.dropdownUkuran.setEnabled(false);
                         startTimer();
                     }
                 }
