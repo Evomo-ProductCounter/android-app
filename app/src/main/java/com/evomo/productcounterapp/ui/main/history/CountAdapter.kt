@@ -2,14 +2,12 @@ package com.evomo.productcounterapp.ui.main.history
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.evomo.productcounterapp.R
 import com.evomo.productcounterapp.data.db.CountObject
 import com.evomo.productcounterapp.databinding.ItemHistoryBinding
 import com.evomo.productcounterapp.utils.CountDiffCallback
-import android.content.res.Resources
 
 class CountAdapter : RecyclerView.Adapter<CountAdapter.CountViewHolder>() {
     private val listCounts = ArrayList<CountObject>()
@@ -39,8 +37,6 @@ class CountAdapter : RecyclerView.Adapter<CountAdapter.CountViewHolder>() {
         fun bind(count: CountObject) {
             with(binding) {
                 itemMachine.text = count.machine
-//                itemCount.text = count.count.toString()
-//                itemParameter.text = "${count.parameter}:"
                 itemParameter.text = String.format(itemView.context.getString(R.string.parameter_value), count.parameter, count.count.toString())
                 itemDate.text = count.date
                 itemOperator.text = String.format(itemView.context.getString(R.string.operator), count.operator)

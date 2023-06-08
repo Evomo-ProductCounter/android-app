@@ -4,7 +4,6 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.ViewModel;
 
 import com.evomo.productcounterapp.data.db.CountObject;
 import com.evomo.productcounterapp.data.repository.CountRepository;

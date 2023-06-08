@@ -46,15 +46,10 @@ class HistoryFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-//        binding = null
     }
 
     private fun obtainViewModel(activity: AppCompatActivity): HistoryViewModel {
         val factory = ViewModelFactory.getInstance(activity.application)
         return ViewModelProvider(activity, factory)[HistoryViewModel::class.java]
-    }
-
-    companion object {
-
     }
 }

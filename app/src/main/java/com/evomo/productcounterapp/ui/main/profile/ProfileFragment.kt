@@ -51,7 +51,6 @@ class ProfileFragment : Fragment() {
                 .load(firebaseUser.photoUrl.toString())
                 .into(binding.userPhoto)
             binding.userEmail.text = firebaseUser.email.toString()
-//            binding.userMobile.text = firebaseUser.phoneNumber.toString()
 
             binding.logoutGroup.setOnClickListener {
                 val builder = AlertDialog.Builder(activity, R.style.LogoutDialog)
@@ -81,17 +80,6 @@ class ProfileFragment : Fragment() {
                     isAllCaps = false
                     setTextColor(resources.getColor(R.color.black))
                 }
-
-//                val title = alertDialog.findViewById<TextView>(android.R.id.title)
-//                title.typeface = activity?.let { it1 -> ResourcesCompat.getFont(it1, R.font.poppins_semibold) }
-//                AlertDialog.Builder(activity)
-//                    .setTitle(R.string.modal_logout_title)
-//                    .setMessage(R.string.modal_logout_desc)
-//                    .setNegativeButton(R.string.btn_cancel, null)
-//                    .setPositiveButton(R.string.btn_logout) { dialogInterface: DialogInterface, i: Int ->
-//                        signOut()
-//                    }.create().show()
-//                signOut()
             }
         }
     }

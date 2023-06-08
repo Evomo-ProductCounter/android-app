@@ -182,7 +182,6 @@ class HomeFragment : Fragment() {
         val data = PieData(dataSet)
         val formatter: ValueFormatter = object : ValueFormatter() {
             override fun getFormattedValue(value: Float): String {
-                // Format the value as per your requirement
                 return "%.1f%%".format(value)
             }
         }
@@ -194,16 +193,11 @@ class HomeFragment : Fragment() {
 
         pieChart.highlightValues(null)
 
-        // loading chart
         pieChart.invalidate()
     }
 
     private fun obtainViewModel(activity: AppCompatActivity): HomeViewModel {
         val factory = ViewModelFactory.getInstance(activity.application)
         return ViewModelProvider(activity, factory)[HomeViewModel::class.java]
-    }
-
-    companion object {
-
     }
 }

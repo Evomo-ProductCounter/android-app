@@ -1,13 +1,11 @@
 package com.evomo.productcounterapp.ui.camera;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.InputType;
@@ -38,8 +36,6 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -105,7 +101,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
                 selectedMachine = item;
-//                Toast.makeText(CameraActivity.this, item, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -118,7 +113,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
                 selectedParameter = item;
-//                Toast.makeText(CameraActivity.this, item, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -151,7 +145,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 cameraBridgeViewBase.disableView();
                 pointsList.clear();
                 startCamera();
-//                Toast.makeText(CameraActivity.this, item, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -162,10 +155,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             @Override
             public void onClick(View v) {
                 if (startCount == true) {
-//                    machineTextView.setDropDownHeight(0);
-//                    sizeTextView.setDropDownHeight(0);
-//                    parameterTextView.setDropDownHeight(0);
-
                     AlertDialog.Builder builder = new AlertDialog.Builder(CameraActivity.this, R.style.LogoutDialog);
                     builder.setTitle(R.string.modal_logout_title)
                             .setMessage(R.string.modal_stop_desc)
@@ -231,7 +220,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
                 Point center = new Point(width / 2, height / 2);
                 roi = new Rect((int) (center.x - centerX), (int) (center.y - centerY), cameraWidth, cameraHeight);
-//                roi = new Rect(300, 600, 400, 150);
 
                 // Get the edge points of the ROI rectangle
                 Point tl = roi.tl();
@@ -308,7 +296,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     Imgproc.drawContours(outFrame, pointsList, -1, color, 4, Imgproc.LINE_8);
                     String counterStr = getResources().getString(R.string.counted_object, String.valueOf(counter));
                     setText(binding.countText, counterStr);
-//                Imgproc.putText(outFrame, counterStr, new Point(10, 40), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 0, 0), 2, Imgproc.LINE_AA);
 
                     return outFrame;
                 }
