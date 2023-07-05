@@ -1,5 +1,6 @@
 package com.evomo.productcounterapp.ui.main.home
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -12,6 +13,9 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.evomo.productcounterapp.R
@@ -19,7 +23,11 @@ import com.evomo.productcounterapp.data.db.MachineInfo
 import com.evomo.productcounterapp.databinding.FragmentHomeBinding
 import com.evomo.productcounterapp.ui.ViewModelFactory
 import com.evomo.productcounterapp.ui.camera.CameraActivity
+import com.evomo.productcounterapp.ui.main.MainActivity
 import com.evomo.productcounterapp.utils.DateHelper
+import com.evomo.productcounterapp.utils.SettingPreferences
+import com.evomo.productcounterapp.utils.SettingViewModel
+import com.evomo.productcounterapp.utils.SettingViewModelFactory
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
@@ -36,8 +44,8 @@ import java.text.DecimalFormat
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
-    private lateinit var auth: FirebaseAuth
-
+//    private lateinit var auth: FirebaseAuth
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
     var machineOptions = arrayOf("Machine 1", "Machine 2", "Machine 3", "Machine 4")
     var machineTextView: AutoCompleteTextView? = null
     var machineAdapterItems: ArrayAdapter<String>? = null
@@ -63,15 +71,22 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        auth = Firebase.auth
-        val firebaseUser = auth.currentUser
-        var name = ""
+//        auth = Firebase.auth
+//        val firebaseUser = auth.currentUser
+//        var name = ""
+//
+//        if (firebaseUser != null) {
+//            name = firebaseUser.displayName.toString()
+//        }
 
-        if (firebaseUser != null) {
-            name = firebaseUser.displayName.toString()
+        val pref = SettingPreferences.getInstance((activity as MainActivity).dataStore)
+        val settingViewModel = ViewModelProvider(this, SettingViewModelFactory(pref)).get(
+            SettingViewModel::class.java
+        )
+
+        settingViewModel.getUserName().observe(viewLifecycleOwner) { dataName ->
+            binding.titleWelcome.text = resources.getString(R.string.title_welcome, dataName.split(" ").firstOrNull())
         }
-
-        binding.titleWelcome.text = resources.getString(R.string.title_welcome, name.split(" ").firstOrNull())
 
         binding.date.text = DateHelper.getCurrentDateNoTime()
 
