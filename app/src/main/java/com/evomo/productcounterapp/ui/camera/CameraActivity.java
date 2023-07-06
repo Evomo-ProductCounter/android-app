@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -34,6 +35,8 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +58,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     public static int centerX;
     public static int centerY;
 
-//    String[] machineOptions = {"Machine 1", "Machine 2", "Machine 3", "Machine 4"};
+    //    String[] machineOptions = {"Machine 1", "Machine 2", "Machine 3", "Machine 4"};
     public static String[] machineOptions;
     String[] parameterOptions = {"In", "Out", "Reject"};
     String[] sizeOptions = {"Small", "Medium", "Large"};
@@ -78,6 +81,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     private CountObject countObject;
     public static String userName;
 //    private FirebaseAuth auth;
+    LocalDateTime start_time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -238,6 +242,9 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
                 parkingStatus.add(false);
                 parkingBuffer.add(null);
+
+                start_time = LocalDateTime.now();
+                Log.d("start_time", String.valueOf(start_time));
             }
 
             @Override
@@ -259,7 +266,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     outFrame = rgbFrame.clone();
 
                     Rect rect = parkingBoundingRect.get(0);
-                    System.out.println("Rect[0]: " + rect);
+//                    Log.d("test", "Rect[0]: " + rect);
 
                     Mat roiGray = grayFrame.submat(rect);
                     MatOfDouble meandev = new MatOfDouble();
@@ -278,6 +285,14 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                             if (status == false) {
                                 counter = counter + 1;
 
+                                LocalDateTime currentTime = LocalDateTime.now();
+                                Log.d("current_time", String.valueOf(currentTime));
+                                Duration diff = Duration.between(start_time, currentTime);
+                                double elapsed_time = diff.toMillis() / 60000.0;
+                                double avg_ppm = Math.round(counter / elapsed_time);
+                                Log.d("test_counter:", String.valueOf(counter));
+                                Log.d("test_elapsed_time:", String.valueOf(elapsed_time));
+                                Log.d("test_avg_ppm:", String.valueOf(avg_ppm));
                             }
                             parkingStatus.set(0, status);
                             parkingBuffer.set(0, null);
