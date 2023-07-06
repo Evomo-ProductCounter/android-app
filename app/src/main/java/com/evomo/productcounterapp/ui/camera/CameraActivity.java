@@ -35,7 +35,10 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.videoio.Videoio;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -247,6 +250,8 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             @Override
             public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
                 if (startCount == true) {
+                    LocalDateTime start_time = LocalDateTime.now();
+
                     // Initialize frame
                     rgbFrame = inputFrame.rgba();
 
@@ -268,7 +273,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     double stdev = stddev.get(0, 0)[0];
 //                double std = Core.meanStdDev(roiGray).stddev[0];
                     double mean = Core.mean(roiGray).val[0];
-                    boolean status = (stdev < 22 && mean > 53);
+                    boolean status = (stdev < 20 && mean > 56);
 
                     if (status != parkingStatus.get(0) && parkingBuffer.get(0) == null) {
                         parkingBuffer.set(0, videoFrames);
@@ -277,6 +282,11 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                             if (status == false) {
                                 counter = counter + 1;
 
+                                LocalDateTime currentTime = LocalDateTime.now();
+                                Duration diff = Duration.between(start_time, currentTime);
+                                long minutes = diff.toMinutes();
+                                double ppm_average = Math.round(counter / minutes * 100.0) / 100.0;
+                                System.out.println(ppm_average);
                             }
                             parkingStatus.set(0, status);
                             parkingBuffer.set(0, null);
