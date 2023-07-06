@@ -12,15 +12,18 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.evomo.productcounterapp.R
 import com.evomo.productcounterapp.data.db.MachineInfo
 import com.evomo.productcounterapp.databinding.FragmentHomeBinding
+import com.evomo.productcounterapp.ui.TokenViewModelFactory
 import com.evomo.productcounterapp.ui.ViewModelFactory
 import com.evomo.productcounterapp.ui.camera.CameraActivity
 import com.evomo.productcounterapp.ui.main.MainActivity
@@ -46,7 +49,8 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
 //    private lateinit var auth: FirebaseAuth
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-    var machineOptions = arrayOf("Machine 1", "Machine 2", "Machine 3", "Machine 4")
+
+//    var machineOptions = arrayOf("Machine 1", "Machine 2", "Machine 3", "Machine 4")
     var machineTextView: AutoCompleteTextView? = null
     var machineAdapterItems: ArrayAdapter<String>? = null
     private var selectedMachine: String? = null
@@ -111,46 +115,57 @@ class HomeFragment : Fragment() {
         binding.rejectNum.text = Reject.toString()
         setChart(entries)
 
-        val viewModel = obtainViewModel(activity as AppCompatActivity)
+        settingViewModel.getToken().observe(viewLifecycleOwner) { token ->
 
-        machineTextView = binding.autocompleteMesinChart
-        machineTextView!!.inputType = InputType.TYPE_NULL
-        machineAdapterItems =
-            context?.let { ArrayAdapter(it, R.layout.dropdown_items, machineOptions) }
-        machineTextView!!.setAdapter(machineAdapterItems)
-        machineTextView!!.onItemClickListener =
-            AdapterView.OnItemClickListener { parent, view, position, id ->
-                val item = parent.getItemAtPosition(position).toString()
-                selectedMachine = item
-                viewModel.getMachineInfo(selectedMachine!!).observe(viewLifecycleOwner) { list ->
-                    if (list != null) {
-                        In = list.find {
-                            it.parameter == "In"
-                        }?.total ?: 0
-                        Out = list.find {
-                            it.parameter == "Out"
-                        }?.total ?: 0
-                        Reject = list.find {
-                            it.parameter == "Reject"
-                        }?.total ?: 0
+            val viewModel = obtainViewModel(activity as AppCompatActivity, token)
+            viewModel.getMachines()
 
-                        entries.clear()
-                        if (In != null) {
-                            entries.add(PieEntry(In.toFloat()))
-                        }
-                        if (Out != null) {
-                            entries.add(PieEntry(Out.toFloat()))
-                        }
-                        if (Reject != null) {
-                            entries.add(PieEntry(Reject.toFloat()))
-                        }
-                        binding.totalNum.text = (In + Out + Reject).toString()
-                        binding.inOutNum.text = (In + Out).toString()
-                        binding.rejectNum.text = Reject.toString()
-                        setChart(entries)
-                    }
+            machineTextView = binding.autocompleteMesinChart
+            machineTextView!!.inputType = InputType.TYPE_NULL
+
+            viewModel.listMachine.observe(viewLifecycleOwner) { list ->
+                val nameList = list.map { item ->
+                    item.name
                 }
+
+                machineAdapterItems =
+                    context?.let { ArrayAdapter(it, R.layout.dropdown_items, nameList) }
+                machineTextView!!.setAdapter(machineAdapterItems)
+                machineTextView!!.onItemClickListener =
+                    AdapterView.OnItemClickListener { parent, view, position, id ->
+                        val item = parent.getItemAtPosition(position).toString()
+                        selectedMachine = item
+                        viewModel.getMachineInfo(selectedMachine!!).observe(viewLifecycleOwner) { list ->
+                            if (list != null) {
+                                In = list.find {
+                                    it.parameter == "In"
+                                }?.total ?: 0
+                                Out = list.find {
+                                    it.parameter == "Out"
+                                }?.total ?: 0
+                                Reject = list.find {
+                                    it.parameter == "Reject"
+                                }?.total ?: 0
+
+                                entries.clear()
+                                if (In != null) {
+                                    entries.add(PieEntry(In.toFloat()))
+                                }
+                                if (Out != null) {
+                                    entries.add(PieEntry(Out.toFloat()))
+                                }
+                                if (Reject != null) {
+                                    entries.add(PieEntry(Reject.toFloat()))
+                                }
+                                binding.totalNum.text = (In + Out + Reject).toString()
+                                binding.inOutNum.text = (In + Out).toString()
+                                binding.rejectNum.text = Reject.toString()
+                                setChart(entries)
+                            }
+                        }
+                    }
             }
+        }
     }
 
     private fun setChart(entries: ArrayList<PieEntry>) {
@@ -211,8 +226,8 @@ class HomeFragment : Fragment() {
         pieChart.invalidate()
     }
 
-    private fun obtainViewModel(activity: AppCompatActivity): HomeViewModel {
-        val factory = ViewModelFactory.getInstance(activity.application)
+    private fun obtainViewModel(activity: AppCompatActivity, token: String): HomeViewModel {
+        val factory = TokenViewModelFactory.getInstance(activity.application, token)
         return ViewModelProvider(activity, factory)[HomeViewModel::class.java]
     }
 }
