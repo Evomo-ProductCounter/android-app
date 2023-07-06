@@ -7,28 +7,25 @@ import com.evomo.productcounterapp.ui.login.LoginViewModel
 import com.evomo.productcounterapp.ui.main.history.HistoryViewModel
 import com.evomo.productcounterapp.ui.main.home.HomeViewModel
 
-class ViewModelFactory private constructor(private val mApplication: Application) : ViewModelProvider.NewInstanceFactory() {
+class TokenViewModelFactory(private val mApplication: Application, private val token:String) : ViewModelProvider.NewInstanceFactory() {
     companion object {
         @Volatile
-        private var INSTANCE: ViewModelFactory? = null
+        private var INSTANCE: TokenViewModelFactory? = null
         @JvmStatic
-        fun getInstance(application: Application): ViewModelFactory {
+        fun getInstance(application: Application, token: String): TokenViewModelFactory {
             if (INSTANCE == null) {
-                synchronized(ViewModelFactory::class.java) {
-                    INSTANCE = ViewModelFactory(application)
+                synchronized(TokenViewModelFactory::class.java) {
+                    INSTANCE = TokenViewModelFactory(application, token)
                 }
             }
-            return INSTANCE as ViewModelFactory
+            return INSTANCE as TokenViewModelFactory
         }
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(HistoryViewModel::class.java)) {
-            return HistoryViewModel(mApplication) as T
-        }
-        else if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
-            return LoginViewModel() as T
+        if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
+            return HomeViewModel(mApplication, token) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
     }

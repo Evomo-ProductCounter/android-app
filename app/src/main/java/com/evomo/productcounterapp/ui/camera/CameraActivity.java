@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,8 +22,6 @@ import com.evomo.productcounterapp.R;
 import com.evomo.productcounterapp.data.db.CountObject;
 import com.evomo.productcounterapp.databinding.ActivityCameraBinding;
 import com.evomo.productcounterapp.utils.DateHelper;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.OpenCVLoader;
@@ -35,7 +34,6 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.videoio.Videoio;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -60,7 +58,8 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     public static int centerX;
     public static int centerY;
 
-    String[] machineOptions = {"Machine 1", "Machine 2", "Machine 3", "Machine 4"};
+    //    String[] machineOptions = {"Machine 1", "Machine 2", "Machine 3", "Machine 4"};
+    public static String[] machineOptions;
     String[] parameterOptions = {"In", "Out", "Reject"};
     String[] sizeOptions = {"Small", "Medium", "Large"};
 
@@ -80,7 +79,9 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
     private CameraViewModel cameraViewModel;
     private CountObject countObject;
-    private FirebaseAuth auth;
+    public static String userName;
+//    private FirebaseAuth auth;
+    LocalDateTime start_time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,12 +174,13 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                                     countObject.setParameter(selectedParameter);
                                     countObject.setCount(counter);
                                     countObject.setDate(DateHelper.INSTANCE.getCurrentDate());
-
-                                    auth = FirebaseAuth.getInstance();
-                                    FirebaseUser firebaseUser = auth.getCurrentUser();
-                                    if (firebaseUser != null){
-                                        countObject.setOperator(String.valueOf(firebaseUser.getDisplayName()));
-                                    }
+                                    countObject.setOperator(userName);
+//
+//                                    auth = FirebaseAuth.getInstance();
+//                                    FirebaseUser firebaseUser = auth.getCurrentUser();
+//                                    if (firebaseUser != null){
+//                                        countObject.setOperator(String.valueOf(firebaseUser.getDisplayName()));
+//                                    }
 
                                     cameraViewModel.insert(countObject);
                                     finish();
@@ -240,6 +242,9 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
                 parkingStatus.add(false);
                 parkingBuffer.add(null);
+
+                start_time = LocalDateTime.now();
+                Log.d("start_time", String.valueOf(start_time));
             }
 
             @Override
@@ -250,8 +255,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             @Override
             public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
                 if (startCount == true) {
-                    LocalDateTime start_time = LocalDateTime.now();
-
                     // Initialize frame
                     rgbFrame = inputFrame.rgba();
 
@@ -263,7 +266,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     outFrame = rgbFrame.clone();
 
                     Rect rect = parkingBoundingRect.get(0);
-                    System.out.println("Rect[0]: " + rect);
+//                    Log.d("test", "Rect[0]: " + rect);
 
                     Mat roiGray = grayFrame.submat(rect);
                     MatOfDouble meandev = new MatOfDouble();
@@ -273,7 +276,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     double stdev = stddev.get(0, 0)[0];
 //                double std = Core.meanStdDev(roiGray).stddev[0];
                     double mean = Core.mean(roiGray).val[0];
-                    boolean status = (stdev < 20 && mean > 56);
+                    boolean status = (stdev < 22 && mean > 53);
 
                     if (status != parkingStatus.get(0) && parkingBuffer.get(0) == null) {
                         parkingBuffer.set(0, videoFrames);
@@ -283,10 +286,13 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                                 counter = counter + 1;
 
                                 LocalDateTime currentTime = LocalDateTime.now();
+                                Log.d("current_time", String.valueOf(currentTime));
                                 Duration diff = Duration.between(start_time, currentTime);
-                                long minutes = diff.toMinutes();
-                                double ppm_average = Math.round(counter / minutes * 100.0) / 100.0;
-                                System.out.println(ppm_average);
+                                double elapsed_time = diff.toMillis() / 60000.0;
+                                double avg_ppm = Math.round(counter / elapsed_time);
+                                Log.d("test_counter:", String.valueOf(counter));
+                                Log.d("test_elapsed_time:", String.valueOf(elapsed_time));
+                                Log.d("test_avg_ppm:", String.valueOf(avg_ppm));
                             }
                             parkingStatus.set(0, status);
                             parkingBuffer.set(0, null);
