@@ -57,7 +57,8 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     public static int centerX;
     public static int centerY;
 
-    String[] machineOptions = {"Machine 1", "Machine 2", "Machine 3", "Machine 4"};
+//    String[] machineOptions = {"Machine 1", "Machine 2", "Machine 3", "Machine 4"};
+    public static String[] machineOptions;
     String[] parameterOptions = {"In", "Out", "Reject"};
     String[] sizeOptions = {"Small", "Medium", "Large"};
 

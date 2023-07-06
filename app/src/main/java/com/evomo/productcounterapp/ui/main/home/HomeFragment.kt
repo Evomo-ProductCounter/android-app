@@ -51,6 +51,7 @@ class HomeFragment : Fragment() {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 //    var machineOptions = arrayOf("Machine 1", "Machine 2", "Machine 3", "Machine 4")
+    private lateinit var nameList: List<String>
     var machineTextView: AutoCompleteTextView? = null
     var machineAdapterItems: ArrayAdapter<String>? = null
     private var selectedMachine: String? = null
@@ -99,6 +100,7 @@ class HomeFragment : Fragment() {
             CameraActivity.cameraHeight = 0
             CameraActivity.centerX = 0
             CameraActivity.centerY = 0
+            CameraActivity.machineOptions = nameList.toTypedArray()
             val intent = Intent(activity, CameraActivity::class.java)
             startActivity(intent)
         }
@@ -124,7 +126,7 @@ class HomeFragment : Fragment() {
             machineTextView!!.inputType = InputType.TYPE_NULL
 
             viewModel.listMachine.observe(viewLifecycleOwner) { list ->
-                val nameList = list.map { item ->
+                nameList = list.map { item ->
                     item.name
                 }
 
