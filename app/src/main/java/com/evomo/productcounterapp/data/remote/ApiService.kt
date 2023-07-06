@@ -1,6 +1,7 @@
 package com.evomo.productcounterapp.data.remote
 
 import com.evomo.productcounterapp.data.model.LoginResponse
+import com.evomo.productcounterapp.data.model.MachinesResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -14,4 +15,9 @@ interface ApiService {
         @Field("username") username: String,
         @Field("password") password: String
     ): Call<LoginResponse>
+
+    @GET("machines")
+    fun getMachines (
+        @Header("Authorization") token: String,
+    ): Call<MachinesResponse>
 }

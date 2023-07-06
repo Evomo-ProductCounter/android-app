@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'com.google.gms.google-services'
+//    id 'com.google.gms.google-services'
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
 }
@@ -45,7 +45,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation project(path: ':OpenCV')
-    implementation 'com.google.firebase:firebase-auth-ktx:22.0.0'
+//    implementation 'com.google.firebase:firebase-auth-ktx:22.0.0'
     //    implementation project(path: ':openCV')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
@@ -67,7 +67,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
 
     //firebase auth
-    implementation 'com.google.android.gms:play-services-auth:20.1.0'
+//    implementation 'com.google.android.gms:play-services-auth:20.1.0'
 
     //image
     implementation 'de.hdodenhof:circleimageview:3.1.0'

@@ -14,7 +14,7 @@ import retrofit2.Response
 
 class LoginViewModel : ViewModel() {
 
-    val emailTemp = MutableLiveData("")
+    private val emailTemp = MutableLiveData("")
 
     private val _loginUser = MutableLiveData<LoginResponse>()
     val loginUser: LiveData<LoginResponse> = _loginUser
