@@ -25,11 +25,11 @@ import com.evomo.productcounterapp.ui.main.MainActivity
 import com.evomo.productcounterapp.utils.SettingPreferences
 import com.evomo.productcounterapp.utils.SettingViewModel
 import com.evomo.productcounterapp.utils.SettingViewModelFactory
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+//import com.google.android.gms.auth.api.signin.GoogleSignIn
+//import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+//import com.google.firebase.auth.FirebaseAuth
+//import com.google.firebase.auth.ktx.auth
+//import com.google.firebase.ktx.Firebase
 import org.w3c.dom.Text
 
 class ProfileFragment : Fragment() {

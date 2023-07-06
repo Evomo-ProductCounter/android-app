@@ -21,8 +21,6 @@ import com.evomo.productcounterapp.R;
 import com.evomo.productcounterapp.data.db.CountObject;
 import com.evomo.productcounterapp.databinding.ActivityCameraBinding;
 import com.evomo.productcounterapp.utils.DateHelper;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.OpenCVLoader;
@@ -78,7 +76,8 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
     private CameraViewModel cameraViewModel;
     private CountObject countObject;
-    private FirebaseAuth auth;
+    public static String userName;
+//    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,12 +170,13 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                                     countObject.setParameter(selectedParameter);
                                     countObject.setCount(counter);
                                     countObject.setDate(DateHelper.INSTANCE.getCurrentDate());
-
-                                    auth = FirebaseAuth.getInstance();
-                                    FirebaseUser firebaseUser = auth.getCurrentUser();
-                                    if (firebaseUser != null){
-                                        countObject.setOperator(String.valueOf(firebaseUser.getDisplayName()));
-                                    }
+                                    countObject.setOperator(userName);
+//
+//                                    auth = FirebaseAuth.getInstance();
+//                                    FirebaseUser firebaseUser = auth.getCurrentUser();
+//                                    if (firebaseUser != null){
+//                                        countObject.setOperator(String.valueOf(firebaseUser.getDisplayName()));
+//                                    }
 
                                     cameraViewModel.insert(countObject);
                                     finish();

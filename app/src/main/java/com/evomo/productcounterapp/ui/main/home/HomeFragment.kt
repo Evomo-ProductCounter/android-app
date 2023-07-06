@@ -12,19 +12,16 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.evomo.productcounterapp.R
 import com.evomo.productcounterapp.data.db.MachineInfo
 import com.evomo.productcounterapp.databinding.FragmentHomeBinding
 import com.evomo.productcounterapp.ui.TokenViewModelFactory
-import com.evomo.productcounterapp.ui.ViewModelFactory
 import com.evomo.productcounterapp.ui.camera.CameraActivity
 import com.evomo.productcounterapp.ui.main.MainActivity
 import com.evomo.productcounterapp.utils.DateHelper
@@ -36,14 +33,8 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
-import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.MPPointF
-import com.github.mikephil.charting.utils.ViewPortHandler
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import java.text.DecimalFormat
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
@@ -60,6 +51,7 @@ class HomeFragment : Fragment() {
     private var Out : Int = 0
     private var Reject : Int = 0
     private lateinit var pieChart : PieChart
+    private lateinit var userName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,6 +82,7 @@ class HomeFragment : Fragment() {
         )
 
         settingViewModel.getUserName().observe(viewLifecycleOwner) { dataName ->
+            userName = dataName
             binding.titleWelcome.text = resources.getString(R.string.title_welcome, dataName.split(" ").firstOrNull())
         }
 
@@ -101,6 +94,7 @@ class HomeFragment : Fragment() {
             CameraActivity.centerX = 0
             CameraActivity.centerY = 0
             CameraActivity.machineOptions = nameList.toTypedArray()
+            CameraActivity.userName = userName
             val intent = Intent(activity, CameraActivity::class.java)
             startActivity(intent)
         }
