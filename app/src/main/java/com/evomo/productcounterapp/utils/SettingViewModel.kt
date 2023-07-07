@@ -23,9 +23,13 @@ class SettingViewModel (private val pref: SettingPreferences) : ViewModel() {
         return pref.getUserName().asLiveData()
     }
 
-    fun setUserPreferences(userToken: String, userName:String, userUsername: String, userUID: String ) {
+    fun getExpiredAt(): LiveData<String> {
+        return pref.getExpired().asLiveData()
+    }
+
+    fun setUserPreferences(userToken: String, userName:String, userUsername: String, userUID: String, expiredAt: String) {
         viewModelScope.launch {
-            pref.saveLoginSession(userToken, userName, userUsername, userUID)
+            pref.saveLoginSession(userToken, userName, userUsername, userUID, expiredAt)
         }
     }
 

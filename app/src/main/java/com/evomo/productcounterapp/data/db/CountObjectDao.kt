@@ -20,6 +20,6 @@ interface CountObjectDao {
     @Query("SELECT * from countObject ORDER BY date DESC")
     fun getAllCountByDate(): LiveData<List<CountObject>>
 
-    @Query("SELECT machine, parameter, SUM(count) AS total FROM countobject WHERE machine = :machineName GROUP BY parameter;")
+    @Query("SELECT machine, parameter, SUM(count) AS total FROM countObject WHERE machine = :machineName GROUP BY parameter;")
     fun getMachineInfo(machineName: String): LiveData<List<MachineInfo>>
 }

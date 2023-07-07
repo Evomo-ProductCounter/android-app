@@ -50,6 +50,16 @@
                 style="@style/HistoryInfo"/>
 
             <TextView
+                android:id="@+id/item_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:text="@string/speed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                style="@style/HistoryInfo"/>
+
+            <TextView
                 android:id="@+id/item_operator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.evomo.productcounterapp.R;
 import com.evomo.productcounterapp.data.db.CountObject;
+import com.evomo.productcounterapp.data.model.Machine;
 import com.evomo.productcounterapp.databinding.ActivityCameraBinding;
 import com.evomo.productcounterapp.utils.DateHelper;
 
@@ -41,6 +42,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.crypto.Mac;
+
 public class CameraActivity extends org.opencv.android.CameraActivity {
 
     CameraBridgeViewBase cameraBridgeViewBase;
@@ -60,6 +63,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
     //    String[] machineOptions = {"Machine 1", "Machine 2", "Machine 3", "Machine 4"};
     public static String[] machineOptions;
+    public static Machine[] machinesList;
     String[] parameterOptions = {"In", "Out", "Reject"};
     String[] sizeOptions = {"Small", "Medium", "Large"};
 
@@ -67,13 +71,15 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     AutoCompleteTextView parameterTextView;
     AutoCompleteTextView sizeTextView;
 
-    ArrayAdapter<String> machineAdapterItems;
+    ArrayAdapter<Machine> machineAdapterItems;
     ArrayAdapter<String> parameterAdapterItems;
     ArrayAdapter<String> sizeAdapterItems;
 
     private String selectedMachine;
+    private String selectedMachineId;
     private String selectedParameter;
     private String selectedSize;
+    private Long speed;
 
     private boolean startCount = false;
 
@@ -98,13 +104,15 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
         machineTextView = binding.autocompleteMesin;
         machineTextView.setInputType(InputType.TYPE_NULL);
-        machineAdapterItems = new ArrayAdapter<String>(this, R.layout.dropdown_items, machineOptions);
+
+        machineAdapterItems = new ArrayAdapter<Machine>(this, R.layout.dropdown_items, machinesList);
         machineTextView.setAdapter(machineAdapterItems);
         machineTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String item = parent.getItemAtPosition(position).toString();
-                selectedMachine = item;
+                Machine item = (Machine) parent.getItemAtPosition(position);
+                selectedMachine = item.getName();
+                selectedMachineId = item.getId();
             }
         });
 
@@ -171,10 +179,12 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     countObject = new CountObject();
                                     countObject.setMachine(selectedMachine);
+                                    countObject.setMachineId(selectedMachineId);
                                     countObject.setParameter(selectedParameter);
                                     countObject.setCount(counter);
                                     countObject.setDate(DateHelper.INSTANCE.getCurrentDate());
                                     countObject.setOperator(userName);
+                                    countObject.setSpeed(speed);
 //
 //                                    auth = FirebaseAuth.getInstance();
 //                                    FirebaseUser firebaseUser = auth.getCurrentUser();
@@ -242,9 +252,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
                 parkingStatus.add(false);
                 parkingBuffer.add(null);
-
-                start_time = LocalDateTime.now();
-                Log.d("start_time", String.valueOf(start_time));
             }
 
             @Override
@@ -290,6 +297,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                                 Duration diff = Duration.between(start_time, currentTime);
                                 double elapsed_time = diff.toMillis() / 60000.0;
                                 double avg_ppm = Math.round(counter / elapsed_time);
+                                speed = (long) avg_ppm;
                                 Log.d("test_counter:", String.valueOf(counter));
                                 Log.d("test_elapsed_time:", String.valueOf(elapsed_time));
                                 Log.d("test_avg_ppm:", String.valueOf(avg_ppm));
@@ -349,6 +357,8 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 binding.timerCount.setVisibility(View.INVISIBLE);
                 binding.stopCount.setVisibility(View.VISIBLE);
                 startCount = true;
+                start_time = LocalDateTime.now();
+                Log.d("start_time", String.valueOf(start_time));
             }
         }.start();
     }
