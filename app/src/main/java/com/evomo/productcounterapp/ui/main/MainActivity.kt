@@ -10,11 +10,12 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.evomo.productcounterapp.R
 import com.evomo.productcounterapp.databinding.ActivityMainBinding
+import com.evomo.productcounterapp.ui.BaseActivity
 import com.evomo.productcounterapp.ui.login.LoginActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.opencv.android.OpenCVLoader
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
 //    private lateinit var auth: FirebaseAuth
 

@@ -37,7 +37,7 @@ data class Data(
 	val name: String,
 
 	@field:SerializedName("expired_at")
-	val expiredAt: String? = null,
+	val expiredAt: String,
 
 	@field:SerializedName("token_type")
 	val tokenType: String? = null,
