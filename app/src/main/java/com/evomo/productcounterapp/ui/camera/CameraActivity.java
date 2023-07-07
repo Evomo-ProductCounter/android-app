@@ -243,8 +243,8 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 parkingStatus.add(false);
                 parkingBuffer.add(null);
 
-                start_time = LocalDateTime.now();
-                Log.d("start_time", String.valueOf(start_time));
+//                start_time = LocalDateTime.now();
+//                Log.d("start_time", String.valueOf(start_time));
             }
 
             @Override
@@ -349,6 +349,8 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 binding.timerCount.setVisibility(View.INVISIBLE);
                 binding.stopCount.setVisibility(View.VISIBLE);
                 startCount = true;
+                start_time = LocalDateTime.now();
+                Log.d("start_time", String.valueOf(start_time));
             }
         }.start();
     }
