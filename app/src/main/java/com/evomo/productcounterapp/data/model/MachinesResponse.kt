@@ -40,4 +40,8 @@ data class Machine(
 
 	@field:SerializedName("status")
 	val status: Boolean
-) : Parcelable
+) : Parcelable {
+	override fun toString(): String {
+		return name
+	}
+}

@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.evomo.productcounterapp.data.model.Machine
 import kotlinx.parcelize.Parcelize
 
 @Entity
@@ -16,6 +17,9 @@ data class CountObject (
     @ColumnInfo(name = "machine")
     var machine: String? = null,
 
+    @ColumnInfo(name = "machineId")
+    var machineId: String? = null,
+
     @ColumnInfo(name = "parameter")
     var parameter: String? = null,
 
@@ -26,5 +30,12 @@ data class CountObject (
     var operator: String? = null,
 
     @ColumnInfo(name = "date")
-    var date: String? = null
-) : Parcelable
+    var date: String? = null,
+
+    @ColumnInfo(name = "speed", defaultValue = "0")
+    var speed: Long? = null
+) : Parcelable {
+    override fun toString(): String {
+        return machine!!
+    }
+}

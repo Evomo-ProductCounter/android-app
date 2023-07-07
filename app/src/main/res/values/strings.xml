@@ -46,6 +46,8 @@
     <string name="machine">Machine</string>
     <string name="parameter">Parameter</string>
     <string name="parameter_value">%s: %s</string>
+    <string name="speed">Speed</string>
+    <string name="speed_value">%s products per minutes</string>
     <string name="count">Count</string>
     <string name="operator">Operated by %s</string>
     <string name="timer">0</string>
