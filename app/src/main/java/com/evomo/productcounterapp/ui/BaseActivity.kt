@@ -35,6 +35,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
         settingViewModel.getToken().observe(this) { token ->
             if (token == "Not Set") {
+                settingViewModel.clearUserPreferences()
                 startActivity(Intent(this, LoginActivity::class.java))
             }
         }
@@ -46,6 +47,7 @@ abstract class BaseActivity : AppCompatActivity() {
                 val currentDate = Date()
 
                 if (expiredDate.after(currentDate)) {
+                    settingViewModel.clearUserPreferences()
                     startActivity(Intent(this, LoginActivity::class.java))
                 }
             }
