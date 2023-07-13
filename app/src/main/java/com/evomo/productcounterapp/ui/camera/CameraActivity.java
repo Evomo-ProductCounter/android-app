@@ -57,6 +57,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.crypto.Mac;
 
@@ -70,6 +72,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     ArrayList<Rect> parkingBoundingRect = new ArrayList<>();
     private ActivityCameraBinding binding;
     private int counter;
+    private int tempCounted;
     private Rect roi;
     private Rect rectRoi;
     public static int cameraWidth;
@@ -107,6 +110,8 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
     private MqttAndroidClient mqttClient;
     public static final String TAG = "AndroidMqttClient";
+    private Timer timer;
+    private boolean isFirstExecution = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,6 +201,12 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                             })
                             .setPositiveButton(R.string.btn_stop, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                    if (tempCounted != 0) {
+                                        sendDataToMqtt();
+                                    }
+                                    stopSendingData();
+                                    disconnect();
+
                                     countObject = new CountObject();
                                     countObject.setMachine(selectedMachine);
                                     countObject.setMachineId(selectedMachineId);
@@ -212,24 +223,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 //                                    }
 
                                     cameraViewModel.insert(countObject);
-
-                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z", Locale.getDefault());
-                                    String waktuKirim = sdf.format(new Date());
-
-                                    JSONObject jsonObject = new JSONObject();
-                                    try {
-                                        jsonObject.put("machine_id", selectedMachineId);
-                                        jsonObject.put("total", counter); // total
-                                        jsonObject.put("good", counter); // good/defect
-//                                        jsonObject.put("speed", speed);
-                                        jsonObject.put("waktu_kirim", waktuKirim);
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    String jsonMessage = jsonObject.toString();
-
-                                    publish("counting", jsonMessage, 1, true);
 
                                     finish();
                                 }
@@ -329,7 +322,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                         if (videoFrames - parkingBuffer.get(0) > 0.001) {
                             if (status == false) {
                                 counter = counter + 1;
-
+                                tempCounted = tempCounted + 1; // cek lagi
                                 LocalDateTime currentTime = LocalDateTime.now();
                                 Log.d("current_time", String.valueOf(currentTime));
                                 Duration diff = Duration.between(start_time, currentTime);
@@ -397,6 +390,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 startCount = true;
                 start_time = LocalDateTime.now();
                 connect(getApplicationContext());
+                startSendingData();
                 Log.d("start_time", String.valueOf(start_time));
             }
         }.start();
@@ -454,7 +448,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.d(TAG, msg + " published to " + topic);
-                    disconnect();
                 }
 
                 @Override
@@ -483,6 +476,48 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
         } catch (MqttException e) {
             e.printStackTrace();
         }
+    }
+
+    public void startSendingData() {
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (!isFirstExecution) {
+                    sendDataToMqtt();
+                } else {
+                    isFirstExecution = false;
+                }
+            }
+        }, 0, 120000); // Execute every 2 minutes (120,000 milliseconds)
+    }
+
+    public void stopSendingData() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    private void sendDataToMqtt() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z", Locale.getDefault());
+        String waktuKirim = sdf.format(new Date());
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("machine_id", selectedMachineId);
+            jsonObject.put("total", tempCounted); // total
+            jsonObject.put("good", tempCounted); // good/defect
+//                                        jsonObject.put("speed", speed);
+            jsonObject.put("waktu_kirim", waktuKirim);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String jsonMessage = jsonObject.toString();
+
+        publish("counting", jsonMessage, 1, true);
+        tempCounted = 0; //reset temp
     }
 
     private void setText(final TextView text, final String value){
