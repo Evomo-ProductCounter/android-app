@@ -64,7 +64,7 @@
     <string name="password_err">Password must contain at least 8 characters</string>
     <string name="not_filled_err">Field must be filled</string>
     <string name="button_text_signin">Sign In</string>
-    <string name="input_email">Input email</string>
+    <string name="input_username">Input username</string>
     <string name="input_password">Input password</string>
     <string name="title_activity_base">BaseActivity</string>
     <!-- Strings used for fragments for navigation -->

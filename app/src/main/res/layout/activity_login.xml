@@ -18,7 +18,7 @@
 
     <com.evomo.productcounterapp.ui.main.customview.EmailText
         android:id="@+id/ed_login_username"
-        android:hint="@string/input_email"
+        android:hint="@string/input_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
