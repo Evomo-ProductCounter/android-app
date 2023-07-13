@@ -22,8 +22,12 @@ class LoginViewModel : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
+    private val _isError = MutableLiveData<Boolean>()
+    val isError: LiveData<Boolean> = _isError
+
     fun login(email: String, password: String) {
         _isLoading.value = true
+        _isError.value = false
         emailTemp.value = email
         val client = ApiConfig.getApiService().login(email, password)
         client.enqueue(object : Callback<LoginResponse> {
@@ -35,6 +39,7 @@ class LoginViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     _loginUser.value = response.body()
                 } else {
+                    _isError.value = true
                     Log.e(TAG, "onFailure: ${response.message()}")
                 }
             }

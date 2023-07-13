@@ -29,7 +29,7 @@ class HomeViewModel (application: Application, token: String) : ViewModel() {
 
     init {
 //        getStories(0,20)
-        getMachines()
+//        getMachines()
     }
 
     fun getMachines() {

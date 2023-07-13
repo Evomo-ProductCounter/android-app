@@ -120,10 +120,14 @@ class HomeFragment : Fragment() {
             val viewModel = obtainViewModel(activity as AppCompatActivity, token)
             viewModel.getMachines()
 
+            viewModel.isLoading.observe(activity as AppCompatActivity) { loading ->
+                showLoading(loading)
+            }
+
             machineTextView = binding.autocompleteMesinChart
             machineTextView!!.inputType = InputType.TYPE_NULL
 
-            viewModel.listMachine.observe(viewLifecycleOwner) { list ->
+            viewModel.listMachine.observe(activity as AppCompatActivity) { list ->
                 machineList = list
                 nameList = list.map { item ->
                     item.name
@@ -225,6 +229,10 @@ class HomeFragment : Fragment() {
         pieChart.highlightValues(null)
 
         pieChart.invalidate()
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun obtainViewModel(activity: AppCompatActivity, token: String): HomeViewModel {
