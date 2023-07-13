@@ -16,6 +16,8 @@ import com.evomo.productcounterapp.ui.main.MainActivity
 import com.evomo.productcounterapp.utils.SettingPreferences
 import com.evomo.productcounterapp.utils.SettingViewModel
 import com.evomo.productcounterapp.utils.SettingViewModelFactory
+import java.text.SimpleDateFormat
+import java.util.*
 
 class LoginActivity : AppCompatActivity() {
 
@@ -84,12 +86,23 @@ class LoginActivity : AppCompatActivity() {
 
         viewModel.loginUser.observe(this) { // get user login response and save to datastore
                 login ->
+//            val currentDate = Date()
+            val currentDate = Calendar.getInstance().time
+            val calendar = Calendar.getInstance()
+            calendar.time = currentDate
+//            calendar.add(Calendar.HOUR_OF_DAY, 2)
+            calendar.add(Calendar.MINUTE, 100)
+            val expiredDate = calendar.time
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+            val formattedDate = dateFormat.format(expiredDate)
+
             settingViewModel.setUserPreferences(
                 login.data.accessToken,
                 login.data.name,
                 username,
                 login.data.userid,
-                login.data.expiredAt
+//                login.data.expiredAt
+                formattedDate.toString()
             )
         }
 

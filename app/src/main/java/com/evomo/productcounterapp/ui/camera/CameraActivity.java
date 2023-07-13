@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -24,6 +25,16 @@ import com.evomo.productcounterapp.data.model.Machine;
 import com.evomo.productcounterapp.databinding.ActivityCameraBinding;
 import com.evomo.productcounterapp.utils.DateHelper;
 
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
@@ -36,11 +47,18 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.crypto.Mac;
 
@@ -54,6 +72,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     ArrayList<Rect> parkingBoundingRect = new ArrayList<>();
     private ActivityCameraBinding binding;
     private int counter;
+    private int tempCounted;
     private Rect roi;
     private Rect rectRoi;
     public static int cameraWidth;
@@ -88,6 +107,11 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     public static String userName;
 //    private FirebaseAuth auth;
     LocalDateTime start_time;
+
+    private MqttAndroidClient mqttClient;
+    public static final String TAG = "AndroidMqttClient";
+    private Timer timer;
+    private boolean isFirstExecution = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,6 +201,12 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                             })
                             .setPositiveButton(R.string.btn_stop, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                    if (tempCounted != 0) {
+                                        sendDataToMqtt();
+                                    }
+                                    stopSendingData();
+                                    disconnect();
+
                                     countObject = new CountObject();
                                     countObject.setMachine(selectedMachine);
                                     countObject.setMachineId(selectedMachineId);
@@ -193,6 +223,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 //                                    }
 
                                     cameraViewModel.insert(countObject);
+
                                     finish();
                                 }
                             })
@@ -291,7 +322,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                         if (videoFrames - parkingBuffer.get(0) > 0.001) {
                             if (status == false) {
                                 counter = counter + 1;
-
+                                tempCounted = tempCounted + 1; // cek lagi
                                 LocalDateTime currentTime = LocalDateTime.now();
                                 Log.d("current_time", String.valueOf(currentTime));
                                 Duration diff = Duration.between(start_time, currentTime);
@@ -358,9 +389,135 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 binding.stopCount.setVisibility(View.VISIBLE);
                 startCount = true;
                 start_time = LocalDateTime.now();
+                connect(getApplicationContext());
+                startSendingData();
                 Log.d("start_time", String.valueOf(start_time));
             }
         }.start();
+    }
+
+    public void connect(Context context) {
+        String serverURI = "tcp://36.92.168.180:9083";
+//        String serverURI = "tcp://broker.hivemq.com:1883";
+
+        mqttClient = new MqttAndroidClient(context, serverURI, start_time.toString()); //client bikin random (bisa timestamp)
+        mqttClient.setCallback(new MqttCallback() {
+            @Override
+            public void connectionLost(Throwable cause) {
+//                Log.d(TAG, "Connection lost " + cause.toString());
+                Log.d(TAG, "Connection lost");
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+                Log.d(TAG, "Receive message: " + message.toString() + " from topic: " + topic);
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+
+            }
+        });
+        MqttConnectOptions options = new MqttConnectOptions();
+        try {
+            mqttClient.connect(options, null, new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.d(TAG, "Connection success");
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.d(TAG, "Connection failure");
+                }
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void publish(String topic, String msg, int qos, boolean retained) {
+        try {
+            MqttMessage message = new MqttMessage();
+            message.setPayload(
+                    msg.getBytes()
+            );
+            message.setQos(qos);
+            message.setRetained(retained);
+            mqttClient.publish(topic, message, null, new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.d(TAG, msg + " published to " + topic);
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.d(TAG, "Failed to publish " + msg + " to " + topic);
+                }
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void disconnect() {
+        try {
+            mqttClient.disconnect(null, new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.d(TAG, "Disconnected");
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.d(TAG, "Failed to disconnect");
+                }
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void startSendingData() {
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (!isFirstExecution) {
+                    sendDataToMqtt();
+                } else {
+                    isFirstExecution = false;
+                }
+            }
+        }, 0, 120000); // Execute every 2 minutes (120,000 milliseconds)
+    }
+
+    public void stopSendingData() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    private void sendDataToMqtt() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z", Locale.getDefault());
+        String waktuKirim = sdf.format(new Date());
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("machine_id", selectedMachineId);
+            jsonObject.put("total", tempCounted); // total
+            jsonObject.put("good", tempCounted); // good/defect
+//                                        jsonObject.put("speed", speed);
+            jsonObject.put("waktu_kirim", waktuKirim);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String jsonMessage = jsonObject.toString();
+
+        publish("counting", jsonMessage, 1, true);
+        tempCounted = 0; //reset temp
     }
 
     private void setText(final TextView text, final String value){

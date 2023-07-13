@@ -26,7 +26,7 @@
     <string name="title_machine_overview">Machine Overview</string>
 
     <string name="title_acc_info">Account Info</string>
-    <string name="title_email">User Email</string>
+    <string name="title_email">Username</string>
     <string name="title_mobile">Mobile</string>
     <string name="title_last_op">Last Operation</string>
     <string name="btn_logout">Logout</string>
