@@ -89,6 +89,10 @@ class HomeFragment : Fragment() {
             binding.titleWelcome.text = resources.getString(R.string.title_welcome, dataName.split(" ").firstOrNull())
         }
 
+        settingViewModel.getToken().observe(viewLifecycleOwner) { token ->
+            CameraActivity.mToken = token
+        }
+
         binding.date.text = DateHelper.getCurrentDateNoTime()
 
         binding.cameraButton.setOnClickListener{

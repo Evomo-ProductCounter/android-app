@@ -1,6 +1,9 @@
 package com.evomo.productcounterapp.ui.camera;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -21,6 +24,7 @@ import android.widget.Toast;
 
 import com.evomo.productcounterapp.R;
 import com.evomo.productcounterapp.data.db.CountObject;
+import com.evomo.productcounterapp.data.model.DataProduct;
 import com.evomo.productcounterapp.data.model.Machine;
 import com.evomo.productcounterapp.databinding.ActivityCameraBinding;
 import com.evomo.productcounterapp.utils.DateHelper;
@@ -53,14 +57,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.crypto.Mac;
 
 public class CameraActivity extends org.opencv.android.CameraActivity {
 
@@ -83,19 +83,24 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     //    String[] machineOptions = {"Machine 1", "Machine 2", "Machine 3", "Machine 4"};
     public static String[] machineOptions;
     public static Machine[] machinesList;
+    public static DataProduct[] productsList = {};
     String[] parameterOptions = {"In", "Out", "Reject"};
     String[] sizeOptions = {"Small", "Medium", "Large"};
 
     AutoCompleteTextView machineTextView;
     AutoCompleteTextView parameterTextView;
     AutoCompleteTextView sizeTextView;
+    AutoCompleteTextView productTextView;
 
     ArrayAdapter<Machine> machineAdapterItems;
     ArrayAdapter<String> parameterAdapterItems;
     ArrayAdapter<String> sizeAdapterItems;
+    ArrayAdapter<DataProduct> productAdapterItems;
 
     private String selectedMachine;
     private String selectedMachineId;
+    private String selectedProduct;
+    private String selectedProductId;
     private String selectedParameter;
     private String selectedSize;
     private Long speed;
@@ -112,10 +117,14 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     public static final String TAG = "AndroidMqttClient";
     private Timer timer;
     private boolean isFirstExecution = true;
+    public static String mToken;
+
+    private CustomLifecycleOwner customLifecycleOwner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        customLifecycleOwner = new CustomLifecycleOwner();
 
         binding = ActivityCameraBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
@@ -129,6 +138,13 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
         machineTextView = binding.autocompleteMesin;
         machineTextView.setInputType(InputType.TYPE_NULL);
 
+        productTextView = binding.autocompleteProduct;
+        productTextView.setInputType(InputType.TYPE_NULL);
+        binding.dropdownProduct.setEnabled(false);
+
+        CameraViewModelFactory viewModelFactory = new CameraViewModelFactory(getApplication(), mToken);
+        cameraViewModel = viewModelFactory.create(CameraViewModel.class);
+
         machineAdapterItems = new ArrayAdapter<Machine>(this, R.layout.dropdown_items, machinesList);
         machineTextView.setAdapter(machineAdapterItems);
         machineTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -137,6 +153,35 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 Machine item = (Machine) parent.getItemAtPosition(position);
                 selectedMachine = item.getName();
                 selectedMachineId = item.getId();
+                cameraViewModel.getProducts(selectedMachineId);
+
+                cameraViewModel.listProduct.observe(customLifecycleOwner, new Observer<List<DataProduct>>() {
+                    @Override
+                    public void onChanged(List<DataProduct> dataProducts) {
+                        productTextView.setText("");
+                        selectedProduct = null;
+                        selectedProductId = null;
+                        if (dataProducts == null) {
+                            binding.dropdownProduct.setEnabled(false);
+                            productAdapterItems = new ArrayAdapter<DataProduct>(getApplicationContext(), R.layout.dropdown_items, new DataProduct[0]);
+                            productTextView.setAdapter(productAdapterItems);
+                        }
+                        else {
+                            productsList = dataProducts.toArray(new DataProduct[0]);
+                            binding.dropdownProduct.setEnabled(true);
+                            productAdapterItems = new ArrayAdapter<DataProduct>(getApplicationContext(), R.layout.dropdown_items, productsList);
+                            productTextView.setAdapter(productAdapterItems);
+                            productTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    DataProduct item = (DataProduct) parent.getItemAtPosition(position);
+                                    selectedProduct = item.getProduct().getName();
+                                    selectedProductId = item.getProduct().getId();
+                                }
+                            });
+                        }
+                    }
+                });
             }
         });
 
@@ -183,9 +228,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 startCamera();
             }
         });
-
-        CameraViewModelFactory viewModelFactory = new CameraViewModelFactory(getApplication());
-        cameraViewModel = viewModelFactory.create(CameraViewModel.class);
 
         binding.stopCount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -247,6 +289,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                         binding.dropdownMesin.setEnabled(false);
                         binding.dropdownParameter.setEnabled(false);
                         binding.dropdownUkuran.setEnabled(false);
+                        binding.dropdownProduct.setEnabled(false);
                         startTimer();
                     }
                 }
@@ -551,5 +594,23 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 getPermission();
             }
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        customLifecycleOwner.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        customLifecycleOwner.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        customLifecycleOwner.onDestroy();
     }
 }

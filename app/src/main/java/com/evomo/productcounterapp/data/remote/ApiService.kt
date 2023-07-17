@@ -1,6 +1,7 @@
 package com.evomo.productcounterapp.data.remote
 
 import com.evomo.productcounterapp.data.model.LoginResponse
+import com.evomo.productcounterapp.data.model.MachineProductResponse
 import com.evomo.productcounterapp.data.model.MachinesResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -20,4 +21,10 @@ interface ApiService {
     fun getMachines (
         @Header("Authorization") token: String,
     ): Call<MachinesResponse>
+
+    @GET("machine/products")
+    fun getProducts (
+        @Header("Authorization") token: String,
+        @Query("machine_id") machineId: String
+    ): Call<MachineProductResponse>
 }
