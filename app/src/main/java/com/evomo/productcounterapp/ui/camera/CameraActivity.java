@@ -29,7 +29,9 @@ import com.evomo.productcounterapp.data.model.Machine;
 import com.evomo.productcounterapp.databinding.ActivityCameraBinding;
 import com.evomo.productcounterapp.utils.DateHelper;
 
-import org.eclipse.paho.android.service.MqttAndroidClient;
+//import org.eclipse.paho.android.service.MqttAndroidClient;
+import info.mqtt.android.service.Ack;
+import info.mqtt.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
@@ -454,7 +456,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
         String serverURI = "tcp://36.92.168.180:9083";
 //        String serverURI = "tcp://broker.hivemq.com:1883";
 
-        mqttClient = new MqttAndroidClient(context, serverURI, start_time.toString()); //client bikin random (bisa timestamp)
+        mqttClient = new MqttAndroidClient(context, serverURI, start_time.toString(), Ack.AUTO_ACK); //client bikin random (bisa timestamp)
         mqttClient.setCallback(new MqttCallback() {
             @Override
             public void connectionLost(Throwable cause) {
@@ -473,63 +475,51 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             }
         });
         MqttConnectOptions options = new MqttConnectOptions();
-        try {
-            mqttClient.connect(options, null, new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.d(TAG, "Connection success");
-                }
+        mqttClient.connect(options, null, new IMqttActionListener() {
+            @Override
+            public void onSuccess(IMqttToken asyncActionToken) {
+                Log.d(TAG, "Connection success");
+            }
 
-                @Override
-                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.d(TAG, "Connection failure");
-                }
-            });
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
+            @Override
+            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                Log.d(TAG, "Connection failure");
+            }
+        });
     }
 
     public void publish(String topic, String msg, int qos, boolean retained) {
-        try {
-            MqttMessage message = new MqttMessage();
-            message.setPayload(
-                    msg.getBytes()
-            );
-            message.setQos(qos);
-            message.setRetained(retained);
-            mqttClient.publish(topic, message, null, new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.d(TAG, msg + " published to " + topic);
-                }
+        MqttMessage message = new MqttMessage();
+        message.setPayload(
+                msg.getBytes()
+        );
+        message.setQos(qos);
+        message.setRetained(retained);
+        mqttClient.publish(topic, message, null, new IMqttActionListener() {
+            @Override
+            public void onSuccess(IMqttToken asyncActionToken) {
+                Log.d(TAG, msg + " published to " + topic);
+            }
 
-                @Override
-                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.d(TAG, "Failed to publish " + msg + " to " + topic);
-                }
-            });
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
+            @Override
+            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                Log.d(TAG, "Failed to publish " + msg + " to " + topic);
+            }
+        });
     }
 
     public void disconnect() {
-        try {
-            mqttClient.disconnect(null, new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.d(TAG, "Disconnected");
-                }
+        mqttClient.disconnect(null, new IMqttActionListener() {
+            @Override
+            public void onSuccess(IMqttToken asyncActionToken) {
+                Log.d(TAG, "Disconnected");
+            }
 
-                @Override
-                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.d(TAG, "Failed to disconnect");
-                }
-            });
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
+            @Override
+            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                Log.d(TAG, "Failed to disconnect");
+            }
+        });
     }
 
     public void startSendingData() {

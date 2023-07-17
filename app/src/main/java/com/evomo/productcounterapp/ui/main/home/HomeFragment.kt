@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,13 +18,16 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.evomo.productcounterapp.R
 import com.evomo.productcounterapp.data.db.MachineInfo
 import com.evomo.productcounterapp.data.model.Machine
 import com.evomo.productcounterapp.databinding.FragmentHomeBinding
 import com.evomo.productcounterapp.ui.TokenViewModelFactory
+import com.evomo.productcounterapp.ui.ViewModelFactory
 import com.evomo.productcounterapp.ui.camera.CameraActivity
+import com.evomo.productcounterapp.ui.login.LoginActivity
 import com.evomo.productcounterapp.ui.main.MainActivity
 import com.evomo.productcounterapp.utils.DateHelper
 import com.evomo.productcounterapp.utils.SettingPreferences
@@ -120,8 +124,18 @@ class HomeFragment : Fragment() {
         setChart(entries)
 
         settingViewModel.getToken().observe(viewLifecycleOwner) { token ->
+            Log.d("TOKEN CHECK", token)
+            if (token == "Not Set") {
+                startActivity(Intent(activity, LoginActivity::class.java))
+            }
 
-            val viewModel = obtainViewModel(activity as AppCompatActivity, token)
+//            val viewModel = obtainViewModel(activity as AppCompatActivity, token)
+//            viewModel.getMachines()
+
+            val viewModel by viewModels<HomeViewModel>(){
+                TokenViewModelFactory((activity as MainActivity).application, token)
+            }
+
             viewModel.getMachines()
 
             viewModel.isLoading.observe(activity as AppCompatActivity) { loading ->
