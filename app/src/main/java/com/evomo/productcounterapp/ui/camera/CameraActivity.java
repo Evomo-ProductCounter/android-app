@@ -1,9 +1,13 @@
 package com.evomo.productcounterapp.ui.camera;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -20,10 +24,21 @@ import android.widget.Toast;
 
 import com.evomo.productcounterapp.R;
 import com.evomo.productcounterapp.data.db.CountObject;
+import com.evomo.productcounterapp.data.model.DataProduct;
 import com.evomo.productcounterapp.data.model.Machine;
 import com.evomo.productcounterapp.databinding.ActivityCameraBinding;
 import com.evomo.productcounterapp.utils.DateHelper;
 
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
@@ -36,13 +51,16 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
-
-import javax.crypto.Mac;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CameraActivity extends org.opencv.android.CameraActivity {
 
@@ -54,6 +72,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     ArrayList<Rect> parkingBoundingRect = new ArrayList<>();
     private ActivityCameraBinding binding;
     private int counter;
+    private int tempCounted;
     private Rect roi;
     private Rect rectRoi;
     public static int cameraWidth;
@@ -64,19 +83,24 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     //    String[] machineOptions = {"Machine 1", "Machine 2", "Machine 3", "Machine 4"};
     public static String[] machineOptions;
     public static Machine[] machinesList;
+    public static DataProduct[] productsList = {};
     String[] parameterOptions = {"In", "Out", "Reject"};
     String[] sizeOptions = {"Small", "Medium", "Large"};
 
     AutoCompleteTextView machineTextView;
     AutoCompleteTextView parameterTextView;
     AutoCompleteTextView sizeTextView;
+    AutoCompleteTextView productTextView;
 
     ArrayAdapter<Machine> machineAdapterItems;
     ArrayAdapter<String> parameterAdapterItems;
     ArrayAdapter<String> sizeAdapterItems;
+    ArrayAdapter<DataProduct> productAdapterItems;
 
     private String selectedMachine;
     private String selectedMachineId;
+    private String selectedProduct;
+    private String selectedProductId;
     private String selectedParameter;
     private String selectedSize;
     private Long speed;
@@ -89,9 +113,18 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     //    private FirebaseAuth auth;
     LocalDateTime start_time;
 
+    private MqttAndroidClient mqttClient;
+    public static final String TAG = "AndroidMqttClient";
+    private Timer timer;
+    private boolean isFirstExecution = true;
+    public static String mToken;
+
+    private CustomLifecycleOwner customLifecycleOwner;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        customLifecycleOwner = new CustomLifecycleOwner();
 
         binding = ActivityCameraBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
@@ -105,6 +138,13 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
         machineTextView = binding.autocompleteMesin;
         machineTextView.setInputType(InputType.TYPE_NULL);
 
+        productTextView = binding.autocompleteProduct;
+        productTextView.setInputType(InputType.TYPE_NULL);
+        binding.dropdownProduct.setEnabled(false);
+
+        CameraViewModelFactory viewModelFactory = new CameraViewModelFactory(getApplication(), mToken);
+        cameraViewModel = viewModelFactory.create(CameraViewModel.class);
+
         machineAdapterItems = new ArrayAdapter<Machine>(this, R.layout.dropdown_items, machinesList);
         machineTextView.setAdapter(machineAdapterItems);
         machineTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -113,6 +153,35 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 Machine item = (Machine) parent.getItemAtPosition(position);
                 selectedMachine = item.getName();
                 selectedMachineId = item.getId();
+                cameraViewModel.getProducts(selectedMachineId);
+
+                cameraViewModel.listProduct.observe(customLifecycleOwner, new Observer<List<DataProduct>>() {
+                    @Override
+                    public void onChanged(List<DataProduct> dataProducts) {
+                        productTextView.setText("");
+                        selectedProduct = null;
+                        selectedProductId = null;
+                        if (dataProducts == null) {
+                            binding.dropdownProduct.setEnabled(false);
+                            productAdapterItems = new ArrayAdapter<DataProduct>(getApplicationContext(), R.layout.dropdown_items, new DataProduct[0]);
+                            productTextView.setAdapter(productAdapterItems);
+                        }
+                        else {
+                            productsList = dataProducts.toArray(new DataProduct[0]);
+                            binding.dropdownProduct.setEnabled(true);
+                            productAdapterItems = new ArrayAdapter<DataProduct>(getApplicationContext(), R.layout.dropdown_items, productsList);
+                            productTextView.setAdapter(productAdapterItems);
+                            productTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    DataProduct item = (DataProduct) parent.getItemAtPosition(position);
+                                    selectedProduct = item.getProduct().getName();
+                                    selectedProductId = item.getProduct().getId();
+                                }
+                            });
+                        }
+                    }
+                });
             }
         });
 
@@ -160,9 +229,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             }
         });
 
-        CameraViewModelFactory viewModelFactory = new CameraViewModelFactory(getApplication());
-        cameraViewModel = viewModelFactory.create(CameraViewModel.class);
-
         binding.stopCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -177,6 +243,12 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                             })
                             .setPositiveButton(R.string.btn_stop, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                    if (tempCounted != 0) {
+                                        sendDataToMqtt();
+                                    }
+                                    stopSendingData();
+                                    disconnect();
+
                                     countObject = new CountObject();
                                     countObject.setMachine(selectedMachine);
                                     countObject.setMachineId(selectedMachineId);
@@ -193,6 +265,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 //                                    }
 
                                     cameraViewModel.insert(countObject);
+
                                     finish();
                                 }
                             })
@@ -216,6 +289,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                         binding.dropdownMesin.setEnabled(false);
                         binding.dropdownParameter.setEnabled(false);
                         binding.dropdownUkuran.setEnabled(false);
+                        binding.dropdownProduct.setEnabled(false);
                         startTimer();
                     }
                 }
@@ -291,7 +365,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                         if (videoFrames - parkingBuffer.get(0) > 0.001) {
                             if (status == false) {
                                 counter = counter + 1;
-
+                                tempCounted = tempCounted + 1; // cek lagi
                                 LocalDateTime currentTime = LocalDateTime.now();
                                 Log.d("current_time", String.valueOf(currentTime));
                                 Duration diff = Duration.between(start_time, currentTime);
@@ -358,9 +432,135 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 binding.stopCount.setVisibility(View.VISIBLE);
                 startCount = true;
                 start_time = LocalDateTime.now();
+                connect(getApplicationContext());
+                startSendingData();
                 Log.d("start_time", String.valueOf(start_time));
             }
         }.start();
+    }
+
+    public void connect(Context context) {
+        String serverURI = "tcp://36.92.168.180:9083";
+//        String serverURI = "tcp://broker.hivemq.com:1883";
+
+        mqttClient = new MqttAndroidClient(context, serverURI, start_time.toString()); //client bikin random (bisa timestamp)
+        mqttClient.setCallback(new MqttCallback() {
+            @Override
+            public void connectionLost(Throwable cause) {
+//                Log.d(TAG, "Connection lost " + cause.toString());
+                Log.d(TAG, "Connection lost");
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+                Log.d(TAG, "Receive message: " + message.toString() + " from topic: " + topic);
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+
+            }
+        });
+        MqttConnectOptions options = new MqttConnectOptions();
+        try {
+            mqttClient.connect(options, null, new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.d(TAG, "Connection success");
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.d(TAG, "Connection failure");
+                }
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void publish(String topic, String msg, int qos, boolean retained) {
+        try {
+            MqttMessage message = new MqttMessage();
+            message.setPayload(
+                    msg.getBytes()
+            );
+            message.setQos(qos);
+            message.setRetained(retained);
+            mqttClient.publish(topic, message, null, new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.d(TAG, msg + " published to " + topic);
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.d(TAG, "Failed to publish " + msg + " to " + topic);
+                }
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void disconnect() {
+        try {
+            mqttClient.disconnect(null, new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.d(TAG, "Disconnected");
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.d(TAG, "Failed to disconnect");
+                }
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void startSendingData() {
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (!isFirstExecution) {
+                    sendDataToMqtt();
+                } else {
+                    isFirstExecution = false;
+                }
+            }
+        }, 0, 120000); // Execute every 2 minutes (120,000 milliseconds)
+    }
+
+    public void stopSendingData() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    private void sendDataToMqtt() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z", Locale.getDefault());
+        String waktuKirim = sdf.format(new Date());
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("machine_id", selectedMachineId);
+            jsonObject.put("total", tempCounted); // total
+            jsonObject.put(selectedParameter.toLowerCase(), tempCounted); // good/defect
+//                                        jsonObject.put("speed", speed);
+            jsonObject.put("waktu_kirim", waktuKirim);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String jsonMessage = jsonObject.toString();
+
+        publish("counting", jsonMessage, 1, true);
+        tempCounted = 0; //reset temp
     }
 
     private void setText(final TextView text, final String value){
@@ -394,5 +594,23 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 getPermission();
             }
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        customLifecycleOwner.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        customLifecycleOwner.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        customLifecycleOwner.onDestroy();
     }
 }

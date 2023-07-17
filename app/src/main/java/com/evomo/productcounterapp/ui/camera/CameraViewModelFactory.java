@@ -9,14 +9,16 @@ import androidx.lifecycle.ViewModelProvider;
 public class CameraViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     private static volatile CameraViewModelFactory INSTANCE;
     private final Application mApplication;
+    private final String mToken;
 
-    CameraViewModelFactory(Application application) {
+    CameraViewModelFactory(Application application, String token) {
         mApplication = application;
+        mToken = token;
     }
-    public static CameraViewModelFactory getInstance(Application application) {
+    public static CameraViewModelFactory getInstance(Application application, String token) {
         if (INSTANCE == null) {
             synchronized (CameraViewModelFactory.class) {
-                INSTANCE = new CameraViewModelFactory(application);
+                INSTANCE = new CameraViewModelFactory(application, token);
             }
         }
         return INSTANCE;
@@ -26,7 +28,7 @@ public class CameraViewModelFactory extends ViewModelProvider.NewInstanceFactory
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(CameraViewModel.class)) {
-            return (T) new CameraViewModel(mApplication);
+            return (T) new CameraViewModel(mApplication, mToken);
         }
         throw new IllegalArgumentException("Unknown ViewModel class: " + modelClass.getName());
     }

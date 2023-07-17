@@ -9,6 +9,7 @@
     <string name="title_machine">Machine</string>
     <string name="title_parameter">Parameter</string>
     <string name="title_size">Size</string>
+    <string name="title_product">Product</string>
 
     <string name="in">In</string>
     <string name="out">Out</string>
@@ -26,14 +27,18 @@
     <string name="title_machine_overview">Machine Overview</string>
 
     <string name="title_acc_info">Account Info</string>
-    <string name="title_email">User Email</string>
+    <string name="title_email">Username</string>
     <string name="title_mobile">Mobile</string>
     <string name="title_last_op">Last Operation</string>
     <string name="btn_logout">Logout</string>
     <string name="btn_cancel">Cancel</string>
+    <string name="btn_try_again">Try Again</string>
+
 
     <string name="modal_logout_title">Warning</string>
     <string name="modal_logout_desc">Are you sure you want to leave?</string>
+    <string name="modal_login_error_title">Login Failed</string>
+    <string name="modal_login_error">Wrong username or password</string>
 
     <string name="last_count">Last Count: %s</string>
     <string name="no_counted">No Object Counted</string>
@@ -64,7 +69,7 @@
     <string name="password_err">Password must contain at least 8 characters</string>
     <string name="not_filled_err">Field must be filled</string>
     <string name="button_text_signin">Sign In</string>
-    <string name="input_email">Input email</string>
+    <string name="input_username">Input username</string>
     <string name="input_password">Input password</string>
     <string name="title_activity_base">BaseActivity</string>
     <!-- Strings used for fragments for navigation -->
