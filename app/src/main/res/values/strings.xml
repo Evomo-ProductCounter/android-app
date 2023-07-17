@@ -9,6 +9,7 @@
     <string name="title_machine">Machine</string>
     <string name="title_parameter">Parameter</string>
     <string name="title_size">Size</string>
+    <string name="title_product">Product</string>
 
     <string name="in">In</string>
     <string name="out">Out</string>
