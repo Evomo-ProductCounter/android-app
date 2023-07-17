@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.evomo.productcounterapp.R
 import com.evomo.productcounterapp.data.db.MachineInfo
+import com.evomo.productcounterapp.data.model.Machine
 import com.evomo.productcounterapp.databinding.FragmentHomeBinding
 import com.evomo.productcounterapp.ui.TokenViewModelFactory
 import com.evomo.productcounterapp.ui.camera.CameraActivity
@@ -43,6 +44,8 @@ class HomeFragment : Fragment() {
 
 //    var machineOptions = arrayOf("Machine 1", "Machine 2", "Machine 3", "Machine 4")
     private lateinit var nameList: List<String>
+    private lateinit var machineList: List<Machine>
+
     var machineTextView: AutoCompleteTextView? = null
     var machineAdapterItems: ArrayAdapter<String>? = null
     private var selectedMachine: String? = null
@@ -94,6 +97,7 @@ class HomeFragment : Fragment() {
             CameraActivity.centerX = 0
             CameraActivity.centerY = 0
             CameraActivity.machineOptions = nameList.toTypedArray()
+            CameraActivity.machinesList = machineList.toTypedArray()
             CameraActivity.userName = userName
             val intent = Intent(activity, CameraActivity::class.java)
             startActivity(intent)
@@ -120,6 +124,7 @@ class HomeFragment : Fragment() {
             machineTextView!!.inputType = InputType.TYPE_NULL
 
             viewModel.listMachine.observe(viewLifecycleOwner) { list ->
+                machineList = list
                 nameList = list.map { item ->
                     item.name
                 }

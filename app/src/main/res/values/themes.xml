@@ -114,4 +114,11 @@
         <item name="fontFamily">@font/poppins_semibold</item>
         <item name="android:layout_weight">1</item>
     </style>
+    <style name="Theme.ProductCounterApp.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="Theme.ProductCounterApp.AppBarOverlay"
+        parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.ProductCounterApp.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

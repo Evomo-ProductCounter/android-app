@@ -88,7 +88,8 @@ class LoginActivity : AppCompatActivity() {
                 login.data.accessToken,
                 login.data.name,
                 username,
-                login.data.userid
+                login.data.userid,
+                login.data.expiredAt
             )
         }
 

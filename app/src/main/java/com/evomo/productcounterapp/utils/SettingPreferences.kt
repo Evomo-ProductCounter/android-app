@@ -12,18 +12,21 @@ class SettingPreferences private constructor(private val dataStore: DataStore<Pr
     private val NAME_KEY = stringPreferencesKey("name")
     private val USERNAME_KEY = stringPreferencesKey("username")
     private val UID_KEY = stringPreferencesKey("uid")
+    private val EXPIRED_KEY = stringPreferencesKey("expired")
 
     fun getUserToken(): Flow<String> = dataStore.data.map { it[TOKEN_KEY] ?: "Not Set" }
     fun getName(): Flow<String> = dataStore.data.map { it[NAME_KEY] ?: "Not Set" }
     fun getUserName(): Flow<String> = dataStore.data.map { it[USERNAME_KEY] ?: "Not Set" }
     fun getUID(): Flow<String> = dataStore.data.map { it[UID_KEY] ?: "Not Set" }
+    fun getExpired(): Flow<String> = dataStore.data.map { it[EXPIRED_KEY] ?: "Not Set" }
 
-    suspend fun saveLoginSession(userToken: String, userName:String, userUsername: String, userUID: String) {
+    suspend fun saveLoginSession(userToken: String, userName:String, userUsername: String, userUID: String, expiredAt: String) {
         dataStore.edit { preferences ->
             preferences[TOKEN_KEY] = userToken
             preferences[NAME_KEY] = userName
             preferences[USERNAME_KEY] = userUsername
             preferences[UID_KEY] = userUID
+            preferences[EXPIRED_KEY] = expiredAt
         }
     }
 
