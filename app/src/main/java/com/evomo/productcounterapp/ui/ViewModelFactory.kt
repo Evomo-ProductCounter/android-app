@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.evomo.productcounterapp.ui.login.LoginViewModel
 import com.evomo.productcounterapp.ui.main.history.HistoryViewModel
-import com.evomo.productcounterapp.ui.main.home.HomeViewModel
 
 class ViewModelFactory private constructor(private val mApplication: Application) : ViewModelProvider.NewInstanceFactory() {
     companion object {
