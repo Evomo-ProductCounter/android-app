@@ -20,6 +20,12 @@ data class CountObject (
     @ColumnInfo(name = "machineId")
     var machineId: String? = null,
 
+    @ColumnInfo(name = "product", defaultValue = "null")
+    var product: String? = null,
+
+    @ColumnInfo(name = "productId", defaultValue = "null")
+    var productId: String? = null,
+
     @ColumnInfo(name = "parameter")
     var parameter: String? = null,
 
