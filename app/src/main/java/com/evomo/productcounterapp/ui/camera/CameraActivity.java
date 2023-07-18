@@ -106,13 +106,13 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     private String selectedParameter;
     private String selectedSize;
     private Long speed;
-
+    private boolean status = false;
     private boolean startCount = false;
-
+    private LocalDateTime lastProductDetectionTime;
     private CameraViewModel cameraViewModel;
     private CountObject countObject;
     public static String userName;
-//    private FirebaseAuth auth;
+    //    private FirebaseAuth auth;
     LocalDateTime start_time;
 
     private MqttAndroidClient mqttClient;
@@ -355,18 +355,19 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     double stdev = stddev.get(0, 0)[0];
 //                double std = Core.meanStdDev(roiGray).stddev[0];
                     double mean = Core.mean(roiGray).val[0];
-                    boolean status = (stdev < 22 && mean > 53);
+                    boolean area = (stdev < 22 && mean > 53);
 
-                    if (status != parkingStatus.get(0) && parkingBuffer.get(0) == null) {
+                    if (area != parkingStatus.get(0) && parkingBuffer.get(0) == null) {
                         parkingBuffer.set(0, videoFrames);
-                    } else if (status != parkingStatus.get(0) && parkingBuffer.get(0) != null) {
+                    } else if (area != parkingStatus.get(0) && parkingBuffer.get(0) != null) {
                         if (videoFrames - parkingBuffer.get(0) > 0.001) {
-                            if (status == false) {
+                            if (area == false) {
                                 counter = counter + 1;
                                 tempCounted = tempCounted + 1; // cek lagi
-                                LocalDateTime currentTime = LocalDateTime.now();
-                                Log.d("current_time", String.valueOf(currentTime));
-                                Duration diff = Duration.between(start_time, currentTime);
+                                status = true;
+                                lastProductDetectionTime = LocalDateTime.now();
+                                Log.d("current_time", String.valueOf(lastProductDetectionTime));
+                                Duration diff = Duration.between(start_time, lastProductDetectionTime);
                                 double elapsed_time = diff.toMillis() / 60000.0;
                                 double avg_ppm = Math.round(counter / elapsed_time);
                                 speed = (long) avg_ppm;
@@ -374,12 +375,22 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                                 Log.d("test_elapsed_time:", String.valueOf(elapsed_time));
                                 Log.d("test_avg_ppm:", String.valueOf(avg_ppm));
                             }
-                            parkingStatus.set(0, status);
+                            parkingStatus.set(0, area);
                             parkingBuffer.set(0, null);
                         }
-                    } else if (status == parkingStatus.get(0) && parkingBuffer.get(0) != null) {
+                    } else if (area == parkingStatus.get(0) && parkingBuffer.get(0) != null) {
                         parkingBuffer.set(0, null);
                     }
+
+                    if (lastProductDetectionTime != null) {
+                        Duration time_diff = Duration.between(lastProductDetectionTime, LocalDateTime.now());
+                        double timeSinceLastDetection = time_diff.toMillis() / 60000.0;
+                        Log.d("last_detection_time:", String.valueOf(timeSinceLastDetection));
+                        if (timeSinceLastDetection > 0.25) {
+                            status = false;
+                        }
+                    }
+                    Log.d("status:", String.valueOf(status));
 
                     Scalar color;
 
