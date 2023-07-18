@@ -254,17 +254,13 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                                     countObject = new CountObject();
                                     countObject.setMachine(selectedMachine);
                                     countObject.setMachineId(selectedMachineId);
+                                    countObject.setProduct(selectedProduct);
+                                    countObject.setProductId(selectedProductId);
                                     countObject.setParameter(selectedParameter);
                                     countObject.setCount(counter);
                                     countObject.setDate(DateHelper.INSTANCE.getCurrentDate());
                                     countObject.setOperator(userName);
                                     countObject.setSpeed(speed);
-//
-//                                    auth = FirebaseAuth.getInstance();
-//                                    FirebaseUser firebaseUser = auth.getCurrentUser();
-//                                    if (firebaseUser != null){
-//                                        countObject.setOperator(String.valueOf(firebaseUser.getDisplayName()));
-//                                    }
 
                                     cameraViewModel.insert(countObject);
 
@@ -284,7 +280,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     negativeButton.setAllCaps(false);
                     negativeButton.setTextColor(getResources().getColor(R.color.black));
                 } else {
-                    if (selectedMachine == null || selectedSize == null || selectedParameter == null) {
+                    if (selectedMachine == null || selectedSize == null || selectedParameter == null || selectedProduct == null) {
                         Toast.makeText(CameraActivity.this, getResources().getString(R.string.error_start), Toast.LENGTH_SHORT).show();
                     } else {
                         binding.stopCount.setText(getResources().getString(R.string.stop_camera));
@@ -539,8 +535,9 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("machine_id", selectedMachineId);
+            jsonObject.put("product_id", selectedProductId);
             jsonObject.put("total", tempCounted); // total
-            jsonObject.put(selectedParameter.toLowerCase(), tempCounted); // good/defect
+            jsonObject.put(selectedParameter.toLowerCase(), tempCounted);
 //                                        jsonObject.put("speed", speed);
             jsonObject.put("waktu_kirim", waktuKirim);
         } catch (JSONException e) {
