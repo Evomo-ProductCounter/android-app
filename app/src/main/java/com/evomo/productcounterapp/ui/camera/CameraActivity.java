@@ -10,6 +10,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.InputType;
@@ -136,6 +139,8 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
         cameraBridgeViewBase = binding.cameraView;
         startCamera();
+
+        binding.statusCircle.setVisibility(View.INVISIBLE);
 
         machineTextView = binding.autocompleteMesin;
         machineTextView.setInputType(InputType.TYPE_NULL);
@@ -386,11 +391,22 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                         Duration time_diff = Duration.between(lastProductDetectionTime, LocalDateTime.now());
                         double timeSinceLastDetection = time_diff.toMillis() / 60000.0;
                         Log.d("last_detection_time:", String.valueOf(timeSinceLastDetection));
-                        if (timeSinceLastDetection > 0.25) {
+                        if (timeSinceLastDetection > 2) { //2 minutes
                             status = false;
                         }
                     }
                     Log.d("status:", String.valueOf(status));
+
+                    if (status) {
+                        setText(binding.countStatus, getResources().getString(R.string.status_active));
+                        binding.statusCircle.setBackgroundColor(getResources().getColor(R.color.green_700));
+//                        binding.statusCircle.setBackground(getResources().getDrawable(R.drawable.circle_status_active));
+                    }
+                    else {
+                        setText(binding.countStatus, getResources().getString(R.string.status_idle));
+                        binding.statusCircle.setBackgroundColor(getResources().getColor(R.color.red));
+//                        binding.statusCircle.setBackground(getResources().getDrawable(R.drawable.circle_status_idle));
+                    }
 
                     Scalar color;
 
@@ -444,6 +460,10 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 connect(getApplicationContext());
                 startSendingData();
                 Log.d("start_time", String.valueOf(start_time));
+                binding.statusCircle.setVisibility(View.VISIBLE);
+//                binding.statusCircle.setBackgroundColor(getResources().getColor(R.color.green_700));
+//                setText(binding.countStatus, getResources().getString(R.string.status_active));
+                setText(binding.countStatus, getResources().getString(R.string.status_idle));
             }
         }.start();
     }
@@ -523,7 +543,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (!isFirstExecution) {
+                if (!isFirstExecution && !status) {
                     sendDataToMqtt();
                 } else {
                     isFirstExecution = false;
@@ -545,11 +565,12 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
         JSONObject jsonObject = new JSONObject();
         try {
+            jsonObject.put("status", status);
             jsonObject.put("machine_id", selectedMachineId);
             jsonObject.put("product_id", selectedProductId);
             jsonObject.put("total", tempCounted); // total
             jsonObject.put(selectedParameter.toLowerCase(), tempCounted);
-//                                        jsonObject.put("speed", speed);
+            jsonObject.put("speed", speed);
             jsonObject.put("waktu_kirim", waktuKirim);
         } catch (JSONException e) {
             e.printStackTrace();
