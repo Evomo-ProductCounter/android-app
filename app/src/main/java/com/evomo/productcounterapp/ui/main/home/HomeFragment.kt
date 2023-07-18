@@ -146,47 +146,52 @@ class HomeFragment : Fragment() {
             machineTextView!!.inputType = InputType.TYPE_NULL
 
             viewModel.listMachine.observe(activity as AppCompatActivity) { list ->
-                machineList = list
-                nameList = list.map { item ->
-                    item.name
+                if (list.isEmpty()) {
+                    viewModel.getMachines()
                 }
+                else {
+                    machineList = list
+                    nameList = list.map { item ->
+                        item.name
+                    }
 
-                machineAdapterItems =
-                    context?.let { ArrayAdapter(it, R.layout.dropdown_items, nameList) }
-                machineTextView!!.setAdapter(machineAdapterItems)
-                machineTextView!!.onItemClickListener =
-                    AdapterView.OnItemClickListener { parent, view, position, id ->
-                        val item = parent.getItemAtPosition(position).toString()
-                        selectedMachine = item
-                        viewModel.getMachineInfo(selectedMachine!!).observe(viewLifecycleOwner) { list ->
-                            if (list != null) {
-                                In = list.find {
-                                    it.parameter == "In"
-                                }?.total ?: 0
-                                Out = list.find {
-                                    it.parameter == "Out"
-                                }?.total ?: 0
-                                Reject = list.find {
-                                    it.parameter == "Reject"
-                                }?.total ?: 0
+                    machineAdapterItems =
+                        context?.let { ArrayAdapter(it, R.layout.dropdown_items, nameList) }
+                    machineTextView!!.setAdapter(machineAdapterItems)
+                    machineTextView!!.onItemClickListener =
+                        AdapterView.OnItemClickListener { parent, view, position, id ->
+                            val item = parent.getItemAtPosition(position).toString()
+                            selectedMachine = item
+                            viewModel.getMachineInfo(selectedMachine!!).observe(viewLifecycleOwner) { list ->
+                                if (list != null) {
+                                    In = list.find {
+                                        it.parameter == "In"
+                                    }?.total ?: 0
+                                    Out = list.find {
+                                        it.parameter == "Out"
+                                    }?.total ?: 0
+                                    Reject = list.find {
+                                        it.parameter == "Reject"
+                                    }?.total ?: 0
 
-                                entries.clear()
-                                if (In != null) {
-                                    entries.add(PieEntry(In.toFloat()))
+                                    entries.clear()
+                                    if (In != null) {
+                                        entries.add(PieEntry(In.toFloat()))
+                                    }
+                                    if (Out != null) {
+                                        entries.add(PieEntry(Out.toFloat()))
+                                    }
+                                    if (Reject != null) {
+                                        entries.add(PieEntry(Reject.toFloat()))
+                                    }
+                                    binding.totalNum.text = (In + Out + Reject).toString()
+                                    binding.inOutNum.text = (In + Out).toString()
+                                    binding.rejectNum.text = Reject.toString()
+                                    setChart(entries)
                                 }
-                                if (Out != null) {
-                                    entries.add(PieEntry(Out.toFloat()))
-                                }
-                                if (Reject != null) {
-                                    entries.add(PieEntry(Reject.toFloat()))
-                                }
-                                binding.totalNum.text = (In + Out + Reject).toString()
-                                binding.inOutNum.text = (In + Out).toString()
-                                binding.rejectNum.text = Reject.toString()
-                                setChart(entries)
                             }
                         }
-                    }
+                }
             }
         }
     }
