@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "929acb03868ccc33f647dc586139303e",
+    "identityHash": "71e5867b22b6fb308f15d324c24dfce2",
     "entities": [
       {
         "tableName": "CountObject",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `machine` TEXT, `parameter` TEXT, `count` INTEGER, `operator` TEXT, `date` TEXT, `speed` INTEGER DEFAULT 0)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `machine` TEXT, `machineId` TEXT, `product` TEXT DEFAULT null, `productId` TEXT DEFAULT null, `parameter` TEXT, `count` INTEGER, `operator` TEXT, `date` TEXT, `speed` INTEGER DEFAULT 0)",
         "fields": [
           {
             "fieldPath": "id",
@@ -19,6 +19,26 @@
             "columnName": "machine",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "machineId",
+            "columnName": "machineId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "product",
+            "columnName": "product",
+            "affinity": "TEXT",
+            "notNull": false,
+            "defaultValue": "null"
+          },
+          {
+            "fieldPath": "productId",
+            "columnName": "productId",
+            "affinity": "TEXT",
+            "notNull": false,
+            "defaultValue": "null"
           },
           {
             "fieldPath": "parameter",
@@ -65,7 +85,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '929acb03868ccc33f647dc586139303e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '71e5867b22b6fb308f15d324c24dfce2')"
     ]
   }
 }

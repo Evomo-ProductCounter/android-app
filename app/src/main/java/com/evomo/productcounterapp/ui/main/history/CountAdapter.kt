@@ -41,6 +41,7 @@ class CountAdapter : RecyclerView.Adapter<CountAdapter.CountViewHolder>() {
                 itemDate.text = count.date
                 itemOperator.text = String.format(itemView.context.getString(R.string.operator), count.operator)
                 itemSpeed.text = String.format(itemView.context.getString(R.string.speed_value), count.speed)
+                itemProduct.text = count.product ?: "Not Available"
             }
         }
     }
