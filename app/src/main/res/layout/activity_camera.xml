@@ -100,22 +100,40 @@
         android:id="@+id/cameraView"
         android:layout_width="370dp"
         android:layout_height="450dp"
+        android:layout_marginTop="15dp"
         app:layout_constraintBottom_toBottomOf="@+id/dropdownUkuran"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/countStatus"></org.opencv.android.JavaCameraView>
+        app:layout_constraintTop_toTopOf="@+id/status_layout">
 
-    <View
-        android:id="@+id/statusCircle"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="5dp"
-        android:background="@drawable/circle_status_idle"
-        app:layout_constraintTop_toBottomOf="@+id/cameraView"
-        app:layout_constraintEnd_toStartOf="@id/countStatus"
-        android:backgroundTint="@color/red"
-        ></View>
+    </org.opencv.android.JavaCameraView>
+
+    <LinearLayout
+        android:id="@+id/status_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cameraView">
+
+        <View
+            android:id="@+id/statusCircle"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/circle_status"
+            ></View>
+
+        <TextView
+            android:id="@+id/countStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_marginTop="15dp"
+            tools:text="@string/count_status"></TextView>
+
+    </LinearLayout>
 
 <!--    <View-->
 <!--        android:id="@+id/statusCircleActive"-->
@@ -131,23 +149,12 @@
 <!--        ></View>-->
 
     <TextView
-        android:id="@+id/countStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:layout_marginTop="15dp"
-        app:layout_constraintTop_toBottomOf="@+id/cameraView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:text="@string/count_status"></TextView>
-
-    <TextView
         android:id="@+id/countText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:layout_marginTop="5dp"
-        app:layout_constraintTop_toBottomOf="@+id/countStatus"
+        app:layout_constraintTop_toBottomOf="@+id/status_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="@string/counted_object"></TextView>
