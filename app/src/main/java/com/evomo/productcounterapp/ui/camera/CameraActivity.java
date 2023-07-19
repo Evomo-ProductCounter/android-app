@@ -405,7 +405,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     else {
                         setText(binding.countStatus, getResources().getString(R.string.status_idle));
                         binding.statusCircle.setBackgroundColor(getResources().getColor(R.color.red));
-//                        binding.statusCircle.setBackground(getResources().getDrawable(R.drawable.circle_status_idle));
+//                        binding.statusCircle.setBackground(getResources().getDrawable(R.drawable.circle_status.xml));
                     }
 
                     Scalar color;
