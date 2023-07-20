@@ -11,6 +11,7 @@
     <string name="title_parameter">Parameter</string>
     <string name="title_size">Size</string>
     <string name="title_product">Product</string>
+    <string name="title_shift">Shift</string>
 
     <string name="in">In</string>
     <string name="out">Out</string>
@@ -68,6 +69,11 @@
     <string name="total_count">Total Count</string>
     <string name="in_out">In &amp; Out</string>
     <string name="dummy_number">100000</string>
+
+    <string name="total_production">Total Production</string>
+    <string name="good_quality">Good Quality</string>
+    <string name="status">Status</string>
+    <string name="run">RUN</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
