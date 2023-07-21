@@ -24,11 +24,11 @@ class BulletChartView @JvmOverloads constructor(
     }
 
     private val targetPaint = Paint().apply {
-        color = Color.GREEN
+        color = Color.YELLOW
     }
 
     private val rangePaint = Paint().apply {
-        color = Color.LTGRAY
+        color = Color.RED
     }
 
     override fun onDraw(canvas: Canvas) {

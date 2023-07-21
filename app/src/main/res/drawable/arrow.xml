@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- custom_arrow.xml -->
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="60dp"
+    android:height="60dp"
+    android:viewportWidth="24.0"
+    android:viewportHeight="24.0">
+
+    <path
+        android:fillColor="#FF0000"
+        android:pathData="M12,2L1,21H23M12,17V7"
+        android:strokeColor="#FF0000"
+        android:strokeWidth="1" />
+</vector>

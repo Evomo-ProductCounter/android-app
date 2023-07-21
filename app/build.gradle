@@ -94,6 +94,8 @@ dependencies {
 
     //chart
     implementation "com.github.PhilJay:MPAndroidChart:v3.1.0"
+    implementation 'com.github.Gruzer:simple-gauge-android:0.3.1'
+    implementation 'com.github.AnyChart:AnyChart-Android:1.1.2'
 
     //mqtt
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
