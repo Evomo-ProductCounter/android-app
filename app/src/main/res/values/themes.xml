@@ -30,6 +30,14 @@
         <item name="android:layout_weight">1</item>
     </style>
 
+    <style name="GaugePercentage" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/poppins_semibold</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
     <style name="UserInfoTitle" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/grey</item>
         <item name="android:textSize">15sp</item>

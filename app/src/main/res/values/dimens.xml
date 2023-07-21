@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Other dimension resources -->
+
+    <!-- Add this dimension for custom_marker_size -->
+    <dimen name="custom_marker_size">20dp</dimen>
+</resources>

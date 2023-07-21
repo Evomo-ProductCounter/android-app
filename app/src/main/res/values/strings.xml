@@ -12,6 +12,7 @@
     <string name="title_size">Size</string>
     <string name="title_product">Product</string>
     <string name="title_shift">Shift</string>
+    <string name="title_timeline">Timeline</string>
 
     <string name="in">In</string>
     <string name="out">Out</string>
@@ -69,6 +70,13 @@
     <string name="total_count">Total Count</string>
     <string name="in_out">In &amp; Out</string>
     <string name="dummy_number">100000</string>
+
+    <string name="oee">OEE</string>
+    <string name="dummy_percentage">73,4 %</string>
+    <string name="availability">Availability</string>
+    <string name="performance">Performance</string>
+    <string name="quality">Quality</string>
+    <string name="timeline">Timeline</string>
 
     <string name="total_production">Total Production</string>
     <string name="good_quality">Good Quality</string>
