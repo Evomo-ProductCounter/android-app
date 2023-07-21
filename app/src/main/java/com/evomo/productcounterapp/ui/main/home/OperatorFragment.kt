@@ -6,9 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.anychart.AnyChart
+import com.anychart.AnyChartView
+import com.anychart.chart.common.dataentry.SingleValueDataSet
+import com.anychart.charts.LinearGauge
+import com.anychart.enums.*
+import com.anychart.scales.OrdinalColor
 import com.ekn.gruzer.gaugelibrary.Range
 import com.evomo.productcounterapp.R
 import com.evomo.productcounterapp.databinding.FragmentOperatorBinding
+import com.evomo.productcounterapp.ui.main.customview.BulletChartView
 import com.evomo.productcounterapp.ui.main.customview.CircularProgressBar
 
 
@@ -56,10 +63,6 @@ class OperatorFragment : Fragment() {
         halfGauge.maxValue = 150.0
         halfGauge.value = 73.4
 
-
-
-        ////
-
         val availPercent: CircularProgressBar = binding.availPercentage
         availPercent.setProgress(97)
 
@@ -68,6 +71,85 @@ class OperatorFragment : Fragment() {
 
         val qualityPercent: CircularProgressBar = binding.qualityPercentage
         qualityPercent.setProgress(94)
+
+        val anyChartView: AnyChartView = binding.anyChartView
+
+        val linearGauge: LinearGauge = AnyChart.linear()
+
+        linearGauge.data(SingleValueDataSet(arrayOf(5.3)))
+
+        linearGauge.layout(Layout.HORIZONTAL)
+
+        linearGauge.label(0)
+            .position(Position.LEFT_CENTER)
+            .anchor(Anchor.LEFT_CENTER)
+            .offsetY("-50px")
+            .offsetX("50px")
+            .fontColor("black")
+            .fontSize(17)
+        linearGauge.label(0).text("Total Rainfall")
+
+        linearGauge.label(1)
+            .position(Position.LEFT_CENTER)
+            .anchor(Anchor.LEFT_CENTER)
+            .offsetY("40px")
+            .offsetX("50px")
+            .fontColor("#777777")
+            .fontSize(17)
+        linearGauge.label(1).text("Drought Hazard")
+
+        linearGauge.label(2)
+            .position(Position.RIGHT_CENTER)
+            .anchor(Anchor.RIGHT_CENTER)
+            .offsetY("40px")
+            .offsetX("50px")
+            .fontColor("#777777")
+            .fontSize(17)
+        linearGauge.label(2).text("Flood Hazard")
+
+        val scaleBarColorScale = OrdinalColor.instantiate()
+        scaleBarColorScale.ranges(
+            arrayOf(
+                "{ from: 0, to: 2, color: ['red 0.5'] }",
+                "{ from: 2, to: 3, color: ['yellow 0.5'] }",
+                "{ from: 3, to: 7, color: ['green 0.5'] }",
+                "{ from: 7, to: 8, color: ['yellow 0.5'] }",
+                "{ from: 8, to: 10, color: ['red 0.5'] }"
+            )
+        )
+
+        linearGauge.scaleBar(0)
+            .width("5%")
+            .colorScale(scaleBarColorScale)
+
+        linearGauge.marker(0)
+            .type(MarkerType.TRIANGLE_DOWN)
+            .color("red")
+            .offset("-3.5%")
+            .zIndex(10)
+
+        linearGauge.scale()
+            .minimum(0)
+            .maximum(10)
+//        linearGauge.scale().ticks
+
+        //        linearGauge.scale().ticks
+        linearGauge.axis(0)
+            .minorTicks(false)
+            .width("1%")
+        linearGauge.axis(0)
+            .offset("-1.5%")
+            .orientation(Orientation.TOP)
+            .labels("top")
+
+        linearGauge.padding(0, 30, 0, 30)
+
+        anyChartView.setChart(linearGauge)
+
+        val bulletChartView: BulletChartView = binding.bulletChart
+        bulletChartView.targetValue = 200f
+        bulletChartView.currentValue = 150f
+        bulletChartView.comparativeValue = 100f
 
 //        val gaugeChart: PieChart = binding.gaugeChart
 
