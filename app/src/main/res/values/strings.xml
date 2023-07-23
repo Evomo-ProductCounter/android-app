@@ -14,6 +14,10 @@
     <string name="title_shift">Shift</string>
     <string name="title_timeline">Timeline</string>
 
+    <string name="stop_time">Stop Time</string>
+    <string name="downtime">Downtime</string>
+    <string name="time">Time</string>
+
     <string name="in">In</string>
     <string name="out">Out</string>
     <string name="reject">Reject</string>

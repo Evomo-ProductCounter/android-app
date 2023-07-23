@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TableLayout
+import android.widget.TableRow
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.anychart.AnyChart
@@ -72,314 +75,90 @@ class OperatorFragment : Fragment() {
         val qualityPercent: CircularProgressBar = binding.qualityPercentage
         qualityPercent.setProgress(94)
 
-        val anyChartView: AnyChartView = binding.anyChartView
-
-        val linearGauge: LinearGauge = AnyChart.linear()
-
-        linearGauge.data(SingleValueDataSet(arrayOf(5.3)))
-
-        linearGauge.layout(Layout.HORIZONTAL)
-
-        linearGauge.label(0)
-            .position(Position.LEFT_CENTER)
-            .anchor(Anchor.LEFT_CENTER)
-            .offsetY("-50px")
-            .offsetX("50px")
-            .fontColor("black")
-            .fontSize(17)
-        linearGauge.label(0).text("Total Rainfall")
-
-        linearGauge.label(1)
-            .position(Position.LEFT_CENTER)
-            .anchor(Anchor.LEFT_CENTER)
-            .offsetY("40px")
-            .offsetX("50px")
-            .fontColor("#777777")
-            .fontSize(17)
-        linearGauge.label(1).text("Drought Hazard")
-
-        linearGauge.label(2)
-            .position(Position.RIGHT_CENTER)
-            .anchor(Anchor.RIGHT_CENTER)
-            .offsetY("40px")
-            .offsetX("50px")
-            .fontColor("#777777")
-            .fontSize(17)
-        linearGauge.label(2).text("Flood Hazard")
-
-        val scaleBarColorScale = OrdinalColor.instantiate()
-        scaleBarColorScale.ranges(
-            arrayOf(
-                "{ from: 0, to: 2, color: ['red 0.5'] }",
-                "{ from: 2, to: 3, color: ['yellow 0.5'] }",
-                "{ from: 3, to: 7, color: ['green 0.5'] }",
-                "{ from: 7, to: 8, color: ['yellow 0.5'] }",
-                "{ from: 8, to: 10, color: ['red 0.5'] }"
-            )
-        )
-
-        linearGauge.scaleBar(0)
-            .width("5%")
-            .colorScale(scaleBarColorScale)
-
-        linearGauge.marker(0)
-            .type(MarkerType.TRIANGLE_DOWN)
-            .color("red")
-            .offset("-3.5%")
-            .zIndex(10)
-
-        linearGauge.scale()
-            .minimum(0)
-            .maximum(10)
-//        linearGauge.scale().ticks
-
-        //        linearGauge.scale().ticks
-        linearGauge.axis(0)
-            .minorTicks(false)
-            .width("1%")
-        linearGauge.axis(0)
-            .offset("-1.5%")
-            .orientation(Orientation.TOP)
-            .labels("top")
-
-        linearGauge.padding(0, 30, 0, 30)
-
-        anyChartView.setChart(linearGauge)
+//        val anyChartView: AnyChartView = binding.anyChartView
+//        val linearGauge: LinearGauge = AnyChart.linear()
+//
+//        linearGauge.data(SingleValueDataSet(arrayOf(5.3)))
+//
+//        linearGauge.layout(Layout.HORIZONTAL)
+//
+//        linearGauge.label(0)
+//            .position(Position.LEFT_CENTER)
+//            .anchor(Anchor.LEFT_CENTER)
+//            .offsetY("-50px")
+//            .offsetX("50px")
+//            .fontColor("black")
+//            .fontSize(17)
+//        linearGauge.label(0).text("Total Rainfall")
+//
+//        linearGauge.label(1)
+//            .position(Position.LEFT_CENTER)
+//            .anchor(Anchor.LEFT_CENTER)
+//            .offsetY("40px")
+//            .offsetX("50px")
+//            .fontColor("#777777")
+//            .fontSize(17)
+//        linearGauge.label(1).text("Drought Hazard")
+//
+//        linearGauge.label(2)
+//            .position(Position.RIGHT_CENTER)
+//            .anchor(Anchor.RIGHT_CENTER)
+//            .offsetY("40px")
+//            .offsetX("50px")
+//            .fontColor("#777777")
+//            .fontSize(17)
+//        linearGauge.label(2).text("Flood Hazard")
+//
+//        val scaleBarColorScale = OrdinalColor.instantiate()
+//        scaleBarColorScale.ranges(
+//            arrayOf(
+//                "{ from: 0, to: 2, color: ['red 0.5'] }",
+//                "{ from: 2, to: 3, color: ['yellow 0.5'] }",
+//                "{ from: 3, to: 7, color: ['green 0.5'] }",
+//                "{ from: 7, to: 8, color: ['yellow 0.5'] }",
+//                "{ from: 8, to: 10, color: ['red 0.5'] }"
+//            )
+//        )
+//
+//        linearGauge.scaleBar(0)
+//            .width("5%")
+//            .colorScale(scaleBarColorScale)
+//
+//        linearGauge.marker(0)
+//            .type(MarkerType.TRIANGLE_DOWN)
+//            .color("red")
+//            .offset("-3.5%")
+//            .zIndex(10)
+//
+//        linearGauge.scale()
+//            .minimum(0)
+//            .maximum(10)
+////        linearGauge.scale().ticks
+//
+//        //        linearGauge.scale().ticks
+//        linearGauge.axis(0)
+//            .minorTicks(false)
+//            .width("1%")
+//        linearGauge.axis(0)
+//            .offset("-1.5%")
+//            .orientation(Orientation.TOP)
+//            .labels("top")
+//
+//        linearGauge.padding(0, 30, 0, 30)
+//
+//        anyChartView.setChart(linearGauge)
 
         val bulletChartView: BulletChartView = binding.bulletChart
         bulletChartView.targetValue = 200f
         bulletChartView.currentValue = 150f
         bulletChartView.comparativeValue = 100f
 
-//        val gaugeChart: PieChart = binding.gaugeChart
-
-        // Set the data for the pie chart
-
-        // Set the data for the pie chart
-//        val entries: MutableList<PieEntry> = ArrayList()
-//        entries.add(PieEntry(40f, "")) // Replace 40f with your first data value
-//        entries.add(PieEntry(30f, "")) // Replace 30f with your second data value
-//        entries.add(PieEntry(30f, "")) // Replace 30f with your third data value
-//
-//        val dataSet = PieDataSet(entries, "")
-////        dataSet.setColors(*ColorTemplate.COLORFUL_COLORS)
-//        val colors = ArrayList<Int>()
-//        colors.add(ContextCompat.getColor(requireContext(), R.color.red)) // Replace with your first color
-//        colors.add(ContextCompat.getColor(requireContext(), R.color.orange_500)) // Replace with your second color
-//        colors.add(ContextCompat.getColor(requireContext(), R.color.green_700)) // Replace with your third color
-//        dataSet.colors = colors
-//        dataSet.sliceSpace = 0f
-//        dataSet.setDrawValues(false)
-//
-//        val data = PieData(dataSet)
-//        gaugeChart.data = data
-//
-//        // Hide unnecessary chart elements
-//        val description = Description()
-//        description.text = ""
-//        gaugeChart.description = description
-//
-//        gaugeChart.isDrawHoleEnabled = true
-//        gaugeChart.setHoleColor(Color.TRANSPARENT)
-//        gaugeChart.holeRadius = 70f // Adjust this value to make the hole smaller or bigger
-//
-//        gaugeChart.isRotationEnabled = false
-//        gaugeChart.legend.isEnabled = false
-//        gaugeChart.setDrawEntryLabels(false)
-//
-//        // Set the angle at which the pie chart should start and the range to show only the top half
-//        gaugeChart.rotationAngle = 180f
-//        gaugeChart.maxAngle = 180f
-//
-//        // Disable interactions with the chart
-//        gaugeChart.setTouchEnabled(false)
-//        gaugeChart.isDragDecelerationEnabled = false
-//        gaugeChart.isHighlightPerTapEnabled = false
-//
-//        // Calculate the angle for the value you want to highlight
-//        val valueToHighlight = 2f // Replace with the value you want to highlight
-//        val angleToHighlight = calculateAngle(valueToHighlight)
-//
-//        val markerView = CustomMarkerView(gaugeChart.context, R.layout.custom_marker_view, angleToHighlight)
-//        gaugeChart.marker = markerView
-//
-//        gaugeChart.invalidate()
-
-//        val bulletChartView = binding.bulletChartContainer
-//        bulletChartView.setMaxValue(100f)
-//        bulletChartView.setCurrentValue(55f)
-//        bulletChartView.setTargetValue(80f)
-//        bulletChartView.setPerformanceRange(60f, 80f)
-
-//
-//        val anyChartView: AnyChartView = binding.anyChartView
-//
-//        val circularGauge = AnyChart.circular()
-//        circularGauge.data(SingleValueDataSet(arrayOf("23", "34", "67", "93", "56", "100")))
-//        circularGauge.fill("#fff")
-//            .stroke(null)
-//            .padding(0.0, 0.0, 0.0, 0.0)
-//            .margin(100.0, 100.0, 100.0, 100.0)
-//        circularGauge.startAngle(0.0)
-//        circularGauge.sweepAngle(270.0)
-//
-//        val xAxis = circularGauge.axis(0)
-//            .radius(100.0)
-//            .width(1.0)
-//            .fill(null as Fill?)
-//        xAxis.scale()
-//            .minimum(0.0)
-//            .maximum(100.0)
-//        xAxis.ticks("{ interval: 1 }")
-//            .minorTicks("{ interval: 1 }")
-//        xAxis.labels().enabled(false)
-//        xAxis.ticks().enabled(false)
-//        xAxis.minorTicks().enabled(false)
-//
-//        circularGauge.label(0.0)
-//            .text("Temazepam, <span style=\"\">32%</span>")
-//            .useHtml(true)
-//            .hAlign(HAlign.CENTER)
-//            .vAlign(VAlign.MIDDLE)
-//        circularGauge.label(0.0)
-//            .anchor(Anchor.RIGHT_CENTER)
-//            .padding(0.0, 10.0, 0.0, 0.0)
-//            .height(17.0 / 2.0)
-//            .offsetY(100.0.toString() + "%")
-//            .offsetX(0.0)
-//        val bar0: Bar = circularGauge.bar(0.0)
-//        bar0.dataIndex(0.0)
-//        bar0.radius(100.0)
-//        bar0.width(17.0)
-//        bar0.fill(SolidFill("#64b5f6", 1.0))
-//        bar0.stroke(null)
-//        bar0.zIndex(5.0)
-//        val bar100: Bar = circularGauge.bar(100.0)
-//        bar100.dataIndex(5.0)
-//        bar100.radius(100.0)
-//        bar100.width(17.0)
-//        bar100.fill(SolidFill("#F5F4F4", 1.0))
-//        bar100.stroke("1 #e5e4e4")
-//        bar100.zIndex(4.0)
-//
-//        circularGauge.label(1.0)
-//            .text("Guaifenesin, <span style=\"\">34%</span>")
-//            .useHtml(true)
-//            .hAlign(HAlign.CENTER)
-//            .vAlign(VAlign.MIDDLE)
-//        circularGauge.label(1.0)
-//            .anchor(Anchor.RIGHT_CENTER)
-//            .padding(0.0, 10.0, 0.0, 0.0)
-//            .height(17.0 / 2.0)
-//            .offsetY(80.0.toString() + "%")
-//            .offsetX(0.0)
-//        val bar1: Bar = circularGauge.bar(1.0)
-//        bar1.dataIndex(1.0)
-//        bar1.radius(80.0)
-//        bar1.width(17.0)
-//        bar1.fill(SolidFill("#1976d2", 1.0))
-//        bar1.stroke(null)
-//        bar1.zIndex(5.0)
-//        val bar101: Bar = circularGauge.bar(101.0)
-//        bar101.dataIndex(5.0)
-//        bar101.radius(80.0)
-//        bar101.width(17.0)
-//        bar101.fill(SolidFill("#F5F4F4", 1.0))
-//        bar101.stroke("1 #e5e4e4")
-//        bar101.zIndex(4.0)
-//
-//        circularGauge.label(2.0)
-//            .text("Salicylic Acid, <span style=\"\">67%</span>")
-//            .useHtml(true)
-//            .hAlign(HAlign.CENTER)
-//            .vAlign(VAlign.MIDDLE)
-//        circularGauge.label(2.0)
-//            .anchor(Anchor.RIGHT_CENTER)
-//            .padding(0.0, 10.0, 0.0, 0.0)
-//            .height(17.0 / 2.0)
-//            .offsetY(60.0.toString() + "%")
-//            .offsetX(0.0)
-//        val bar2: Bar = circularGauge.bar(2.0)
-//        bar2.dataIndex(2.0)
-//        bar2.radius(60.0)
-//        bar2.width(17.0)
-//        bar2.fill(SolidFill("#ef6c00", 1.0))
-//        bar2.stroke(null)
-//        bar2.zIndex(5.0)
-//        val bar102: Bar = circularGauge.bar(102.0)
-//        bar102.dataIndex(5.0)
-//        bar102.radius(60.0)
-//        bar102.width(17.0)
-//        bar102.fill(SolidFill("#F5F4F4", 1.0))
-//        bar102.stroke("1 #e5e4e4")
-//        bar102.zIndex(4.0)
-//
-//        circularGauge.label(3.0)
-//            .text("Fluoride, <span style=\"\">93%</span>")
-//            .useHtml(true)
-//            .hAlign(HAlign.CENTER)
-//            .vAlign(VAlign.MIDDLE)
-//        circularGauge.label(3.0)
-//            .anchor(Anchor.RIGHT_CENTER)
-//            .padding(0.0, 10.0, 0.0, 0.0)
-//            .height(17.0 / 2.0)
-//            .offsetY(40.0.toString() + "%")
-//            .offsetX(0.0)
-//        val bar3: Bar = circularGauge.bar(3.0)
-//        bar3.dataIndex(3.0)
-//        bar3.radius(40.0)
-//        bar3.width(17.0)
-//        bar3.fill(SolidFill("#ffd54f", 1.0))
-//        bar3.stroke(null)
-//        bar3.zIndex(5.0)
-//        val bar103: Bar = circularGauge.bar(103.0)
-//        bar103.dataIndex(5.0)
-//        bar103.radius(40.0)
-//        bar103.width(17.0)
-//        bar103.fill(SolidFill("#F5F4F4", 1.0))
-//        bar103.stroke("1 #e5e4e4")
-//        bar103.zIndex(4.0)
-//
-//        circularGauge.label(4.0)
-//            .text("Zinc Oxide, <span style=\"\">56%</span>")
-//            .useHtml(true)
-//            .hAlign(HAlign.CENTER)
-//            .vAlign(VAlign.MIDDLE)
-//        circularGauge.label(4.0)
-//            .anchor(Anchor.RIGHT_CENTER)
-//            .padding(0.0, 10.0, 0.0, 0.0)
-//            .height(17.0 / 2.0)
-//            .offsetY(20.0.toString() + "%")
-//            .offsetX(0.0)
-//        val bar4: Bar = circularGauge.bar(4.0)
-//        bar4.dataIndex(4.0)
-//        bar4.radius(20.0)
-//        bar4.width(17.0)
-//        bar4.fill(SolidFill("#455a64", 1.0))
-//        bar4.stroke(null)
-//        bar4.zIndex(5.0)
-//        val bar104: Bar = circularGauge.bar(104.0)
-//        bar104.dataIndex(5.0)
-//        bar104.radius(20.0)
-//        bar104.width(17.0)
-//        bar104.fill(SolidFill("#F5F4F4", 1.0))
-//        bar104.stroke("1 #e5e4e4")
-//        bar104.zIndex(4.0)
-//
-//        circularGauge.margin(50.0, 50.0, 50.0, 50.0)
-//        circularGauge.title()
-//            .text(
-//                """Medicine manufacturing progress' +
-//    '<br/><span style="color:#929292; font-size: 12px;">(ACME CORPORATION)</span>"""
-//            )
-//            .useHtml(true)
-//        circularGauge.title().enabled(true)
-//        circularGauge.title().hAlign(HAlign.CENTER)
-//        circularGauge.title()
-//            .padding(0.0, 0.0, 0.0, 0.0)
-//            .margin(0.0, 0.0, 20.0, 0.0)
-//
-//        anyChartView.setChart(circularGauge)
+        val tableLayout = binding.tableLayout
+        addHeader(tableLayout)
+        // Add rows dynamically
+        addRowToTable(tableLayout, "07:00:00", "Downtime 1", "00:08:00")
+        addRowToTable(tableLayout, "07:08:00", "Downtime 2", "00:00:30")
+        addRowToTable(tableLayout, "07:53:00", "Downtime 3", "00:01:00")
     }
 
     private fun calculateAngle(valueToHighlight: Float): Float {
@@ -387,5 +166,61 @@ class OperatorFragment : Fragment() {
         val totalValue = 40f + 30f + 30f // Sum of all data values
         val anglePerValue = 180f / totalValue
         return 270f - anglePerValue * valueToHighlight
+    }
+
+    private fun addRowToTable(tableLayout: TableLayout, item1: String, item2: String, item3: String) {
+        val tableRow = TableRow(activity)
+        val layoutParams = TableRow.LayoutParams(
+            TableRow.LayoutParams.MATCH_PARENT,
+            TableRow.LayoutParams.WRAP_CONTENT,
+        )
+        tableRow.layoutParams = layoutParams
+        tableRow.setPadding(24, 8, 8, 16)
+
+        val textView1 = TextView(activity)
+        textView1.text = item1
+        textView1.setTextAppearance(R.style.TableColumn)
+
+        val textView2 = TextView(activity)
+        textView2.text = item2
+        textView2.setTextAppearance(R.style.TableColumn)
+
+        val textView3 = TextView(activity)
+        textView3.text = item3
+        textView3.setTextAppearance(R.style.TableColumn)
+
+        tableRow.addView(textView1)
+        tableRow.addView(textView2)
+        tableRow.addView(textView3)
+
+        tableLayout.addView(tableRow)
+    }
+
+    private fun addHeader(tableLayout: TableLayout) {
+        val tableRow = TableRow(activity)
+        val layoutParams = TableRow.LayoutParams(
+            TableRow.LayoutParams.MATCH_PARENT,
+            TableRow.LayoutParams.WRAP_CONTENT,
+        )
+        tableRow.layoutParams = layoutParams
+        tableRow.setPadding(24, 24, 8, 16)
+
+        val textView1 = TextView(activity)
+        textView1.text = getString(R.string.stop_time)
+        textView1.setTextAppearance(R.style.TableHeader)
+
+        val textView2 = TextView(activity)
+        textView2.text = getString(R.string.downtime)
+        textView2.setTextAppearance(R.style.TableHeader)
+
+        val textView3 = TextView(activity)
+        textView3.text = getString(R.string.time)
+        textView3.setTextAppearance(R.style.TableHeader)
+
+        tableRow.addView(textView1)
+        tableRow.addView(textView2)
+        tableRow.addView(textView3)
+
+        tableLayout.addView(tableRow)
     }
 }

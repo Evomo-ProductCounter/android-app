@@ -8,6 +8,9 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewGroup
+import com.evomo.productcounterapp.R
+
 //
 //class BulletChartView @JvmOverloads constructor(
 //    context: Context,
@@ -88,15 +91,15 @@ class BulletChartView @JvmOverloads constructor(
 
     // Define the paint objects for drawing
     private val targetPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.BLUE // Set the target bar color
+        color = context.getColor(R.color.orange_500) // Set the target bar color
     }
 
     private val currentPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.GREEN // Set the current value bar color
+        color = context.getColor(R.color.green_700) // Set the current value bar color
     }
 
     private val comparativePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.RED // Set the comparative value bar color
+        color = context.getColor(R.color.red) // Set the comparative value bar color
     }
 
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
