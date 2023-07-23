@@ -38,6 +38,21 @@
         <item name="android:layout_weight">1</item>
     </style>
 
+    <style name="TableHeader" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/poppins_semibold</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="TableColumn" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">12sp</item>
+        <item name="fontFamily">@font/poppins</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
     <style name="UserInfoTitle" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/grey</item>
         <item name="android:textSize">15sp</item>
