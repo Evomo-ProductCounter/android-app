@@ -6,10 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.evomo.productcounterapp.data.model.CurrentRuntimeResponse
-import com.evomo.productcounterapp.data.model.DataRuntime
-import com.evomo.productcounterapp.data.model.Machine
-import com.evomo.productcounterapp.data.model.MachinesResponse
+import com.evomo.productcounterapp.data.model.*
 import com.evomo.productcounterapp.data.remote.ApiConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,12 +20,21 @@ class OperatorViewModel (application: Application, token: String) : ViewModel() 
     private val _socketStatus = MutableLiveData(false)
     val socketStatus: LiveData<Boolean> = _socketStatus
 
-    private val _messages = MutableLiveData<Pair<Boolean, String>>()
-    val messages: LiveData<Pair<Boolean, String>> = _messages
+    private val _oee = MutableLiveData<DataOEE>()
+    val oee: LiveData<DataOEE> = _oee
 
-    fun addMessage(message: Pair<Boolean, String>) = viewModelScope.launch(Dispatchers.Main) {
+    private val _quantity = MutableLiveData<DataQuantity>()
+    val quantity: LiveData<DataQuantity> = _quantity
+
+    fun addOEEData(data: DataOEE) = viewModelScope.launch(Dispatchers.Main) {
         if (_socketStatus.value == true) {
-            _messages.value = message
+            _oee.value = data
+        }
+    }
+
+    fun addQuantityData(data: DataQuantity) = viewModelScope.launch(Dispatchers.Main) {
+        if (_socketStatus.value == true) {
+            _quantity.value = data
         }
     }
 
