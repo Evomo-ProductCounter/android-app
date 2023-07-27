@@ -33,6 +33,7 @@ import com.evomo.productcounterapp.ui.login.LoginActivity
 import com.evomo.productcounterapp.ui.main.MainActivity
 import com.evomo.productcounterapp.ui.main.customview.BulletChartView
 import com.evomo.productcounterapp.ui.main.customview.CircularProgressBar
+import com.evomo.productcounterapp.ui.main.customview.CircularProgressBarPerf
 import com.evomo.productcounterapp.utils.SettingPreferences
 import com.evomo.productcounterapp.utils.SettingViewModel
 import com.evomo.productcounterapp.utils.SettingViewModelFactory
@@ -53,9 +54,15 @@ class OperatorFragment : Fragment() {
     var machineAdapterItems: ArrayAdapter<String>? = null
     private var selectedMachine: String? = null
 
-    private lateinit var webSocketListener: WebSocketListener
+    private lateinit var OEESocketListener: WebSocketListener
+    private lateinit var QuantitySocketListener: WebSocketListener
     private val okHttpClient = OkHttpClient()
-    private var webSocket: WebSocket? = null
+    private var OEESocket: WebSocket? = null
+    private var QuantitySocket: WebSocket? = null
+
+    lateinit var UID : String
+    var scope = "operator"
+    var consumerCustomId = "5e4b58ba2b91b5525a1bf8a1"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,14 +94,72 @@ class OperatorFragment : Fragment() {
                 TokenViewModelFactory((activity as MainActivity).application, token)
             }
 
+            OEESocketListener = WebSocketListener(viewModel, "OEE")
+            QuantitySocketListener = WebSocketListener(viewModel, "Quantity")
+
             settingViewModel.getUID().observe(viewLifecycleOwner) { userId ->
                 viewModel.getRuntime(userId)
+                UID = userId
             }
 
             viewModel.listRuntime.observe(viewLifecycleOwner) { dataRuntime ->
                 Log.d("RUNTIME", dataRuntime.currentRuntime.get(0).name)
+
+                OEESocket = okHttpClient.newWebSocket(createRequestOEE(), OEESocketListener)
+                QuantitySocket = okHttpClient.newWebSocket(createRequestQuantity(), QuantitySocketListener)
+
             }
 
+            val range = Range()
+            range.color = ContextCompat.getColor(requireContext(), R.color.red)
+            range.from = 0.0
+            range.to = 50.0
+
+            val range2 = Range()
+            range2.color = ContextCompat.getColor(requireContext(), R.color.orange_500)
+            range2.from = 50.0
+            range2.to = 75.0
+
+            val range3 = Range()
+            range3.color = ContextCompat.getColor(requireContext(), R.color.green_700)
+            range3.from = 75.0
+            range3.to = 100.0
+
+            var halfGauge = binding.halfGauge
+            //add color ranges to gauge
+            halfGauge.addRange(range)
+            halfGauge.addRange(range2)
+            halfGauge.addRange(range3)
+
+            //set min max and current value
+            halfGauge.minValue = 0.0
+            halfGauge.maxValue = 100.0
+
+            viewModel.oee.observe(viewLifecycleOwner) { dataOEE ->
+//                Log.d("DATDATDATDTATDA", dataOEE.toString())
+
+                halfGauge.value = dataOEE.data.oee
+                val formattedPercentage = String.format("%.1f %%", dataOEE.data.oee)
+                binding.gaugePercentage.text = formattedPercentage
+
+                val availPercent: CircularProgressBar = binding.availPercentage
+                availPercent.setProgress(dataOEE.data.availability.toInt())
+
+                val performancePercent: CircularProgressBarPerf = binding.performancePercentage
+                performancePercent.setProgress(dataOEE.data.performance.toInt())
+
+                val qualityPercent: CircularProgressBar = binding.qualityPercentage
+                qualityPercent.setProgress(dataOEE.data.quality.toInt())
+            }
+
+
+            viewModel.quantity.observe(viewLifecycleOwner) { dataQuantity ->
+                Log.d("QUQUQUQUQU", dataQuantity.toString())
+
+                binding.totalNum.text = dataQuantity.data.total.toString()
+                binding.goodNum.text = dataQuantity.data.good.toString()
+                binding.rejectNum.text = dataQuantity.data.defect.toString()
+            }
 //            viewModel.getMachines()
 //
 //            viewModel.isLoading.observe(activity as AppCompatActivity) { loading ->
@@ -125,41 +190,6 @@ class OperatorFragment : Fragment() {
 //                }
 //            }
         }
-
-        val range = Range()
-        range.color = ContextCompat.getColor(requireContext(), R.color.red)
-        range.from = 0.0
-        range.to = 50.0
-
-        val range2 = Range()
-        range2.color = ContextCompat.getColor(requireContext(), R.color.orange_500)
-        range2.from = 50.0
-        range2.to = 100.0
-
-        val range3 = Range()
-        range3.color = ContextCompat.getColor(requireContext(), R.color.green_700)
-        range3.from = 100.0
-        range3.to = 150.0
-
-        var halfGauge = binding.halfGauge
-        //add color ranges to gauge
-        halfGauge.addRange(range)
-        halfGauge.addRange(range2)
-        halfGauge.addRange(range3)
-
-        //set min max and current value
-        halfGauge.minValue = 0.0
-        halfGauge.maxValue = 150.0
-        halfGauge.value = 73.4
-
-        val availPercent: CircularProgressBar = binding.availPercentage
-        availPercent.setProgress(97)
-
-        val performancePercent: CircularProgressBar = binding.performancePercentage
-        performancePercent.setProgress(80)
-
-        val qualityPercent: CircularProgressBar = binding.qualityPercentage
-        qualityPercent.setProgress(94)
 
         val bulletChartView: BulletChartView = binding.bulletChart
         bulletChartView.targetValue = 200f
@@ -234,9 +264,15 @@ class OperatorFragment : Fragment() {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
-    private fun createRequest(): Request {
-//        val websocketURL = "wss://${Constants.CLUSTER_ID}.piesocket.com/v3/1?api_key=${Constants.API_KEY}"
-        val websocketURL = ""
+    private fun createRequestOEE(): Request {
+        val websocketURL = "wss://oeesocket.jeager.io/machine/stream/oee?x-authenticated-userid=${UID}&x-authenticated-scope=${scope}&x-consumer-custom-id=${consumerCustomId}"
+        return Request.Builder()
+            .url(websocketURL)
+            .build()
+    }
+
+    private fun createRequestQuantity(): Request {
+        val websocketURL = "wss://oeesocket.jeager.io/machine/stream/quantity?x-authenticated-userid=${UID}&x-authenticated-scope=${scope}&x-consumer-custom-id=${consumerCustomId}"
         return Request.Builder()
             .url(websocketURL)
             .build()

@@ -261,7 +261,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <com.evomo.productcounterapp.ui.main.customview.CircularProgressBar
+                        <com.evomo.productcounterapp.ui.main.customview.CircularProgressBarPerf
                             android:id="@+id/performancePercentage"
                             android:layout_width="90dp"
                             android:layout_height="90dp"
