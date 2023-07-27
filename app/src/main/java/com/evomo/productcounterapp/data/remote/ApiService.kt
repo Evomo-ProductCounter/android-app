@@ -1,8 +1,6 @@
 package com.evomo.productcounterapp.data.remote
 
-import com.evomo.productcounterapp.data.model.LoginResponse
-import com.evomo.productcounterapp.data.model.MachineProductResponse
-import com.evomo.productcounterapp.data.model.MachinesResponse
+import com.evomo.productcounterapp.data.model.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -27,4 +25,12 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Query("machine_id") machineId: String
     ): Call<MachineProductResponse>
+
+    @GET("planned_running_time/byuser")
+    fun getRuntime (
+        @Header("Authorization") token: String,
+        @Query("start_date") startDate: String,
+        @Query("end_date") endDate: String,
+        @Query("user_id") userId: String
+    ): Call<CurrentRuntimeResponse>
 }
