@@ -1,14 +1,22 @@
 package com.evomo.productcounterapp.ui.main.home
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TableLayout
-import android.widget.TableRow
-import android.widget.TextView
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.anychart.AnyChart
 import com.anychart.AnyChartView
 import com.anychart.chart.common.dataentry.SingleValueDataSet
@@ -17,13 +25,37 @@ import com.anychart.enums.*
 import com.anychart.scales.OrdinalColor
 import com.ekn.gruzer.gaugelibrary.Range
 import com.evomo.productcounterapp.R
+import com.evomo.productcounterapp.data.model.Machine
+import com.evomo.productcounterapp.data.remote.WebSocketListener
 import com.evomo.productcounterapp.databinding.FragmentOperatorBinding
+import com.evomo.productcounterapp.ui.TokenViewModelFactory
+import com.evomo.productcounterapp.ui.login.LoginActivity
+import com.evomo.productcounterapp.ui.main.MainActivity
 import com.evomo.productcounterapp.ui.main.customview.BulletChartView
 import com.evomo.productcounterapp.ui.main.customview.CircularProgressBar
+import com.evomo.productcounterapp.utils.SettingPreferences
+import com.evomo.productcounterapp.utils.SettingViewModel
+import com.evomo.productcounterapp.utils.SettingViewModelFactory
+import com.github.mikephil.charting.data.PieEntry
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.WebSocket
 
 
 class OperatorFragment : Fragment() {
     private lateinit var binding: FragmentOperatorBinding
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+
+    private lateinit var nameList: List<String>
+    private lateinit var machineList: List<Machine>
+
+    var machineTextView: AutoCompleteTextView? = null
+    var machineAdapterItems: ArrayAdapter<String>? = null
+    private var selectedMachine: String? = null
+
+    private lateinit var webSocketListener: WebSocketListener
+    private val okHttpClient = OkHttpClient()
+    private var webSocket: WebSocket? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +71,60 @@ class OperatorFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val pref = SettingPreferences.getInstance((activity as MainActivity).dataStore)
+        val settingViewModel = ViewModelProvider(this, SettingViewModelFactory(pref)).get(
+            SettingViewModel::class.java
+        )
+
+        settingViewModel.getToken().observe(viewLifecycleOwner) { token ->
+            Log.d("TOKEN CHECK", token)
+            if (token == "Not Set") {
+                startActivity(Intent(activity, LoginActivity::class.java))
+            }
+
+            val viewModel by viewModels<OperatorViewModel>(){
+                TokenViewModelFactory((activity as MainActivity).application, token)
+            }
+
+            settingViewModel.getUID().observe(viewLifecycleOwner) { userId ->
+                viewModel.getRuntime(userId)
+            }
+
+            viewModel.listRuntime.observe(viewLifecycleOwner) { dataRuntime ->
+                Log.d("RUNTIME", dataRuntime.currentRuntime.get(0).name)
+            }
+
+//            viewModel.getMachines()
+//
+//            viewModel.isLoading.observe(activity as AppCompatActivity) { loading ->
+//                showLoading(loading)
+//            }
+//
+//            machineTextView = binding.autocompleteMesinOperator
+//            machineTextView!!.inputType = InputType.TYPE_NULL
+//
+//            viewModel.listMachine.observe(activity as AppCompatActivity) { list ->
+//                if (list.isEmpty()) {
+//                    viewModel.getMachines()
+//                }
+//                else {
+//                    machineList = list
+//                    nameList = list.map { item ->
+//                        item.name
+//                    }
+//
+//                    machineAdapterItems =
+//                        context?.let { ArrayAdapter(it, R.layout.dropdown_items, nameList) }
+//                    machineTextView!!.setAdapter(machineAdapterItems)
+//                    machineTextView!!.onItemClickListener =
+//                        AdapterView.OnItemClickListener { parent, view, position, id ->
+//                            val item = parent.getItemAtPosition(position).toString()
+//                            selectedMachine = item
+//                        }
+//                }
+//            }
+        }
 
         val range = Range()
         range.color = ContextCompat.getColor(requireContext(), R.color.red)
@@ -75,79 +161,6 @@ class OperatorFragment : Fragment() {
         val qualityPercent: CircularProgressBar = binding.qualityPercentage
         qualityPercent.setProgress(94)
 
-//        val anyChartView: AnyChartView = binding.anyChartView
-//        val linearGauge: LinearGauge = AnyChart.linear()
-//
-//        linearGauge.data(SingleValueDataSet(arrayOf(5.3)))
-//
-//        linearGauge.layout(Layout.HORIZONTAL)
-//
-//        linearGauge.label(0)
-//            .position(Position.LEFT_CENTER)
-//            .anchor(Anchor.LEFT_CENTER)
-//            .offsetY("-50px")
-//            .offsetX("50px")
-//            .fontColor("black")
-//            .fontSize(17)
-//        linearGauge.label(0).text("Total Rainfall")
-//
-//        linearGauge.label(1)
-//            .position(Position.LEFT_CENTER)
-//            .anchor(Anchor.LEFT_CENTER)
-//            .offsetY("40px")
-//            .offsetX("50px")
-//            .fontColor("#777777")
-//            .fontSize(17)
-//        linearGauge.label(1).text("Drought Hazard")
-//
-//        linearGauge.label(2)
-//            .position(Position.RIGHT_CENTER)
-//            .anchor(Anchor.RIGHT_CENTER)
-//            .offsetY("40px")
-//            .offsetX("50px")
-//            .fontColor("#777777")
-//            .fontSize(17)
-//        linearGauge.label(2).text("Flood Hazard")
-//
-//        val scaleBarColorScale = OrdinalColor.instantiate()
-//        scaleBarColorScale.ranges(
-//            arrayOf(
-//                "{ from: 0, to: 2, color: ['red 0.5'] }",
-//                "{ from: 2, to: 3, color: ['yellow 0.5'] }",
-//                "{ from: 3, to: 7, color: ['green 0.5'] }",
-//                "{ from: 7, to: 8, color: ['yellow 0.5'] }",
-//                "{ from: 8, to: 10, color: ['red 0.5'] }"
-//            )
-//        )
-//
-//        linearGauge.scaleBar(0)
-//            .width("5%")
-//            .colorScale(scaleBarColorScale)
-//
-//        linearGauge.marker(0)
-//            .type(MarkerType.TRIANGLE_DOWN)
-//            .color("red")
-//            .offset("-3.5%")
-//            .zIndex(10)
-//
-//        linearGauge.scale()
-//            .minimum(0)
-//            .maximum(10)
-////        linearGauge.scale().ticks
-//
-//        //        linearGauge.scale().ticks
-//        linearGauge.axis(0)
-//            .minorTicks(false)
-//            .width("1%")
-//        linearGauge.axis(0)
-//            .offset("-1.5%")
-//            .orientation(Orientation.TOP)
-//            .labels("top")
-//
-//        linearGauge.padding(0, 30, 0, 30)
-//
-//        anyChartView.setChart(linearGauge)
-
         val bulletChartView: BulletChartView = binding.bulletChart
         bulletChartView.targetValue = 200f
         bulletChartView.currentValue = 150f
@@ -159,13 +172,6 @@ class OperatorFragment : Fragment() {
         addRowToTable(tableLayout, "07:00:00", "Downtime 1", "00:08:00")
         addRowToTable(tableLayout, "07:08:00", "Downtime 2", "00:00:30")
         addRowToTable(tableLayout, "07:53:00", "Downtime 3", "00:01:00")
-    }
-
-    private fun calculateAngle(valueToHighlight: Float): Float {
-        // Calculate the angle for the value to highlight
-        val totalValue = 40f + 30f + 30f // Sum of all data values
-        val anglePerValue = 180f / totalValue
-        return 270f - anglePerValue * valueToHighlight
     }
 
     private fun addRowToTable(tableLayout: TableLayout, item1: String, item2: String, item3: String) {
@@ -222,5 +228,22 @@ class OperatorFragment : Fragment() {
         tableRow.addView(textView3)
 
         tableLayout.addView(tableRow)
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun createRequest(): Request {
+//        val websocketURL = "wss://${Constants.CLUSTER_ID}.piesocket.com/v3/1?api_key=${Constants.API_KEY}"
+        val websocketURL = ""
+        return Request.Builder()
+            .url(websocketURL)
+            .build()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        okHttpClient.dispatcher.executorService.shutdown()
     }
 }
