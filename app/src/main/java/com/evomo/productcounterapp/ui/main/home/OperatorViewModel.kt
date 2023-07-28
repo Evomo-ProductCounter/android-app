@@ -52,8 +52,10 @@ class OperatorViewModel (application: Application, token: String) : ViewModel() 
 
     fun getRuntime(userId: String) {
         _isLoading.value = true
-        val startDate = LocalDate.now()
-        val endDate = startDate.plusDays(1)
+//        val startDate = LocalDate.now()
+//        val endDate = startDate.plusDays(1)
+        val endDate = LocalDate.now()
+        val startDate = endDate.minusDays(1)
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val formattedStartDate = startDate.format(formatter)
         val formattedEndDate = endDate.format(formatter)
