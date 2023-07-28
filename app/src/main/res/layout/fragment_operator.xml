@@ -11,57 +11,62 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/dropdownMesinOperator"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="0dp"
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@drawable/gradient_background"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/home_title"
+        style="@style/PageTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/title_operator"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintStart_toStartOf="@+id/view" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/evomo_logo"
+        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="96dp"
+        android:background="@drawable/layout_background"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/machine_name"
+            style="@style/InfoTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/title_machine"
-            android:minWidth="150dp"
-            android:textColor="@color/black"
-            android:layout_marginTop="20dp"
-            app:layout_constraintEnd_toStartOf="@+id/dropdownShiftOperator"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/machine"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent=".4">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <AutoCompleteTextView
-                android:id="@+id/autocomplete_mesin_operator"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/poppins"
-                android:inputType="none"
-                android:minWidth="20dp"
-                android:textColor="@color/black" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/dropdownShiftOperator"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/date"
+            style="@style/UserInfoTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/title_shift"
-            android:minWidth="150dp"
-            android:textColor="@color/black"
-            android:layout_marginTop="20dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/dropdownMesinOperator"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent=".4">
-
-            <AutoCompleteTextView
-                android:id="@+id/autocomplete_shift_operator"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/poppins"
-                android:inputType="none"
-                android:minWidth="20dp"
-                android:textColor="@color/black" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginStart="32dp"
+            android:text="@string/date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/machine_name" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardInfo"
@@ -72,7 +77,7 @@
             android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dropdownShiftOperator">
+            app:layout_constraintTop_toBottomOf="@+id/date">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -372,13 +377,13 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-<!--                <com.anychart.AnyChartView-->
-<!--                    android:id="@+id/any_chart_view"-->
-<!--                    android:layout_width="400dp"-->
-<!--                    android:layout_height="400dp"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintTop_toBottomOf="@id/dropdownTimeline"/>-->
+                <!--                <com.anychart.AnyChartView-->
+                <!--                    android:id="@+id/any_chart_view"-->
+                <!--                    android:layout_width="400dp"-->
+                <!--                    android:layout_height="400dp"-->
+                <!--                    app:layout_constraintStart_toStartOf="parent"-->
+                <!--                    app:layout_constraintEnd_toEndOf="parent"-->
+                <!--                    app:layout_constraintTop_toBottomOf="@id/dropdownTimeline"/>-->
 
                 <com.evomo.productcounterapp.ui.main.customview.BulletChartView
                     android:id="@+id/bullet_chart"
@@ -410,6 +415,60 @@
 
         </androidx.cardview.widget.CardView>
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--        <com.google.android.material.textfield.TextInputLayout-->
+<!--            android:id="@+id/dropdownMesinOperator"-->
+<!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:hint="@string/title_machine"-->
+<!--            android:minWidth="150dp"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/dropdownShiftOperator"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintWidth_default="percent"-->
+<!--            app:layout_constraintWidth_percent=".4">-->
+
+<!--            <AutoCompleteTextView-->
+<!--                android:id="@+id/autocomplete_mesin_operator"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:fontFamily="@font/poppins"-->
+<!--                android:inputType="none"-->
+<!--                android:minWidth="20dp"-->
+<!--                android:textColor="@color/black" />-->
+
+<!--        </com.google.android.material.textfield.TextInputLayout>-->
+
+<!--        <com.google.android.material.textfield.TextInputLayout-->
+<!--            android:id="@+id/dropdownShiftOperator"-->
+<!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:hint="@string/title_shift"-->
+<!--            android:minWidth="150dp"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/dropdownMesinOperator"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintWidth_default="percent"-->
+<!--            app:layout_constraintWidth_percent=".4">-->
+
+<!--            <AutoCompleteTextView-->
+<!--                android:id="@+id/autocomplete_shift_operator"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:fontFamily="@font/poppins"-->
+<!--                android:inputType="none"-->
+<!--                android:minWidth="20dp"-->
+<!--                android:textColor="@color/black" />-->
+
+<!--        </com.google.android.material.textfield.TextInputLayout>-->
+
         <!--    <com.github.mikephil.charting.charts.PieChart-->
         <!--        android:id="@+id/gauge_chart"-->
         <!--        android:layout_width="300dp"-->
@@ -435,7 +494,6 @@
         <!--        app:layout_constraintTop_toBottomOf="@+id/gauge_chart">-->
 
         <!--    </com.evomo.productcounterapp.ui.main.customview.BulletChartView>-->
-
 
         <ProgressBar
             android:id="@+id/progressBar"
