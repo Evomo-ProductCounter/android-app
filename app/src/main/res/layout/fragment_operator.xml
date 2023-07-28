@@ -233,7 +233,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:layout_marginRight="16dp">
 
                         <com.evomo.productcounterapp.ui.main.customview.CircularProgressBar
                             android:id="@+id/availPercentage"
@@ -241,11 +242,12 @@
                             android:layout_height="90dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/halfGauge" />
+                            app:layout_constraintTop_toBottomOf="@id/halfGauge"
+                            android:layout_marginBottom="8dp"/>
 
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="8dp" />
+<!--                        <Space-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="8dp" />-->
 
                         <TextView
                             style="@style/MachineInfo"
@@ -256,15 +258,16 @@
                             android:textColor="#000000" />
                     </LinearLayout>
 
-                    <Space
-                        android:layout_width="16dp"
-                        android:layout_height="16dp" />
+<!--                    <Space-->
+<!--                        android:layout_width="16dp"-->
+<!--                        android:layout_height="16dp" />-->
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:layout_marginRight="16dp">
 
                         <com.evomo.productcounterapp.ui.main.customview.CircularProgressBarPerf
                             android:id="@+id/performancePercentage"
@@ -272,11 +275,12 @@
                             android:layout_height="90dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/halfGauge" />
+                            app:layout_constraintTop_toBottomOf="@id/halfGauge"
+                            android:layout_marginBottom="8dp"/>
 
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="8dp" />
+<!--                        <Space-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="8dp" />-->
 
                         <TextView
                             style="@style/MachineInfo"
@@ -287,9 +291,9 @@
                             android:textColor="#000000" />
                     </LinearLayout>
 
-                    <Space
-                        android:layout_width="16dp"
-                        android:layout_height="16dp" />
+<!--                    <Space-->
+<!--                        android:layout_width="16dp"-->
+<!--                        android:layout_height="16dp" />-->
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -303,11 +307,12 @@
                             android:layout_height="90dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/halfGauge" />
+                            app:layout_constraintTop_toBottomOf="@id/halfGauge"
+                            android:layout_marginBottom="8dp"/>
 
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="8dp" />
+<!--                        <Space-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="8dp" />-->
 
                         <TextView
                             style="@style/MachineInfo"
