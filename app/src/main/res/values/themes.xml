@@ -130,6 +130,14 @@
         <item name="android:layout_weight">1</item>
     </style>
 
+    <style name="InfoDev" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/red</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/poppins_semibold</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
     <style name="HistoryDate" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/grey</item>
         <item name="android:textSize">12sp</item>

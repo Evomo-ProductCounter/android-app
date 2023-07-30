@@ -382,14 +382,6 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!--                <com.anychart.AnyChartView-->
-                <!--                    android:id="@+id/any_chart_view"-->
-                <!--                    android:layout_width="400dp"-->
-                <!--                    android:layout_height="400dp"-->
-                <!--                    app:layout_constraintStart_toStartOf="parent"-->
-                <!--                    app:layout_constraintEnd_toEndOf="parent"-->
-                <!--                    app:layout_constraintTop_toBottomOf="@id/dropdownTimeline"/>-->
-
                 <com.evomo.productcounterapp.ui.main.customview.BulletChartView
                     android:id="@+id/bullet_chart"
                     android:layout_width="match_parent"
@@ -418,87 +410,36 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <View
+                    android:id="@+id/blur_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/grey_transparent_dark"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+
+                <TextView
+                    android:id="@+id/under_development"
+                    style="@style/InfoDev"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/under_dev"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-<!--        <com.google.android.material.textfield.TextInputLayout-->
-<!--            android:id="@+id/dropdownMesinOperator"-->
-<!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:hint="@string/title_machine"-->
-<!--            android:minWidth="150dp"-->
-<!--            android:textColor="@color/black"-->
-<!--            android:layout_marginTop="20dp"-->
-<!--            app:layout_constraintEnd_toStartOf="@+id/dropdownShiftOperator"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintWidth_default="percent"-->
-<!--            app:layout_constraintWidth_percent=".4">-->
-
-<!--            <AutoCompleteTextView-->
-<!--                android:id="@+id/autocomplete_mesin_operator"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:fontFamily="@font/poppins"-->
-<!--                android:inputType="none"-->
-<!--                android:minWidth="20dp"-->
-<!--                android:textColor="@color/black" />-->
-
-<!--        </com.google.android.material.textfield.TextInputLayout>-->
-
-<!--        <com.google.android.material.textfield.TextInputLayout-->
-<!--            android:id="@+id/dropdownShiftOperator"-->
-<!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:hint="@string/title_shift"-->
-<!--            android:minWidth="150dp"-->
-<!--            android:textColor="@color/black"-->
-<!--            android:layout_marginTop="20dp"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toEndOf="@+id/dropdownMesinOperator"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintWidth_default="percent"-->
-<!--            app:layout_constraintWidth_percent=".4">-->
-
-<!--            <AutoCompleteTextView-->
-<!--                android:id="@+id/autocomplete_shift_operator"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:fontFamily="@font/poppins"-->
-<!--                android:inputType="none"-->
-<!--                android:minWidth="20dp"-->
-<!--                android:textColor="@color/black" />-->
-
-<!--        </com.google.android.material.textfield.TextInputLayout>-->
-
-        <!--    <com.github.mikephil.charting.charts.PieChart-->
-        <!--        android:id="@+id/gauge_chart"-->
-        <!--        android:layout_width="300dp"-->
-        <!--        android:layout_height="200dp"-->
-        <!--        app:layout_constraintEnd_toEndOf="parent"-->
-        <!--        app:layout_constraintStart_toStartOf="parent"-->
-        <!--        app:layout_constraintTop_toBottomOf="@+id/halfGauge" />-->
-
-        <!--    <com.anychart.AnyChartView-->
-        <!--        android:id="@+id/any_chart_view"-->
-        <!--        android:layout_width="500dp"-->
-        <!--        android:layout_height="500dp"-->
-        <!--        app:layout_constraintEnd_toEndOf="parent"-->
-        <!--        app:layout_constraintStart_toStartOf="parent"-->
-        <!--        app:layout_constraintTop_toBottomOf="@+id/cardInfo"-->
-        <!--        />-->
-
-        <!--    <com.evomo.productcounterapp.ui.main.customview.BulletChartView-->
-        <!--        android:id="@+id/bulletChartContainer"-->
-        <!--        android:layout_width="match_parent"-->
-        <!--        android:layout_height="200dp"-->
-        <!--        android:layout_margin="16dp"-->
-        <!--        app:layout_constraintTop_toBottomOf="@+id/gauge_chart">-->
-
-        <!--    </com.evomo.productcounterapp.ui.main.customview.BulletChartView>-->
 
         <ProgressBar
             android:id="@+id/progressBar"
