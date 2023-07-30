@@ -10,6 +10,8 @@
     <color name="grey">#D1CECE</color>
     <color name="grey_500">#6E6A6A</color>
     <color name="grey_transparent">#CCD1CECE</color>
+    <color name="grey_transparent_dark">#E6716E6E</color>
+
     <color name="red">#F04249</color>
 
     <color name="green_700">#159957</color>

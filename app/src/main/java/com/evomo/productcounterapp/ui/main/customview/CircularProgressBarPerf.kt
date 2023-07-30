@@ -64,6 +64,20 @@ class CircularProgressBarPerf @JvmOverloads constructor(
 
     fun setProgress(progress: Int) {
         this.progress = progress
+
+        if (progress <= max * 0.25) {
+            paint.color = ContextCompat.getColor(context, R.color.red)
+        }
+        else if (progress <= max * 0.5) {
+            paint.color = ContextCompat.getColor(context, R.color.orange_500)
+        }
+        else if (progress <= max * 0.75) {
+            paint.color = ContextCompat.getColor(context, R.color.green_500)
+        }
+        else {
+            paint.color = ContextCompat.getColor(context, R.color.green_700) // Change the progress bar color
+        }
+
         invalidate()
     }
 

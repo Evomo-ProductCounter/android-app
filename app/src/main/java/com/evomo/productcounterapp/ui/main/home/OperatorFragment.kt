@@ -34,6 +34,7 @@ import com.evomo.productcounterapp.ui.main.MainActivity
 import com.evomo.productcounterapp.ui.main.customview.BulletChartView
 import com.evomo.productcounterapp.ui.main.customview.CircularProgressBar
 import com.evomo.productcounterapp.ui.main.customview.CircularProgressBarPerf
+import com.evomo.productcounterapp.utils.DateHelper
 import com.evomo.productcounterapp.utils.SettingPreferences
 import com.evomo.productcounterapp.utils.SettingViewModel
 import com.evomo.productcounterapp.utils.SettingViewModelFactory
@@ -79,6 +80,8 @@ class OperatorFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.date.text = DateHelper.getCurrentDateNoTime()
+
         val pref = SettingPreferences.getInstance((activity as MainActivity).dataStore)
         val settingViewModel = ViewModelProvider(this, SettingViewModelFactory(pref)).get(
             SettingViewModel::class.java
@@ -103,11 +106,12 @@ class OperatorFragment : Fragment() {
             }
 
             viewModel.listRuntime.observe(viewLifecycleOwner) { dataRuntime ->
-                Log.d("RUNTIME", dataRuntime.currentRuntime.get(0).name)
+                Log.d("RUNTIME", dataRuntime.currentRuntime[0].name)
 
                 OEESocket = okHttpClient.newWebSocket(createRequestOEE(), OEESocketListener)
                 QuantitySocket = okHttpClient.newWebSocket(createRequestQuantity(), QuantitySocketListener)
 
+                binding.machineName.text = dataRuntime.currentRuntime[0].machine.name
             }
 
             val range = Range()
@@ -126,6 +130,7 @@ class OperatorFragment : Fragment() {
             range3.to = 100.0
 
             var halfGauge = binding.halfGauge
+
             //add color ranges to gauge
             halfGauge.addRange(range)
             halfGauge.addRange(range2)

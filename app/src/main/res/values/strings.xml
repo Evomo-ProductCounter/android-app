@@ -33,6 +33,7 @@
     <string name="title_history">History</string>
     <string name="title_profile">Profile</string>
     <string name="title_welcome">Welcome, %s</string>
+    <string name="title_operator">Operator</string>
 
     <string name="title_machine_overview">Machine Overview</string>
 
@@ -95,6 +96,9 @@
     <string name="input_username">Input username</string>
     <string name="input_password">Input password</string>
     <string name="title_activity_base">BaseActivity</string>
+
+    <string name="under_dev">Under Development</string>
+
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
