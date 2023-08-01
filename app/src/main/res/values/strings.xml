@@ -75,9 +75,11 @@
     <string name="total_count">Total Count</string>
     <string name="in_out">In &amp; Out</string>
     <string name="dummy_number">100000</string>
+    <string name="dummy_zero">0</string>
 
     <string name="oee">OEE</string>
     <string name="dummy_percentage">73,4 %</string>
+    <string name="dummy_zero_percentage">0 %</string>
     <string name="availability">Availability</string>
     <string name="performance">Performance</string>
     <string name="quality">Quality</string>

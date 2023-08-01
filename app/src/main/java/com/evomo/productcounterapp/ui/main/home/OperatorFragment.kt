@@ -3,13 +3,18 @@ package com.evomo.productcounterapp.ui.main.home
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.InputType
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
+import android.view.ViewGroup.MarginLayoutParams
+import android.view.WindowManager
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.TableLayout
+import android.widget.TableRow
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -17,12 +22,6 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import com.anychart.AnyChart
-import com.anychart.AnyChartView
-import com.anychart.chart.common.dataentry.SingleValueDataSet
-import com.anychart.charts.LinearGauge
-import com.anychart.enums.*
-import com.anychart.scales.OrdinalColor
 import com.ekn.gruzer.gaugelibrary.Range
 import com.evomo.productcounterapp.R
 import com.evomo.productcounterapp.data.model.Machine
@@ -38,7 +37,6 @@ import com.evomo.productcounterapp.utils.DateHelper
 import com.evomo.productcounterapp.utils.SettingPreferences
 import com.evomo.productcounterapp.utils.SettingViewModel
 import com.evomo.productcounterapp.utils.SettingViewModelFactory
-import com.github.mikephil.charting.data.PieEntry
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -81,6 +79,17 @@ class OperatorFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.date.text = DateHelper.getCurrentDateNoTime()
+
+        // Calculate half of the screen width and height
+        val displayMetrics = DisplayMetrics()
+        (binding.progressBar.context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.defaultDisplay?.getMetrics(displayMetrics)
+        val screenWidth = displayMetrics.widthPixels
+        val screenHeight = displayMetrics.heightPixels
+        val halfScreenWidth = screenWidth / 2
+        val halfScreenHeight = screenHeight / 2
+
+        // Set the margin to half of the screen size
+        setMarginToView(binding.progressBar, halfScreenWidth, halfScreenHeight)
 
         val pref = SettingPreferences.getInstance((activity as MainActivity).dataStore)
         val settingViewModel = ViewModelProvider(this, SettingViewModelFactory(pref)).get(
@@ -140,6 +149,10 @@ class OperatorFragment : Fragment() {
             halfGauge.minValue = 0.0
             halfGauge.maxValue = 100.0
 
+            viewModel.socketStatus.observe(viewLifecycleOwner) { status ->
+                showLoading(!status)
+            }
+
             viewModel.oee.observe(viewLifecycleOwner) { dataOEE ->
 //                Log.d("DATDATDATDTATDA", dataOEE.toString())
 
@@ -159,12 +172,13 @@ class OperatorFragment : Fragment() {
 
 
             viewModel.quantity.observe(viewLifecycleOwner) { dataQuantity ->
-                Log.d("QUQUQUQUQU", dataQuantity.toString())
+//                Log.d("QUQUQUQUQU", dataQuantity.toString())
 
                 binding.totalNum.text = dataQuantity.data.total.toString()
                 binding.goodNum.text = dataQuantity.data.good.toString()
                 binding.rejectNum.text = dataQuantity.data.defect.toString()
             }
+
 //            viewModel.getMachines()
 //
 //            viewModel.isLoading.observe(activity as AppCompatActivity) { loading ->
@@ -207,6 +221,15 @@ class OperatorFragment : Fragment() {
         addRowToTable(tableLayout, "07:00:00", "Downtime 1", "00:08:00")
         addRowToTable(tableLayout, "07:08:00", "Downtime 2", "00:00:30")
         addRowToTable(tableLayout, "07:53:00", "Downtime 3", "00:01:00")
+    }
+
+    private fun setMarginToView(view: View, marginWidth: Int, marginHeight: Int) {
+        // Create a new layout params to apply margins
+        val layoutParams = view.layoutParams as MarginLayoutParams
+        layoutParams.setMargins(marginWidth, marginHeight, marginWidth, marginHeight)
+
+        // Apply the layout params to the view
+        view.layoutParams = layoutParams
     }
 
     private fun addRowToTable(tableLayout: TableLayout, item1: String, item2: String, item3: String) {
@@ -285,6 +308,14 @@ class OperatorFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        OEESocket?.close(1000, "Canceled manually.")
+        QuantitySocket?.close(1000, "Canceled manually.")
         okHttpClient.dispatcher.executorService.shutdown()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        OEESocket?.close(1000, "Canceled manually.")
+        QuantitySocket?.close(1000, "Canceled manually.")
     }
 }
