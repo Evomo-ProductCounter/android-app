@@ -308,6 +308,14 @@ class OperatorFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        OEESocket?.close(1000, "Canceled manually.")
+        QuantitySocket?.close(1000, "Canceled manually.")
         okHttpClient.dispatcher.executorService.shutdown()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        OEESocket?.close(1000, "Canceled manually.")
+        QuantitySocket?.close(1000, "Canceled manually.")
     }
 }
