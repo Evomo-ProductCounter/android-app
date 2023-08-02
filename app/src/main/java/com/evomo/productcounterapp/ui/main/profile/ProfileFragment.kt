@@ -34,7 +34,6 @@ import org.w3c.dom.Text
 
 class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
-//    private lateinit var auth: FirebaseAuth
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,58 +93,7 @@ class ProfileFragment : Fragment() {
                 setTextColor(resources.getColor(R.color.black))
             }
         }
-
-//        auth = Firebase.auth
-//        val firebaseUser = auth.currentUser
-//
-//        if (firebaseUser != null) {
-//            binding.userName.text = firebaseUser.displayName.toString()
-//            Glide.with(this)
-//                .load(firebaseUser.photoUrl.toString())
-//                .into(binding.userPhoto)
-//            binding.userEmail.text = firebaseUser.email.toString()
-//
-//            binding.logoutGroup.setOnClickListener {
-//                val builder = AlertDialog.Builder(activity, R.style.LogoutDialog)
-//                with(builder) {
-//                    setTitle(R.string.modal_logout_title)
-//                    setMessage(R.string.modal_logout_desc)
-//                    setNegativeButton(R.string.btn_cancel) { dialogInterface: DialogInterface, i: Int ->
-//                        dialogInterface.cancel()
-//                    }
-//                    setPositiveButton(R.string.btn_logout) { dialogInterface: DialogInterface, i: Int ->
-//                        signOut()
-//                    }
-//                    setIcon(R.drawable.ic_baseline_warning_24_yellow);
-//                }
-//
-//                val alertDialog = builder.create()
-//                alertDialog.show()
-//
-//                val positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
-//                with(positiveButton) {
-//                    isAllCaps = false
-//                    setTextColor(resources.getColor(R.color.red))
-//                }
-//
-//                val negativeButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
-//                with(negativeButton) {
-//                    isAllCaps = false
-//                    setTextColor(resources.getColor(R.color.black))
-//                }
-//            }
-//        }
     }
-
-//    private fun signOut() {
-//        auth.signOut()
-//        activity?.let {
-//            GoogleSignIn.getClient(it, GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build())
-//                .signOut()
-//        } // show account chooser on login
-//        startActivity(Intent(activity, LoginActivity::class.java))
-//        activity?.finish()
-//    }
 
     private fun signOut() {
         val pref = SettingPreferences.getInstance((activity as MainActivity).dataStore)
