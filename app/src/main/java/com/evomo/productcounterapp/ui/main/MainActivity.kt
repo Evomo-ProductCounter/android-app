@@ -17,25 +17,12 @@ import org.opencv.android.OpenCVLoader
 
 class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
-//    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide title bar
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        if (OpenCVLoader.initDebug()) Log.d("LOADED", "success")
-        else Log.d("LOADED", "error")
-//
-//        auth = Firebase.auth
-//        val firebaseUser = auth.currentUser
-//        if (firebaseUser == null) {
-//            // Not signed in, launch the Login activity
-//            startActivity(Intent(this, LoginActivity::class.java))
-//            finish()
-//            return
-//        }
 
         val navView: BottomNavigationView = binding.navView
 

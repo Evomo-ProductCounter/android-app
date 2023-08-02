@@ -350,7 +350,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     outFrame = rgbFrame.clone();
 
                     Rect rect = parkingBoundingRect.get(0);
-//                    Log.d("test", "Rect[0]: " + rect);
 
                     Mat roiGray = grayFrame.submat(rect);
                     MatOfDouble meandev = new MatOfDouble();
@@ -358,7 +357,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     Core.meanStdDev(roiGray, meandev, stddev);
 
                     double stdev = stddev.get(0, 0)[0];
-//                double std = Core.meanStdDev(roiGray).stddev[0];
                     double mean = Core.mean(roiGray).val[0];
                     boolean area = (stdev < 22 && mean > 53);
 
@@ -400,12 +398,10 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     if (status) {
                         setText(binding.countStatus, getResources().getString(R.string.status_active));
                         binding.statusCircle.setBackgroundColor(getResources().getColor(R.color.green_700));
-//                        binding.statusCircle.setBackground(getResources().getDrawable(R.drawable.circle_status_active));
                     }
                     else {
                         setText(binding.countStatus, getResources().getString(R.string.status_idle));
                         binding.statusCircle.setBackgroundColor(getResources().getColor(R.color.red));
-//                        binding.statusCircle.setBackground(getResources().getDrawable(R.drawable.circle_status.xml));
                     }
 
                     Scalar color;
@@ -461,8 +457,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 startSendingData();
                 Log.d("start_time", String.valueOf(start_time));
                 binding.statusCircle.setVisibility(View.VISIBLE);
-//                binding.statusCircle.setBackgroundColor(getResources().getColor(R.color.green_700));
-//                setText(binding.countStatus, getResources().getString(R.string.status_active));
                 setText(binding.countStatus, getResources().getString(R.string.status_idle));
             }
         }.start();
@@ -470,13 +464,11 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
     public void connect(Context context) {
         String serverURI = "tcp://36.92.168.180:9083";
-//        String serverURI = "tcp://broker.hivemq.com:1883";
 
         mqttClient = new MqttAndroidClient(context, serverURI, start_time.toString(), Ack.AUTO_ACK); //client bikin random (bisa timestamp)
         mqttClient.setCallback(new MqttCallback() {
             @Override
             public void connectionLost(Throwable cause) {
-//                Log.d(TAG, "Connection lost " + cause.toString());
                 Log.d(TAG, "Connection lost");
             }
 
@@ -572,6 +564,12 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             jsonObject.put(selectedParameter.toLowerCase(), tempCounted);
             jsonObject.put("speed", speed);
             jsonObject.put("waktu_kirim", waktuKirim);
+
+            if (selectedParameter.toLowerCase() == "out") {
+                jsonObject.put("end", true);
+            } else {
+                jsonObject.put("end", false);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

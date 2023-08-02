@@ -43,10 +43,8 @@ import com.github.mikephil.charting.utils.MPPointF
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
-//    private lateinit var auth: FirebaseAuth
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
-//    var machineOptions = arrayOf("Machine 1", "Machine 2", "Machine 3", "Machine 4")
     private lateinit var nameList: List<String>
     private lateinit var machineList: List<Machine>
 
@@ -74,14 +72,6 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-//        auth = Firebase.auth
-//        val firebaseUser = auth.currentUser
-//        var name = ""
-//
-//        if (firebaseUser != null) {
-//            name = firebaseUser.displayName.toString()
-//        }
 
         val pref = SettingPreferences.getInstance((activity as MainActivity).dataStore)
         val settingViewModel = ViewModelProvider(this, SettingViewModelFactory(pref)).get(
@@ -128,9 +118,6 @@ class HomeFragment : Fragment() {
             if (token == "Not Set") {
                 startActivity(Intent(activity, LoginActivity::class.java))
             }
-
-//            val viewModel = obtainViewModel(activity as AppCompatActivity, token)
-//            viewModel.getMachines()
 
             val viewModel by viewModels<HomeViewModel>(){
                 TokenViewModelFactory((activity as MainActivity).application, token)

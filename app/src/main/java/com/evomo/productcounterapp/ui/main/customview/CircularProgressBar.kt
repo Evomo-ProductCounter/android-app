@@ -75,7 +75,7 @@ class CircularProgressBar @JvmOverloads constructor(
             paint.color = ContextCompat.getColor(context, R.color.green_500)
         }
         else {
-            paint.color = ContextCompat.getColor(context, R.color.green_700) // Change the progress bar color
+            paint.color = ContextCompat.getColor(context, R.color.green_700)
         }
 
         invalidate()
