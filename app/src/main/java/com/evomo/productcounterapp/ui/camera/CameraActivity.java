@@ -572,6 +572,12 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             jsonObject.put(selectedParameter.toLowerCase(), tempCounted);
             jsonObject.put("speed", speed);
             jsonObject.put("waktu_kirim", waktuKirim);
+
+            if (selectedParameter.toLowerCase() == "out") {
+                jsonObject.put("end", true);
+            } else {
+                jsonObject.put("end", false);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
