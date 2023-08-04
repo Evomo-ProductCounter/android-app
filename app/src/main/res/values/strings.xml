@@ -69,6 +69,8 @@
     <string name="operator">Operated by %s</string>
     <string name="timer">0</string>
 
+    <string name="no_runtime">No Runtime Running</string>
+
     <string name="colon">%s:</string>
 
     <string name="info">Information</string>

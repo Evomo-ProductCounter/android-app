@@ -7,14 +7,17 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
+import android.view.ViewGroup.VISIBLE
 import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -115,12 +118,28 @@ class OperatorFragment : Fragment() {
             }
 
             viewModel.listRuntime.observe(viewLifecycleOwner) { dataRuntime ->
-                Log.d("RUNTIME", dataRuntime.currentRuntime[0].name)
+                if (dataRuntime.currentRuntime != null) {
+                    OEESocket = okHttpClient.newWebSocket(createRequestOEE(), OEESocketListener)
+                    QuantitySocket = okHttpClient.newWebSocket(createRequestQuantity(), QuantitySocketListener)
 
-                OEESocket = okHttpClient.newWebSocket(createRequestOEE(), OEESocketListener)
-                QuantitySocket = okHttpClient.newWebSocket(createRequestQuantity(), QuantitySocketListener)
-
-                binding.machineName.text = dataRuntime.currentRuntime[0].machine.name
+                    binding.machineName.text = dataRuntime.currentRuntime[0].machine.name
+                }
+                else {
+                    binding.homeScroll.setScrolling(false)
+                    binding.noRuntime.visibility = VISIBLE
+                    setPaddingToBottomOfScreen(binding.noRuntime)
+                    binding.machineName.visibility = GONE
+                    binding.date.visibility = GONE
+                    binding.cardInfo.visibility = GONE
+                    binding.cardGauge.visibility = GONE
+                    binding.cardTimeline.visibility = GONE
+//                    binding.bulletChart.visibility = INVISIBLE
+//                    binding.dropdownTimeline.visibility = INVISIBLE
+//                    binding.timelineTitle.visibility = INVISIBLE
+//                    binding.underDevelopment.visibility = INVISIBLE
+//                    binding.blurBackground.visibility = INVISIBLE
+                    showLoading(false)
+                }
             }
 
             val range = Range()
@@ -221,6 +240,14 @@ class OperatorFragment : Fragment() {
         addRowToTable(tableLayout, "07:00:00", "Downtime 1", "00:08:00")
         addRowToTable(tableLayout, "07:08:00", "Downtime 2", "00:00:30")
         addRowToTable(tableLayout, "07:53:00", "Downtime 3", "00:01:00")
+    }
+
+    private fun setPaddingToBottomOfScreen(textView: TextView) {
+        val displayMetrics = DisplayMetrics()
+        activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
+        val screenHeight = displayMetrics.heightPixels
+        val paddingToBottom = screenHeight - textView.height
+        textView.setPadding(textView.paddingLeft, textView.paddingTop, textView.paddingRight, paddingToBottom)
     }
 
     private fun setMarginToView(view: View, marginWidth: Int, marginHeight: Int) {
