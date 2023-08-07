@@ -317,6 +317,8 @@ class OperatorFragment : Fragment() {
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+
+        binding.homeScroll.setScrolling(!isLoading)
     }
 
     private fun createRequestOEE(): Request {
