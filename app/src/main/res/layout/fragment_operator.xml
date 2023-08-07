@@ -361,7 +361,8 @@
                     android:paddingLeft="16dp"
                     android:paddingTop="16dp"
                     android:paddingRight="16dp"
-                    android:paddingBottom="16dp">
+                    android:paddingBottom="16dp"
+                    >
 
                     <TextView
                         android:id="@+id/timelineTitle"
@@ -386,7 +387,8 @@
                         android:textColor="@color/black"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:visibility="gone">
 
                         <AutoCompleteTextView
                             android:id="@+id/autocomplete_timeline_operator"
@@ -407,7 +409,7 @@
                         android:layout_marginTop="32dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/dropdownTimeline"/>
+                        app:layout_constraintTop_toBottomOf="@id/timelineTitle"/>
 
                     <TableLayout
                         android:id="@+id/tableLayout"
@@ -429,7 +431,8 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:visibility="invisible">
 
                     <View
                         android:id="@+id/blur_background"

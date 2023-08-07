@@ -17,7 +17,6 @@ import android.widget.AutoCompleteTextView
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -43,6 +42,10 @@ import com.evomo.productcounterapp.utils.SettingViewModelFactory
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
+import org.json.JSONObject
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 
 class OperatorFragment : Fragment() {
@@ -58,9 +61,11 @@ class OperatorFragment : Fragment() {
 
     private lateinit var OEESocketListener: WebSocketListener
     private lateinit var QuantitySocketListener: WebSocketListener
+    private lateinit var DowntimeSocketListener: WebSocketListener
     private val okHttpClient = OkHttpClient()
     private var OEESocket: WebSocket? = null
     private var QuantitySocket: WebSocket? = null
+    private var DowntimeSocket: WebSocket? = null
 
     lateinit var UID : String
     var scope = "operator"
@@ -111,6 +116,7 @@ class OperatorFragment : Fragment() {
 
             OEESocketListener = WebSocketListener(viewModel, "OEE")
             QuantitySocketListener = WebSocketListener(viewModel, "Quantity")
+            DowntimeSocketListener = WebSocketListener(viewModel, "Downtime")
 
             settingViewModel.getUID().observe(viewLifecycleOwner) { userId ->
                 viewModel.getRuntime(userId)
@@ -121,6 +127,15 @@ class OperatorFragment : Fragment() {
                 if (dataRuntime.currentRuntime != null) {
                     OEESocket = okHttpClient.newWebSocket(createRequestOEE(), OEESocketListener)
                     QuantitySocket = okHttpClient.newWebSocket(createRequestQuantity(), QuantitySocketListener)
+                    DowntimeSocket = okHttpClient.newWebSocket(createRequestDowntime(), DowntimeSocketListener)
+
+                    val jsonObject = JSONObject()
+                    jsonObject.put("sort", "asc");
+                    jsonObject.put("machine_id", dataRuntime.currentRuntime[0].machine.id);
+                    jsonObject.put("runtime_id", dataRuntime.currentRuntime[0].id);
+                    DowntimeSocket!!.send(
+                        jsonObject.toString()
+                    )
 
                     binding.machineName.text = dataRuntime.currentRuntime[0].machine.name
                 }
@@ -133,11 +148,6 @@ class OperatorFragment : Fragment() {
                     binding.cardInfo.visibility = GONE
                     binding.cardGauge.visibility = GONE
                     binding.cardTimeline.visibility = GONE
-//                    binding.bulletChart.visibility = INVISIBLE
-//                    binding.dropdownTimeline.visibility = INVISIBLE
-//                    binding.timelineTitle.visibility = INVISIBLE
-//                    binding.underDevelopment.visibility = INVISIBLE
-//                    binding.blurBackground.visibility = INVISIBLE
                     showLoading(false)
                 }
             }
@@ -168,13 +178,14 @@ class OperatorFragment : Fragment() {
             halfGauge.minValue = 0.0
             halfGauge.maxValue = 100.0
 
+            val tableLayout = binding.tableLayout
+            addHeader(tableLayout)
+
             viewModel.socketStatus.observe(viewLifecycleOwner) { status ->
                 showLoading(!status)
             }
 
             viewModel.oee.observe(viewLifecycleOwner) { dataOEE ->
-//                Log.d("DATDATDATDTATDA", dataOEE.toString())
-
                 halfGauge.value = dataOEE.data.oee
                 val formattedPercentage = String.format("%.1f %%", dataOEE.data.oee)
                 binding.gaugePercentage.text = formattedPercentage
@@ -189,44 +200,37 @@ class OperatorFragment : Fragment() {
                 qualityPercent.setProgress(dataOEE.data.quality.toInt())
             }
 
-
             viewModel.quantity.observe(viewLifecycleOwner) { dataQuantity ->
-//                Log.d("QUQUQUQUQU", dataQuantity.toString())
-
                 binding.totalNum.text = dataQuantity.data.total.toString()
                 binding.goodNum.text = dataQuantity.data.good.toString()
                 binding.rejectNum.text = dataQuantity.data.defect.toString()
             }
 
-//            viewModel.getMachines()
-//
-//            viewModel.isLoading.observe(activity as AppCompatActivity) { loading ->
-//                showLoading(loading)
-//            }
-//
-//            machineTextView = binding.autocompleteMesinOperator
-//            machineTextView!!.inputType = InputType.TYPE_NULL
-//
-//            viewModel.listMachine.observe(activity as AppCompatActivity) { list ->
-//                if (list.isEmpty()) {
-//                    viewModel.getMachines()
+            viewModel.downtime.observe(viewLifecycleOwner) { dataDowntime ->
+//                while (tableLayout.childCount > 0) {
+//                    val rowToRemove = tableLayout.getChildAt(0) as? TableRow
+//                    tableLayout.removeView(rowToRemove)
 //                }
-//                else {
-//                    machineList = list
-//                    nameList = list.map { item ->
-//                        item.name
-//                    }
-//
-//                    machineAdapterItems =
-//                        context?.let { ArrayAdapter(it, R.layout.dropdown_items, nameList) }
-//                    machineTextView!!.setAdapter(machineAdapterItems)
-//                    machineTextView!!.onItemClickListener =
-//                        AdapterView.OnItemClickListener { parent, view, position, id ->
-//                            val item = parent.getItemAtPosition(position).toString()
-//                            selectedMachine = item
-//                        }
-//                }
-//            }
+
+                while (tableLayout.childCount > 1) {
+                    tableLayout.removeView(tableLayout.getChildAt(tableLayout.childCount - 1))
+                }
+
+                for (i in 0 until dataDowntime.data.size) {
+                    val downtime = dataDowntime.data[i]
+                    val instantStart = Instant.parse(downtime.startTime)
+                    val instantEnd = Instant.parse(downtime.endTime)
+
+                    val localStartTime = instantStart.atZone(ZoneId.systemDefault())
+                    val localEndTime = instantEnd.atZone(ZoneId.systemDefault())
+
+                    val timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss")
+
+                    val formattedStartTime = timeFormat.format(localStartTime)
+                    val formattedEndTime = timeFormat.format(localEndTime)
+                    addRowToTable(tableLayout,formattedStartTime , "Downtime ${i}", formattedEndTime)
+                }
+            }
         }
 
         val bulletChartView: BulletChartView = binding.bulletChart
@@ -234,12 +238,6 @@ class OperatorFragment : Fragment() {
         bulletChartView.currentValue = 150f
         bulletChartView.comparativeValue = 100f
 
-        val tableLayout = binding.tableLayout
-        addHeader(tableLayout)
-        // Add rows dynamically
-        addRowToTable(tableLayout, "07:00:00", "Downtime 1", "00:08:00")
-        addRowToTable(tableLayout, "07:08:00", "Downtime 2", "00:00:30")
-        addRowToTable(tableLayout, "07:53:00", "Downtime 3", "00:01:00")
     }
 
     private fun setPaddingToBottomOfScreen(textView: TextView) {
@@ -330,6 +328,13 @@ class OperatorFragment : Fragment() {
 
     private fun createRequestQuantity(): Request {
         val websocketURL = "wss://oeesocket.jeager.io/machine/stream/quantity?x-authenticated-userid=${UID}&x-authenticated-scope=${scope}&x-consumer-custom-id=${consumerCustomId}"
+        return Request.Builder()
+            .url(websocketURL)
+            .build()
+    }
+
+    private fun createRequestDowntime(): Request {
+        val websocketURL = "wss://oeesocket.jeager.io/machine/stream/downtime?x-authenticated-userid=${UID}&x-authenticated-scope=${scope}&x-consumer-custom-id=${consumerCustomId}"
         return Request.Builder()
             .url(websocketURL)
             .build()

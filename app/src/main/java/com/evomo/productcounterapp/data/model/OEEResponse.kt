@@ -183,4 +183,6 @@ data class CurrentRuntimeInfoItem(
 
 	@field:SerializedName("id")
 	val id: String
+
+	// di downtime hrsnya ada status sm sector_id
 ) : Parcelable

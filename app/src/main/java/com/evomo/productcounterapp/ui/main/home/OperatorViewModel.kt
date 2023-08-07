@@ -26,6 +26,9 @@ class OperatorViewModel (application: Application, token: String) : ViewModel() 
     private val _quantity = MutableLiveData<DataQuantity>()
     val quantity: LiveData<DataQuantity> = _quantity
 
+    private val _downtime = MutableLiveData<DataDowntime>()
+    val downtime: LiveData<DataDowntime> = _downtime
+
     fun addOEEData(data: DataOEE) = viewModelScope.launch(Dispatchers.Main) {
         if (_socketStatus.value == true) {
             _oee.value = data
@@ -35,6 +38,12 @@ class OperatorViewModel (application: Application, token: String) : ViewModel() 
     fun addQuantityData(data: DataQuantity) = viewModelScope.launch(Dispatchers.Main) {
         if (_socketStatus.value == true) {
             _quantity.value = data
+        }
+    }
+
+    fun addDowntimeData(data: DataDowntime) = viewModelScope.launch(Dispatchers.Main) {
+        if (_socketStatus.value == true) {
+            _downtime.value = data
         }
     }
 

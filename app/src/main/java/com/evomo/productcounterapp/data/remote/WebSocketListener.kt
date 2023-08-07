@@ -1,6 +1,7 @@
 package com.evomo.productcounterapp.data.remote
 
 import android.util.Log
+import com.evomo.productcounterapp.data.model.DowntimeResponse
 import com.evomo.productcounterapp.data.model.OEEResponse
 import com.evomo.productcounterapp.data.model.QuantityResponse
 import com.evomo.productcounterapp.ui.main.home.OperatorViewModel
@@ -21,15 +22,16 @@ class WebSocketListener(private val viewModel: OperatorViewModel, private val ty
 
     override fun onMessage(webSocket: WebSocket, text: String) {
         super.onMessage(webSocket, text)
-//        viewModel.addMessage(Pair(false, text))
         if (type == "OEE") {
             val data = Gson().fromJson(text, OEEResponse::class.java)
-//            Log.d("OEE", data.data.data.performance.toString())
             viewModel.addOEEData(data.data)
+        }
+        else if (type == "Downtime") {
+            val data = Gson().fromJson(text, DowntimeResponse::class.java)
+            viewModel.addDowntimeData(data.data)
         }
         else {
             val data = Gson().fromJson(text, QuantityResponse::class.java)
-            Log.d("QUANTITY", data.data.toString())
             viewModel.addQuantityData(data.data)
         }
         Log.d(TAG, "onMessage: $text")
