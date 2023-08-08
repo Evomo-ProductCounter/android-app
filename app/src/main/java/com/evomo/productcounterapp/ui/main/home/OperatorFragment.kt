@@ -3,6 +3,7 @@ package com.evomo.productcounterapp.ui.main.home
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import android.view.ViewGroup.VISIBLE
 import android.view.WindowManager
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.TableLayout
@@ -39,11 +41,13 @@ import com.evomo.productcounterapp.utils.DateHelper
 import com.evomo.productcounterapp.utils.SettingPreferences
 import com.evomo.productcounterapp.utils.SettingViewModel
 import com.evomo.productcounterapp.utils.SettingViewModelFactory
+import com.github.mikephil.charting.data.PieEntry
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
 import org.json.JSONObject
 import java.time.Instant
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -52,12 +56,14 @@ class OperatorFragment : Fragment() {
     private lateinit var binding: FragmentOperatorBinding
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
-    private lateinit var nameList: List<String>
+    private var timeList: MutableList<String> = mutableListOf<String>()
     private lateinit var machineList: List<Machine>
 
-    var machineTextView: AutoCompleteTextView? = null
-    var machineAdapterItems: ArrayAdapter<String>? = null
-    private var selectedMachine: String? = null
+    var timeTextView: AutoCompleteTextView? = null
+    var timeAdapterItems: ArrayAdapter<String>? = null
+    private var selectedTime: String? = null
+    private var selectedStartTime: String? = null
+    private var selectedEndTime: String? = null
 
     private lateinit var OEESocketListener: WebSocketListener
     private lateinit var QuantitySocketListener: WebSocketListener
@@ -66,6 +72,9 @@ class OperatorFragment : Fragment() {
     private var OEESocket: WebSocket? = null
     private var QuantitySocket: WebSocket? = null
     private var DowntimeSocket: WebSocket? = null
+
+    private val timeFormatNoSeconds = DateTimeFormatter.ofPattern("HH:mm")
+    private val timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss")
 
     lateinit var UID : String
     var scope = "operator"
@@ -98,6 +107,31 @@ class OperatorFragment : Fragment() {
 
         // Set the margin to half of the screen size
         setMarginToView(binding.progressBar, halfScreenWidth, halfScreenHeight)
+
+        val bulletChartView: BulletChartView = binding.bulletChart
+        bulletChartView.setMaxValue(100f)
+        bulletChartView.setPerformanceRange(20f, 100f)
+
+        // set dropdown timeline
+        // Create an array of time options from 07:00 to 24:00 with 1-hour interval
+
+//        for (hour in 7..24) {
+//            val startTime = String.format("%02d:00", hour)
+//            val endTime = if (hour == 24) "00:00" else String.format("%02d:00", hour + 1)
+//            timeList.add("$startTime - $endTime")
+//        }
+
+        for (hour in 7..23) {
+            val startTime = String.format("%02d:00", hour)
+            val endTime = String.format("%02d:00", hour + 1)
+            timeList.add("$startTime - $endTime")
+        }
+
+        timeTextView = binding.autocompleteTimelineOperator
+        timeTextView!!.inputType = InputType.TYPE_NULL
+        timeAdapterItems =
+            context?.let { ArrayAdapter(it, R.layout.dropdown_items, timeList) }
+        timeTextView!!.setAdapter(timeAdapterItems)
 
         val pref = SettingPreferences.getInstance((activity as MainActivity).dataStore)
         val settingViewModel = ViewModelProvider(this, SettingViewModelFactory(pref)).get(
@@ -207,11 +241,6 @@ class OperatorFragment : Fragment() {
             }
 
             viewModel.downtime.observe(viewLifecycleOwner) { dataDowntime ->
-//                while (tableLayout.childCount > 0) {
-//                    val rowToRemove = tableLayout.getChildAt(0) as? TableRow
-//                    tableLayout.removeView(rowToRemove)
-//                }
-
                 while (tableLayout.childCount > 1) {
                     tableLayout.removeView(tableLayout.getChildAt(tableLayout.childCount - 1))
                 }
@@ -224,20 +253,62 @@ class OperatorFragment : Fragment() {
                     val localStartTime = instantStart.atZone(ZoneId.systemDefault())
                     val localEndTime = instantEnd.atZone(ZoneId.systemDefault())
 
-                    val timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss")
-
                     val formattedStartTime = timeFormat.format(localStartTime)
                     val formattedEndTime = timeFormat.format(localEndTime)
                     addRowToTable(tableLayout,formattedStartTime , "Downtime ${i}", formattedEndTime)
                 }
+
+                timeTextView!!.onItemClickListener =
+                    AdapterView.OnItemClickListener { parent, view, position, id ->
+                        val item = parent.getItemAtPosition(position).toString()
+                        val times = item.split(" - ")
+                        selectedStartTime = times[0]
+                        selectedEndTime = times[1]
+
+                        val startTime = LocalTime.parse(selectedStartTime, timeFormatNoSeconds)
+                        val endTime = LocalTime.parse(selectedEndTime, timeFormatNoSeconds)
+                        val durationsList: MutableList<Pair<Float, Float>> = mutableListOf()
+
+                        for (i in 0 until dataDowntime.data.size) {
+                            val downtime = dataDowntime.data[i]
+
+                            val instantStart = Instant.parse(downtime.startTime)
+                            val instantEnd = Instant.parse(downtime.endTime)
+
+                            val localStartTime = instantStart.atZone(ZoneId.systemDefault()).toLocalTime()
+                            val localEndTime = instantEnd.atZone(ZoneId.systemDefault()).toLocalTime()
+
+//                            if ((localStartTime.hour == startTime.hour) && (localEndTime.hour == endTime.hour)) {
+                            if (localStartTime.hour == startTime.hour) {
+                                var startMinute = localStartTime.minute.toFloat()
+                                var endMinute = localEndTime.minute.toFloat()
+
+                                if ((localEndTime.hour == endTime.hour) && (endMinute > 0)) {
+                                    durationsList.add(startMinute to 60f)
+                                }
+                                else {
+                                    durationsList.add(startMinute to localEndTime.minute.toFloat())
+                                }
+                            }
+                            else if (localEndTime.hour == startTime.hour) {
+                                durationsList.add(0f to localEndTime.minute.toFloat())
+                            }
+                        }
+//
+//                        bulletChartView.setDurations(
+//                            *durationsList.toTypedArray()
+//                        )
+
+                        bulletChartView.clearDurations()
+
+                        if (durationsList.isNotEmpty()) {
+                            bulletChartView.setDurations(
+                                *durationsList.toTypedArray()
+                            )
+                        }
+                    }
             }
         }
-
-        val bulletChartView: BulletChartView = binding.bulletChart
-        bulletChartView.targetValue = 200f
-        bulletChartView.currentValue = 150f
-        bulletChartView.comparativeValue = 100f
-
     }
 
     private fun setPaddingToBottomOfScreen(textView: TextView) {
@@ -264,7 +335,7 @@ class OperatorFragment : Fragment() {
             TableRow.LayoutParams.WRAP_CONTENT,
         )
         tableRow.layoutParams = layoutParams
-        tableRow.setPadding(24, 8, 8, 16)
+        tableRow.setPadding(48, 8, 8, 16)
 
         val textView1 = TextView(activity)
         textView1.text = item1
@@ -292,7 +363,7 @@ class OperatorFragment : Fragment() {
             TableRow.LayoutParams.WRAP_CONTENT,
         )
         tableRow.layoutParams = layoutParams
-        tableRow.setPadding(24, 24, 8, 16)
+        tableRow.setPadding(48, 24, 8, 16)
 
         val textView1 = TextView(activity)
         textView1.text = getString(R.string.stop_time)
