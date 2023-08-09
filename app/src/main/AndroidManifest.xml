@@ -24,7 +24,7 @@
         android:theme="@style/Theme.ProductCounterApp"
         tools:targetApi="31">
         <activity
-            android:name=".ui.camera.LearningCameraActivity"
+            android:name=".ui.camera.MLCameraActivity"
             android:exported="false" />
         <!-- <activity -->
         <!-- android:name=".BaseActivity" -->
