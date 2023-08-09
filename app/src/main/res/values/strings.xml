@@ -103,6 +103,10 @@
 
     <string name="under_dev">Under Development</string>
 
+    <string name="choose_model">Choose the Model</string>
+    <string name="opencv">OpenCV</string>
+    <string name="model_opencv">Pre-trained Model + OpenCV</string>
+
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>

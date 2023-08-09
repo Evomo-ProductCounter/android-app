@@ -3,10 +3,8 @@ package com.evomo.productcounterapp.ui
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.evomo.productcounterapp.ui.login.LoginViewModel
-import com.evomo.productcounterapp.ui.main.history.HistoryViewModel
 import com.evomo.productcounterapp.ui.main.home.HomeViewModel
-import com.evomo.productcounterapp.ui.main.home.OperatorViewModel
+import com.evomo.productcounterapp.ui.main.operator.OperatorViewModel
 
 class TokenViewModelFactory(private val mApplication: Application, private val token:String) : ViewModelProvider.NewInstanceFactory() {
     companion object {

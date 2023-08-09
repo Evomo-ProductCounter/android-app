@@ -1,4 +1,4 @@
-package com.evomo.productcounterapp.ui.main.home
+package com.evomo.productcounterapp.ui.main.operator
 
 import android.app.Application
 import android.util.Log

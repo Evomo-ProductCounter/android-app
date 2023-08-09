@@ -4,7 +4,7 @@ import android.util.Log
 import com.evomo.productcounterapp.data.model.DowntimeResponse
 import com.evomo.productcounterapp.data.model.OEEResponse
 import com.evomo.productcounterapp.data.model.QuantityResponse
-import com.evomo.productcounterapp.ui.main.home.OperatorViewModel
+import com.evomo.productcounterapp.ui.main.operator.OperatorViewModel
 import com.google.gson.Gson
 import okhttp3.Response
 import okhttp3.WebSocket

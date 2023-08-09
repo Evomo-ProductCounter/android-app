@@ -58,6 +58,8 @@ class HomeFragment : Fragment() {
     private lateinit var pieChart : PieChart
     private lateinit var userName: String
 
+    private val dialogFragment = ModelDialogFragment()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -90,15 +92,17 @@ class HomeFragment : Fragment() {
         binding.date.text = DateHelper.getCurrentDateNoTime()
 
         binding.cameraButton.setOnClickListener{
-//            CameraActivity.cameraWidth = 0
-//            CameraActivity.cameraHeight = 0
-//            CameraActivity.centerX = 0
-//            CameraActivity.centerY = 0
-//            CameraActivity.machineOptions = nameList.toTypedArray()
-//            CameraActivity.machinesList = machineList.toTypedArray()
-//            CameraActivity.userName = userName
-            val intent = Intent(activity, MLCameraActivity::class.java)
-            startActivity(intent)
+            CameraActivity.cameraWidth = 0
+            CameraActivity.cameraHeight = 0
+            CameraActivity.centerX = 0
+            CameraActivity.centerY = 0
+            CameraActivity.machineOptions = nameList.toTypedArray()
+            CameraActivity.machinesList = machineList.toTypedArray()
+            CameraActivity.userName = userName
+
+            dialogFragment.show(childFragmentManager, ModelDialogFragment::class.java.simpleName)
+//            val intent = Intent(activity, MLCameraActivity::class.java)
+//            startActivity(intent)
         }
 
         pieChart = binding.pieChart

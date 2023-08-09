@@ -1,4 +1,4 @@
-package com.evomo.productcounterapp.ui.main.home
+package com.evomo.productcounterapp.ui.main.operator
 
 import android.content.Context
 import android.content.Intent
@@ -41,7 +41,6 @@ import com.evomo.productcounterapp.utils.DateHelper
 import com.evomo.productcounterapp.utils.SettingPreferences
 import com.evomo.productcounterapp.utils.SettingViewModel
 import com.evomo.productcounterapp.utils.SettingViewModelFactory
-import com.github.mikephil.charting.data.PieEntry
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
