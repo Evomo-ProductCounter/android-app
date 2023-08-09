@@ -113,17 +113,9 @@ class OperatorFragment : Fragment() {
         bulletChartView.setPerformanceRange(20f, 100f)
 
         // set dropdown timeline
-        // Create an array of time options from 07:00 to 24:00 with 1-hour interval
-
-//        for (hour in 7..24) {
-//            val startTime = String.format("%02d:00", hour)
-//            val endTime = if (hour == 24) "00:00" else String.format("%02d:00", hour + 1)
-//            timeList.add("$startTime - $endTime")
-//        }
-
-        for (hour in 7..23) {
+        for (hour in 0..23) {
             val startTime = String.format("%02d:00", hour)
-            val endTime = String.format("%02d:00", hour + 1)
+            val endTime = String.format("%02d:00", (hour + 1) % 24)
             timeList.add("$startTime - $endTime")
         }
 
@@ -278,7 +270,6 @@ class OperatorFragment : Fragment() {
                             val localStartTime = instantStart.atZone(ZoneId.systemDefault()).toLocalTime()
                             val localEndTime = instantEnd.atZone(ZoneId.systemDefault()).toLocalTime()
 
-//                            if ((localStartTime.hour == startTime.hour) && (localEndTime.hour == endTime.hour)) {
                             if (localStartTime.hour == startTime.hour) {
                                 var startMinute = localStartTime.minute.toFloat()
                                 var endMinute = localEndTime.minute.toFloat()
@@ -294,11 +285,6 @@ class OperatorFragment : Fragment() {
                                 durationsList.add(0f to localEndTime.minute.toFloat())
                             }
                         }
-//
-//                        bulletChartView.setDurations(
-//                            *durationsList.toTypedArray()
-//                        )
-
                         bulletChartView.clearDurations()
 
                         if (durationsList.isNotEmpty()) {
