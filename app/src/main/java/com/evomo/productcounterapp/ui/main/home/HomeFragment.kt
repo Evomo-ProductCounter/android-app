@@ -20,12 +20,12 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import com.evomo.productcounterapp.ui.camera.MLCameraActivity
 import com.evomo.productcounterapp.R
 import com.evomo.productcounterapp.data.db.MachineInfo
 import com.evomo.productcounterapp.data.model.Machine
 import com.evomo.productcounterapp.databinding.FragmentHomeBinding
 import com.evomo.productcounterapp.ui.TokenViewModelFactory
-import com.evomo.productcounterapp.ui.ViewModelFactory
 import com.evomo.productcounterapp.ui.camera.CameraActivity
 import com.evomo.productcounterapp.ui.login.LoginActivity
 import com.evomo.productcounterapp.ui.main.MainActivity
@@ -90,14 +90,14 @@ class HomeFragment : Fragment() {
         binding.date.text = DateHelper.getCurrentDateNoTime()
 
         binding.cameraButton.setOnClickListener{
-            CameraActivity.cameraWidth = 0
-            CameraActivity.cameraHeight = 0
-            CameraActivity.centerX = 0
-            CameraActivity.centerY = 0
-            CameraActivity.machineOptions = nameList.toTypedArray()
-            CameraActivity.machinesList = machineList.toTypedArray()
-            CameraActivity.userName = userName
-            val intent = Intent(activity, CameraActivity::class.java)
+//            CameraActivity.cameraWidth = 0
+//            CameraActivity.cameraHeight = 0
+//            CameraActivity.centerX = 0
+//            CameraActivity.centerY = 0
+//            CameraActivity.machineOptions = nameList.toTypedArray()
+//            CameraActivity.machinesList = machineList.toTypedArray()
+//            CameraActivity.userName = userName
+            val intent = Intent(activity, MLCameraActivity::class.java)
             startActivity(intent)
         }
 
