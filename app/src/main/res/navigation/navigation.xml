@@ -25,7 +25,7 @@
 
     <fragment
         android:id="@+id/navigation_operator"
-        android:name="com.evomo.productcounterapp.ui.main.home.OperatorFragment"
+        android:name="com.evomo.productcounterapp.ui.main.operator.OperatorFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_operator"/>
 </navigation>
