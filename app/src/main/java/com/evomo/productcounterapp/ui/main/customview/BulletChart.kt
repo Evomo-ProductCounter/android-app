@@ -9,6 +9,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.evomo.productcounterapp.R
 
 class BulletChartView @JvmOverloads constructor(
@@ -28,6 +29,7 @@ class BulletChartView @JvmOverloads constructor(
         color = Color.BLACK
         strokeWidth = 2f
         textSize = 24f
+        typeface = ResourcesCompat.getFont(context, R.font.poppins_semibold)
     }
 
     // Draw border lines around the chart
@@ -86,17 +88,17 @@ class BulletChartView @JvmOverloads constructor(
             canvas.drawText(text, textX, textY, minuteStampPaint)
         }
 
-        // Draw the top border line
-        canvas.drawLine(0f, height / 4f, width, height / 4f, borderPaint)
-
-        // Draw the bottom border line
-        canvas.drawLine(0f, height * 3f / 4f, width, height * 3f / 4f, borderPaint)
-
-        // Draw the left border line
-        canvas.drawLine(0f, height / 4f, 0f, height * 3f / 4f, borderPaint)
-
-        // Draw the right border line
-        canvas.drawLine(width, height / 4f, width, height * 3f / 4f, borderPaint)
+//        // Draw the top border line
+//        canvas.drawLine(0f, height / 4f, width, height / 4f, borderPaint)
+//
+//        // Draw the bottom border line
+//        canvas.drawLine(0f, height * 3f / 4f, width, height * 3f / 4f, borderPaint)
+//
+//        // Draw the left border line
+//        canvas.drawLine(0f, height / 4f, 0f, height * 3f / 4f, borderPaint)
+//
+//        // Draw the right border line
+//        canvas.drawLine(width, height / 4f, width, height * 3f / 4f, borderPaint)
     }
 
     fun setMaxValue(maxValue: Float) {
