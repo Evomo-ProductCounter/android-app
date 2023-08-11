@@ -44,12 +44,15 @@
     <string name="btn_logout">Logout</string>
     <string name="btn_cancel">Cancel</string>
     <string name="btn_try_again">Try Again</string>
-
+    <string name="btn_exit">Exit</string>
 
     <string name="modal_logout_title">Warning</string>
     <string name="modal_logout_desc">Are you sure you want to leave?</string>
     <string name="modal_login_error_title">Login Failed</string>
     <string name="modal_login_error">Wrong username or password</string>
+
+    <string name="modal_device_error_title">Launch Failed</string>
+    <string name="modal_device_error">The device doesn\'t meet the required specifications</string>
 
     <string name="last_count">Last Count: %s</string>
     <string name="no_counted">No Object Counted</string>
