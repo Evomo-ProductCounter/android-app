@@ -40,15 +40,8 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        val manufacturer = Build.MANUFACTURER
-//        val model = Build.MODEL
         val ramInMb = getTotalRAM()
         val numCores = getNumCores()
-
-//        Log.d("TEST", "Manufacturer $manufacturer")
-//        Log.d("TEST", "Model: $model")
-//        Log.d("TEST", "Total RAM: $ramInMb MB")
-//        Log.d("TEST", "Number of CPU Cores: $numCores")
 
         if (ramInMb < 4000 || numCores < 4) {
             val builder = AlertDialog.Builder(this, R.style.LogoutDialog)
