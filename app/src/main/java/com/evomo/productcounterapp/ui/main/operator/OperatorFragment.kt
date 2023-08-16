@@ -94,7 +94,7 @@ class OperatorFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.date.text = DateHelper.getCurrentDateNoTime()
+        binding.date.text = DateHelper.getCurrentDate()
 
         // Calculate half of the screen width and height
         val displayMetrics = DisplayMetrics()
