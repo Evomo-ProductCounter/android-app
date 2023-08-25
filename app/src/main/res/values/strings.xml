@@ -13,6 +13,8 @@
     <string name="title_product">Product</string>
     <string name="title_shift">Shift</string>
     <string name="title_timeline">Timeline</string>
+    <string name="title_option">Option</string>
+    <string name="title_runtime">Runtime</string>
 
     <string name="stop_time">Stop Time</string>
     <string name="downtime">Downtime</string>

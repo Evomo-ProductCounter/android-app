@@ -63,16 +63,44 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:visibility="visible" />
 
-            <TextView
-                android:id="@+id/machine_name"
-                style="@style/InfoTitle"
-                android:layout_width="wrap_content"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/dropdownRuntime"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="32dp"
-                android:text="@string/machine"
+                android:layout_marginEnd="20dp"
+                android:hint="@string/title_runtime"
+                android:minWidth="150dp"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/date"
+                app:layout_constraintWidth_default="percent">
+
+                <AutoCompleteTextView
+                    android:id="@+id/autocomplete_runtime_operator"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/poppins"
+                    android:inputType="none"
+                    android:minWidth="20dp"
+                    android:textColor="@color/black" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+<!--            <TextView-->
+<!--                android:id="@+id/machine_name"-->
+<!--                style="@style/InfoTitle"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="32dp"-->
+<!--                android:layout_marginTop="32dp"-->
+<!--                android:text="@string/machine"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent" />-->
 
             <TextView
                 android:id="@+id/date"
@@ -80,9 +108,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/date"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/machine_name" />
+                app:layout_constraintTop_toBottomOf="@+id/dropdownRuntime" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardInfo"
@@ -373,6 +402,34 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
+
+<!--                    <com.google.android.material.textfield.TextInputLayout-->
+<!--                        android:id="@+id/dropdownOption"-->
+<!--                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        app:layout_constraintWidth_default="percent"-->
+<!--                        app:layout_constraintWidth_percent=".4"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginTop="50dp"-->
+<!--                        android:layout_marginStart="16dp"-->
+<!--                        android:layout_marginEnd="8dp"-->
+<!--                        android:hint="@string/title_option"-->
+<!--                        android:minWidth="150dp"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        app:layout_constraintEnd_toStartOf="@id/dropdownTimeline"-->
+<!--                        app:layout_constraintStart_toStartOf="parent"-->
+<!--                        app:layout_constraintTop_toTopOf="parent">-->
+
+<!--                        <AutoCompleteTextView-->
+<!--                            android:id="@+id/autocomplete_option_operator"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:fontFamily="@font/poppins"-->
+<!--                            android:inputType="none"-->
+<!--                            android:minWidth="20dp"-->
+<!--                            android:textColor="@color/black" />-->
+
+<!--                    </com.google.android.material.textfield.TextInputLayout>-->
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/dropdownTimeline"

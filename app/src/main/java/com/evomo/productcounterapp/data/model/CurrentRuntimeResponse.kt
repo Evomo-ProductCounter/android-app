@@ -68,7 +68,11 @@ data class CurrentRuntimeItem(
 
 	@field:SerializedName("targets")
 	val targets: List<TargetsItem>
-) : Parcelable
+) : Parcelable {
+	override fun toString(): String {
+		return name
+	}
+}
 
 @Parcelize
 data class DataRuntime(
