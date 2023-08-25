@@ -175,9 +175,6 @@ class OperatorFragment : Fragment() {
                     runtimeTextView!!.onItemClickListener =
                         AdapterView.OnItemClickListener { parent, view, position, id ->
                             reconnect()
-//                            OEESocketListener = WebSocketListener(viewModel, "OEE")
-//                            QuantitySocketListener = WebSocketListener(viewModel, "Quantity")
-//                            DowntimeSocketListener = WebSocketListener(viewModel, "Downtime")
 
                             val (detailRuntimes, userId, machine, name, start, end, idRuntime, targets) = parent.getItemAtPosition(
                                 position
@@ -202,6 +199,11 @@ class OperatorFragment : Fragment() {
                             QuantitySocket!!.send(
                                 jsonObjectOEE.toString()
                             )
+
+                            timeTextView!!.setText("")
+                            selectedStartTime = null
+                            selectedEndTime = null
+                            bulletChartView.clearDurations()
                         }
 
                     if (selectedRuntime == null) {
