@@ -28,6 +28,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.ekn.gruzer.gaugelibrary.Range
 import com.evomo.productcounterapp.R
+import com.evomo.productcounterapp.data.model.CurrentRuntimeItem
 import com.evomo.productcounterapp.data.model.Machine
 import com.evomo.productcounterapp.data.remote.WebSocketListener
 import com.evomo.productcounterapp.databinding.FragmentOperatorBinding
@@ -64,6 +65,15 @@ class OperatorFragment : Fragment() {
     private var selectedStartTime: String? = null
     private var selectedEndTime: String? = null
 
+    var optionTextView: AutoCompleteTextView? = null
+    var optionAdapterItems: ArrayAdapter<String>? = null
+    private var selectedOption: String? = null
+    var parameterOptions = arrayOf("Hour", "Shift")
+
+    var runtimeTextView: AutoCompleteTextView? = null
+    var runtimeAdapterItems: ArrayAdapter<CurrentRuntimeItem>? = null
+    private var selectedRuntime: String? = null
+
     private lateinit var OEESocketListener: WebSocketListener
     private lateinit var QuantitySocketListener: WebSocketListener
     private lateinit var DowntimeSocketListener: WebSocketListener
@@ -94,7 +104,7 @@ class OperatorFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.date.text = DateHelper.getCurrentDateNoTime()
+        binding.date.text = DateHelper.getCurrentDate()
 
         // Calculate half of the screen width and height
         val displayMetrics = DisplayMetrics()
@@ -124,6 +134,15 @@ class OperatorFragment : Fragment() {
             context?.let { ArrayAdapter(it, R.layout.dropdown_items, timeList) }
         timeTextView!!.setAdapter(timeAdapterItems)
 
+//        optionTextView = binding.autocompleteOptionOperator
+//        optionTextView!!.inputType = InputType.TYPE_NULL
+//        optionAdapterItems =
+//            context?.let { ArrayAdapter(it, R.layout.dropdown_items, parameterOptions) }
+//        optionTextView!!.setAdapter(optionAdapterItems)
+
+        runtimeTextView = binding.autocompleteRuntimeOperator
+        runtimeTextView!!.inputType = InputType.TYPE_NULL
+
         val pref = SettingPreferences.getInstance((activity as MainActivity).dataStore)
         val settingViewModel = ViewModelProvider(this, SettingViewModelFactory(pref)).get(
             SettingViewModel::class.java
@@ -150,25 +169,75 @@ class OperatorFragment : Fragment() {
 
             viewModel.listRuntime.observe(viewLifecycleOwner) { dataRuntime ->
                 if (dataRuntime.currentRuntime != null) {
-                    OEESocket = okHttpClient.newWebSocket(createRequestOEE(), OEESocketListener)
-                    QuantitySocket = okHttpClient.newWebSocket(createRequestQuantity(), QuantitySocketListener)
-                    DowntimeSocket = okHttpClient.newWebSocket(createRequestDowntime(), DowntimeSocketListener)
+                    runtimeAdapterItems =
+                        context?.let { ArrayAdapter(it, R.layout.dropdown_items, dataRuntime.currentRuntime) }
+                    runtimeTextView!!.setAdapter(runtimeAdapterItems)
+                    runtimeTextView!!.onItemClickListener =
+                        AdapterView.OnItemClickListener { parent, view, position, id ->
+                            reconnect()
 
-                    val jsonObject = JSONObject()
-                    jsonObject.put("sort", "asc");
-                    jsonObject.put("machine_id", dataRuntime.currentRuntime[0].machine.id);
-                    jsonObject.put("runtime_id", dataRuntime.currentRuntime[0].id);
-                    DowntimeSocket!!.send(
-                        jsonObject.toString()
-                    )
+                            val (detailRuntimes, userId, machine, name, start, end, idRuntime, targets) = parent.getItemAtPosition(
+                                position
+                            ) as CurrentRuntimeItem
+                            val item = parent.getItemAtPosition(position).toString()
+                            selectedRuntime = item
 
-                    binding.machineName.text = dataRuntime.currentRuntime[0].machine.name
+                            val jsonObjectDowntime = JSONObject()
+                            jsonObjectDowntime.put("sort", "asc");
+                            jsonObjectDowntime.put("machine_id", machine.id);
+                            jsonObjectDowntime.put("runtime_id", idRuntime);
+                            DowntimeSocket!!.send(
+                                jsonObjectDowntime.toString()
+                            )
+
+                            val jsonObjectOEE = JSONObject()
+                            jsonObjectOEE.put("runtime_id", idRuntime);
+                            OEESocket!!.send(
+                                jsonObjectOEE.toString()
+                            )
+
+                            QuantitySocket!!.send(
+                                jsonObjectOEE.toString()
+                            )
+
+                            timeTextView!!.setText("")
+                            selectedStartTime = null
+                            selectedEndTime = null
+                            bulletChartView.clearDurations()
+                        }
+
+                    if (selectedRuntime == null) {
+                        runtimeTextView!!.setText(dataRuntime.currentRuntime[0].name, false)
+                        OEESocket = okHttpClient.newWebSocket(createRequestOEE(), OEESocketListener)
+                        QuantitySocket = okHttpClient.newWebSocket(createRequestQuantity(), QuantitySocketListener)
+                        DowntimeSocket = okHttpClient.newWebSocket(createRequestDowntime(), DowntimeSocketListener)
+
+                        val jsonObject = JSONObject()
+                        jsonObject.put("sort", "asc");
+                        jsonObject.put("machine_id", dataRuntime.currentRuntime[0].machine.id);
+                        jsonObject.put("runtime_id", dataRuntime.currentRuntime[0].id);
+                        DowntimeSocket!!.send(
+                            jsonObject.toString()
+                        )
+
+                        val jsonObjectOEE = JSONObject()
+                        jsonObjectOEE.put("runtime_id", dataRuntime.currentRuntime[0].id);
+                        OEESocket!!.send(
+                            jsonObjectOEE.toString()
+                        )
+
+                        QuantitySocket!!.send(
+                            jsonObjectOEE.toString()
+                        )
+                    }
+//                    binding.machineName.text = dataRuntime.currentRuntime[0].machine.name
                 }
                 else {
                     binding.homeScroll.setScrolling(false)
                     binding.noRuntime.visibility = VISIBLE
                     setPaddingToBottomOfScreen(binding.noRuntime)
-                    binding.machineName.visibility = GONE
+//                    binding.machineName.visibility = GONE
+                    binding.dropdownRuntime.visibility = GONE
                     binding.date.visibility = GONE
                     binding.cardInfo.visibility = GONE
                     binding.cardGauge.visibility = GONE
@@ -232,21 +301,23 @@ class OperatorFragment : Fragment() {
             }
 
             viewModel.downtime.observe(viewLifecycleOwner) { dataDowntime ->
-                while (tableLayout.childCount > 1) {
-                    tableLayout.removeView(tableLayout.getChildAt(tableLayout.childCount - 1))
-                }
+                if (selectedStartTime == null) {
+                    while (tableLayout.childCount > 1) {
+                        tableLayout.removeView(tableLayout.getChildAt(tableLayout.childCount - 1))
+                    }
 
-                for (i in 0 until dataDowntime.data.size) {
-                    val downtime = dataDowntime.data[i]
-                    val instantStart = Instant.parse(downtime.startTime)
-                    val instantEnd = Instant.parse(downtime.endTime)
+                    for (i in 0 until dataDowntime.data.size) {
+                        val downtime = dataDowntime.data[i]
+                        val instantStart = Instant.parse(downtime.startTime)
+                        val instantEnd = Instant.parse(downtime.endTime)
 
-                    val localStartTime = instantStart.atZone(ZoneId.systemDefault())
-                    val localEndTime = instantEnd.atZone(ZoneId.systemDefault())
+                        val localStartTime = instantStart.atZone(ZoneId.systemDefault())
+                        val localEndTime = instantEnd.atZone(ZoneId.systemDefault())
 
-                    val formattedStartTime = timeFormat.format(localStartTime)
-                    val formattedEndTime = timeFormat.format(localEndTime)
-                    addRowToTable(tableLayout,formattedStartTime , "Downtime ${i}", formattedEndTime)
+                        val formattedStartTime = timeFormat.format(localStartTime)
+                        val formattedEndTime = timeFormat.format(localEndTime)
+                        addRowToTable(tableLayout,formattedStartTime , "Downtime ${i}", formattedEndTime)
+                    }
                 }
 
                 timeTextView!!.onItemClickListener =
@@ -259,6 +330,10 @@ class OperatorFragment : Fragment() {
                         val startTime = LocalTime.parse(selectedStartTime, timeFormatNoSeconds)
                         val endTime = LocalTime.parse(selectedEndTime, timeFormatNoSeconds)
                         val durationsList: MutableList<Pair<Float, Float>> = mutableListOf()
+
+                        while (tableLayout.childCount > 1) {
+                            tableLayout.removeView(tableLayout.getChildAt(tableLayout.childCount - 1))
+                        }
 
                         for (i in 0 until dataDowntime.data.size) {
                             val downtime = dataDowntime.data[i]
@@ -279,9 +354,16 @@ class OperatorFragment : Fragment() {
                                 else {
                                     durationsList.add(startMinute to localEndTime.minute.toFloat())
                                 }
+
+                                val formattedStartTime = timeFormat.format(localStartTime)
+                                val formattedEndTime = timeFormat.format(localEndTime)
+                                addRowToTable(tableLayout,formattedStartTime , "Downtime ${i}", formattedEndTime)
                             }
                             else if (localEndTime.hour == startTime.hour) {
                                 durationsList.add(0f to localEndTime.minute.toFloat())
+                                val formattedStartTime = timeFormat.format(localStartTime)
+                                val formattedEndTime = timeFormat.format(localEndTime)
+                                addRowToTable(tableLayout,formattedStartTime , "Downtime ${i}", formattedEndTime)
                             }
                         }
                         bulletChartView.clearDurations()
@@ -396,16 +478,49 @@ class OperatorFragment : Fragment() {
             .build()
     }
 
+    private fun reconnect() {
+        OEESocket?.cancel()
+        QuantitySocket?.cancel()
+        DowntimeSocket?.cancel()
+
+        OEESocket = null
+        QuantitySocket = null
+        DowntimeSocket = null
+
+        OEESocket = okHttpClient.newWebSocket(createRequestOEE(), OEESocketListener)
+        QuantitySocket = okHttpClient.newWebSocket(createRequestQuantity(), QuantitySocketListener)
+        DowntimeSocket = okHttpClient.newWebSocket(createRequestDowntime(), DowntimeSocketListener)
+    }
+
+    private fun closeConnection() {
+        OEESocket?.cancel()
+        QuantitySocket?.cancel()
+        DowntimeSocket?.cancel()
+//        OEESocket?.close(1000, "Canceled manually.")
+//        QuantitySocket?.close(1000, "Canceled manually.")
+//        DowntimeSocket?.close(1000, "Canceled manually.")
+
+        // Make sure to set the variables to null after closing
+        OEESocket = null
+        QuantitySocket = null
+        DowntimeSocket = null
+
+        // Properly shut down the OkHttpClient's executor service
+        okHttpClient.dispatcher.executorService.shutdown()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        OEESocket?.close(1000, "Canceled manually.")
-        QuantitySocket?.close(1000, "Canceled manually.")
-        okHttpClient.dispatcher.executorService.shutdown()
+        closeConnection()
+//        OEESocket?.close(1000, "Canceled manually.")
+//        QuantitySocket?.close(1000, "Canceled manually.")
+//        okHttpClient.dispatcher.executorService.shutdown()
     }
 
     override fun onPause() {
         super.onPause()
-        OEESocket?.close(1000, "Canceled manually.")
-        QuantitySocket?.close(1000, "Canceled manually.")
+        closeConnection()
+//        OEESocket?.close(1000, "Canceled manually.")
+//        QuantitySocket?.close(1000, "Canceled manually.")
     }
 }

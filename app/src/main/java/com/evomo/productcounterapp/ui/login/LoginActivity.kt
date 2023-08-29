@@ -1,11 +1,14 @@
 package com.evomo.productcounterapp.ui.login
 
+import android.app.ActivityManager
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +23,7 @@ import com.evomo.productcounterapp.ui.main.MainActivity
 import com.evomo.productcounterapp.utils.SettingPreferences
 import com.evomo.productcounterapp.utils.SettingViewModel
 import com.evomo.productcounterapp.utils.SettingViewModelFactory
+import java.io.RandomAccessFile
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -35,6 +39,30 @@ class LoginActivity : AppCompatActivity() {
         supportActionBar?.hide() //hide title bar
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val ramInMb = getTotalRAM()
+        val numCores = getNumCores()
+
+        if (ramInMb < 4000 || numCores < 4) {
+            val builder = AlertDialog.Builder(this, R.style.LogoutDialog)
+            with(builder) {
+                setTitle(R.string.modal_device_error_title)
+                setMessage(R.string.modal_device_error)
+                setNegativeButton(R.string.btn_exit) { dialogInterface: DialogInterface, i: Int ->
+                    finishAffinity()
+                }
+                setIcon(R.drawable.ic_baseline_warning_24_yellow);
+            }
+
+            val alertDialog = builder.create()
+            alertDialog.show()
+
+            val negativeButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+            with(negativeButton) {
+                isAllCaps = false
+                setTextColor(resources.getColor(R.color.red))
+            }
+        }
 
         val viewModel = obtainViewModel(this)
         val pref = SettingPreferences.getInstance((this).dataStore)
@@ -123,6 +151,21 @@ class LoginActivity : AppCompatActivity() {
             }
             showLoading(false)
         }
+    }
+
+    private fun getTotalRAM(): Long {
+        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val memoryInfo = ActivityManager.MemoryInfo()
+        activityManager.getMemoryInfo(memoryInfo)
+
+        val totalMemoryInBytes = memoryInfo.totalMem
+        val totalMemoryInMb = totalMemoryInBytes / (1024 * 1024)
+
+        return totalMemoryInMb
+    }
+
+    private fun getNumCores(): Int {
+        return Runtime.getRuntime().availableProcessors()
     }
 
     private fun obtainViewModel(activity: AppCompatActivity): LoginViewModel {

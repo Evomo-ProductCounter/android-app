@@ -15,6 +15,7 @@ class CircularProgressBarPerf @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     private val paint: Paint = Paint()
+    private val circlePaint: Paint = Paint()
     private val rectF: RectF = RectF()
     private var progress: Int = 0
     private var max: Int = 100
@@ -25,6 +26,12 @@ class CircularProgressBarPerf @JvmOverloads constructor(
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = dpToPx(8f) // Adjust the stroke width as needed
         paint.color = ContextCompat.getColor(context, R.color.green_700) // Change the progress bar color
+
+        circlePaint.isAntiAlias = true
+        circlePaint.strokeCap = Paint.Cap.ROUND
+        circlePaint.style = Paint.Style.STROKE
+        circlePaint.strokeWidth = dpToPx(8f)
+        circlePaint.color = ContextCompat.getColor(context, R.color.grey_transparent)
     }
 
     private val textPaint: Paint = Paint().apply {
@@ -40,6 +47,7 @@ class CircularProgressBarPerf @JvmOverloads constructor(
         super.onDraw(canvas)
 
         val angle = 360f * progress / max
+        canvas.drawArc(rectF, 90f, 360f, false, circlePaint)
         canvas.drawArc(rectF, 90f, angle, false, paint)
 
         // Draw the progress percentage text in the center
