@@ -60,6 +60,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -349,16 +350,21 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     Imgproc.cvtColor(blurFrame, grayFrame, Imgproc.COLOR_BGR2GRAY);
                     outFrame = rgbFrame.clone();
 
-                    Rect rect = parkingBoundingRect.get(0);
+                    Mat roiGray = grayFrame.submat(rectRoi);
 
-                    Mat roiGray = grayFrame.submat(rect);
                     MatOfDouble meandev = new MatOfDouble();
                     MatOfDouble stddev = new MatOfDouble();
                     Core.meanStdDev(roiGray, meandev, stddev);
 
                     double stdev = stddev.get(0, 0)[0];
-                    double mean = Core.mean(roiGray).val[0];
-                    boolean area = (stdev < 22 && mean > 53);
+                    double mean = meandev.get(0, 0)[0];
+                    boolean area = (stdev < 30 && mean > 170);
+
+//                    Log.d("greyFrame", Arrays.toString(roiGray.get(0, 0)));
+
+                    Log.d("pixel_stdev", String.valueOf(stdev));
+                    Log.d("pixel_mean", String.valueOf(mean));
+                    Log.d("roi_status", String.valueOf(area));
 
                     if (area != parkingStatus.get(0) && parkingBuffer.get(0) == null) {
                         parkingBuffer.set(0, videoFrames);
