@@ -18,6 +18,7 @@ import android.os.CountDownTimer;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -85,7 +86,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     public static int centerX;
     public static int centerY;
 
-    //    String[] machineOptions = {"Machine 1", "Machine 2", "Machine 3", "Machine 4"};
     public static String[] machineOptions;
     public static Machine[] machinesList;
     public static DataProduct[] productsList = {};
@@ -115,7 +115,6 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     private CameraViewModel cameraViewModel;
     private CountObject countObject;
     public static String userName;
-    //    private FirebaseAuth auth;
     LocalDateTime start_time;
 
     private MqttAndroidClient mqttClient;
@@ -129,6 +128,8 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         customLifecycleOwner = new CustomLifecycleOwner();
 
         binding = ActivityCameraBinding.inflate(getLayoutInflater());
