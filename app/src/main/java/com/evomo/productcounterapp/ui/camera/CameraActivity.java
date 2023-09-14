@@ -359,7 +359,7 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
                     double stdev = stddev.get(0, 0)[0];
                     double mean = meandev.get(0, 0)[0];
-                    boolean area = (stdev < 30 && mean > 170);
+                    boolean area = (stdev > 33 && mean > 160);
 
 //                    Log.d("greyFrame", Arrays.toString(roiGray.get(0, 0)));
 
