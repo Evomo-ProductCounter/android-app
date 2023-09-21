@@ -52,5 +52,8 @@ data class Data(
 	val userid: String,
 
 	@field:SerializedName("client_id")
-	val clientId: String? = null
+	val clientId: String? = null,
+
+	@field:SerializedName("isAgreeTnc")
+	val isAgreeTnc: Boolean? = null,
 ) : Parcelable
