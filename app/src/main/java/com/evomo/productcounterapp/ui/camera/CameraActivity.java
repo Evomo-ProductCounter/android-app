@@ -61,6 +61,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -251,11 +252,11 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                             })
                             .setPositiveButton(R.string.btn_stop, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    if (tempCounted != 0) {
-                                        sendDataToMqtt();
-                                    }
-                                    stopSendingData();
-                                    disconnect();
+//                                    if (tempCounted != 0) {
+//                                        sendDataToMqtt();
+//                                    }
+//                                    stopSendingData();
+//                                    disconnect();
 
                                     countObject = new CountObject();
                                     countObject.setMachine(selectedMachine);
@@ -350,22 +351,29 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     Imgproc.cvtColor(blurFrame, grayFrame, Imgproc.COLOR_BGR2GRAY);
                     outFrame = rgbFrame.clone();
 
-                    Rect rect = parkingBoundingRect.get(0);
+                    Mat roiGray = grayFrame.submat(rectRoi);
 
-                    Mat roiGray = grayFrame.submat(rect);
                     MatOfDouble meandev = new MatOfDouble();
                     MatOfDouble stddev = new MatOfDouble();
                     Core.meanStdDev(roiGray, meandev, stddev);
 
                     double stdev = stddev.get(0, 0)[0];
-                    double mean = Core.mean(roiGray).val[0];
-                    boolean area = (stdev < 22 && mean > 53);
+                    double mean = meandev.get(0, 0)[0];
+                    boolean area = (stdev < 14 && mean > 150);
+
+//                    Log.d("greyFrame", Arrays.toString(roiGray.get(0, 0)));
+
+                    Log.d("pixel_stdev", String.valueOf(stdev));
+                    Log.d("pixel_mean", String.valueOf(mean));
+                    Log.d("roi_status", String.valueOf(area));
+                    Log.d("stdev_status", String.valueOf(stdev < 9));
+                    Log.d("mean_status", String.valueOf(mean > 150));
 
                     if (area != parkingStatus.get(0) && parkingBuffer.get(0) == null) {
                         parkingBuffer.set(0, videoFrames);
                     } else if (area != parkingStatus.get(0) && parkingBuffer.get(0) != null) {
                         if (videoFrames - parkingBuffer.get(0) > 0.001) {
-                            if (area == false) {
+                            if (area == true) {
                                 counter = counter + 1;
                                 tempCounted = tempCounted + 1; // cek lagi
                                 status = true;
@@ -408,9 +416,11 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     Scalar color;
 
                     if (parkingStatus.get(0)) {
-                        color = new Scalar(0, 255, 0);
-                    } else {
                         color = new Scalar(255, 0, 0);
+//                        color = new Scalar(0, 255, 0);
+                    } else {
+//                        color = new Scalar(255, 0, 0);
+                        color = new Scalar(0, 255, 0);
                     }
 
                     Imgproc.drawContours(outFrame, pointsList, -1, color, 4, Imgproc.LINE_8);
@@ -454,8 +464,8 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 binding.stopCount.setVisibility(View.VISIBLE);
                 startCount = true;
                 start_time = LocalDateTime.now();
-                connect(getApplicationContext());
-                startSendingData();
+//                connect(getApplicationContext());
+//                startSendingData();
                 Log.d("start_time", String.valueOf(start_time));
                 binding.statusCircle.setVisibility(View.VISIBLE);
                 setText(binding.countStatus, getResources().getString(R.string.status_idle));
