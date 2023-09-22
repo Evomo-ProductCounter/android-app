@@ -140,19 +140,6 @@
 
         </LinearLayout>
 
-        <!--    <View-->
-        <!--        android:id="@+id/statusCircleActive"-->
-        <!--        android:layout_width="20dp"-->
-        <!--        android:layout_height="20dp"-->
-        <!--        android:layout_marginTop="15dp"-->
-        <!--        android:layout_marginRight="5dp"-->
-        <!--        android:background="@drawable/circle_status_active"-->
-        <!--        app:layout_constraintTop_toBottomOf="@+id/cameraView"-->
-        <!--        app:layout_constraintEnd_toStartOf="@id/countStatus"-->
-        <!--        android:backgroundTint="@color/green_700"-->
-        <!--        android:visibility="invisible"-->
-        <!--        ></View>-->
-
         <TextView
             android:id="@+id/countText"
             android:layout_width="wrap_content"
@@ -163,6 +150,24 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="@string/counted_object"></TextView>
+
+        <Button
+            android:id="@+id/chooseObject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="@color/red"
+            android:fontFamily="@font/poppins_semibold"
+            android:minWidth="250dp"
+            android:text="@string/btn_choose_obj"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/countText"
+            android:visibility="invisible"
+            />
 
         <Button
             android:id="@+id/stopCount"
@@ -178,7 +183,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/countText"></Button>
+            app:layout_constraintTop_toBottomOf="@+id/countText"/>
 
         <View
             android:id="@+id/blur_background"
@@ -203,17 +208,6 @@
             android:visibility="invisible"
             />
 
-        <!--    <TextView-->
-        <!--        android:id="@+id/needHelp"-->
-        <!--        android:layout_width="wrap_content"-->
-        <!--        android:layout_height="wrap_content"-->
-        <!--        android:layout_marginBottom="16dp"-->
-        <!--        android:layout_marginTop="8dp"-->
-        <!--        android:text="@string/need_help"-->
-        <!--        app:layout_constraintEnd_toEndOf="parent"-->
-        <!--        app:layout_constraintStart_toStartOf="parent"-->
-        <!--        app:layout_constraintTop_toBottomOf="@+id/stopCount">-->
-        <!--    </TextView>-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>
