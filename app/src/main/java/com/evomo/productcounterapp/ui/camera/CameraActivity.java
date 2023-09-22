@@ -112,6 +112,10 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
     private Long speed;
     private boolean status = false;
     private boolean startCount = false;
+
+    private double objectStDev;
+    private double objectMean;
+
     private LocalDateTime lastProductDetectionTime;
     private CameraViewModel cameraViewModel;
     private CountObject countObject;
@@ -252,11 +256,11 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                             })
                             .setPositiveButton(R.string.btn_stop, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialogInterface, int i) {
-//                                    if (tempCounted != 0) {
-//                                        sendDataToMqtt();
-//                                    }
-//                                    stopSendingData();
-//                                    disconnect();
+                                    if (tempCounted != 0) {
+                                        sendDataToMqtt();
+                                    }
+                                    stopSendingData();
+                                    disconnect();
 
                                     countObject = new CountObject();
                                     countObject.setMachine(selectedMachine);
@@ -286,7 +290,8 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                     Button negativeButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
                     negativeButton.setAllCaps(false);
                     negativeButton.setTextColor(getResources().getColor(R.color.black));
-                } else {
+                }
+                else {
                     if (selectedMachine == null || selectedSize == null || selectedParameter == null || selectedProduct == null) {
                         Toast.makeText(CameraActivity.this, getResources().getString(R.string.error_start), Toast.LENGTH_SHORT).show();
                     } else {
@@ -298,6 +303,18 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                         startTimer();
                     }
                 }
+            }
+        });
+
+        binding.chooseObject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.chooseObject.setVisibility(View.INVISIBLE);
+                binding.stopCount.setVisibility(View.VISIBLE);
+//                objectChosen = true;
+                startCount = true;
+                binding.statusCircle.setVisibility(View.VISIBLE);
+                setText(binding.countStatus, getResources().getString(R.string.status_idle));
             }
         });
     }
@@ -340,35 +357,39 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
 
             @Override
             public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+                // Initialize frame
+                rgbFrame = inputFrame.rgba();
+
+                long videoFrames = System.currentTimeMillis();
+                System.out.println("Video Frames: " + videoFrames);
+
+                Imgproc.GaussianBlur(rgbFrame.clone(), blurFrame, new Size(3, 3), 0);
+                Imgproc.cvtColor(blurFrame, grayFrame, Imgproc.COLOR_BGR2GRAY);
+                outFrame = rgbFrame.clone();
+
+                Mat roiGray = grayFrame.submat(rectRoi);
+
+                MatOfDouble meandev = new MatOfDouble();
+                MatOfDouble stddev = new MatOfDouble();
+                Core.meanStdDev(roiGray, meandev, stddev);
+
+                double stdev = stddev.get(0, 0)[0];
+                double mean = meandev.get(0, 0)[0];
+
+                if (startCount == false) { // set the object mean and stdev
+                    objectStDev = stdev;
+                    objectMean = mean;
+                }
+
+//                boolean area = (stdev < 14 && mean > 150);
+                boolean area = (stdev < objectStDev && mean > objectMean);
+
+                Log.d("pixel_stdev", String.valueOf(stdev));
+                Log.d("pixel_mean", String.valueOf(mean));
+                Log.d("roi_status", String.valueOf(area));
+                Log.d("stdev_status", String.valueOf(stdev < 9));
+                Log.d("mean_status", String.valueOf(mean > 150));
                 if (startCount == true) {
-                    // Initialize frame
-                    rgbFrame = inputFrame.rgba();
-
-                    long videoFrames = System.currentTimeMillis();
-                    System.out.println("Video Frames: " + videoFrames);
-
-                    Imgproc.GaussianBlur(rgbFrame.clone(), blurFrame, new Size(3, 3), 0);
-                    Imgproc.cvtColor(blurFrame, grayFrame, Imgproc.COLOR_BGR2GRAY);
-                    outFrame = rgbFrame.clone();
-
-                    Mat roiGray = grayFrame.submat(rectRoi);
-
-                    MatOfDouble meandev = new MatOfDouble();
-                    MatOfDouble stddev = new MatOfDouble();
-                    Core.meanStdDev(roiGray, meandev, stddev);
-
-                    double stdev = stddev.get(0, 0)[0];
-                    double mean = meandev.get(0, 0)[0];
-                    boolean area = (stdev < 14 && mean > 150);
-
-//                    Log.d("greyFrame", Arrays.toString(roiGray.get(0, 0)));
-
-                    Log.d("pixel_stdev", String.valueOf(stdev));
-                    Log.d("pixel_mean", String.valueOf(mean));
-                    Log.d("roi_status", String.valueOf(area));
-                    Log.d("stdev_status", String.valueOf(stdev < 9));
-                    Log.d("mean_status", String.valueOf(mean > 150));
-
                     if (area != parkingStatus.get(0) && parkingBuffer.get(0) == null) {
                         parkingBuffer.set(0, videoFrames);
                     } else if (area != parkingStatus.get(0) && parkingBuffer.get(0) != null) {
@@ -461,14 +482,16 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             public void onFinish() {
                 binding.blurBackground.setVisibility(View.INVISIBLE);
                 binding.timerCount.setVisibility(View.INVISIBLE);
-                binding.stopCount.setVisibility(View.VISIBLE);
-                startCount = true;
+
+                binding.chooseObject.setVisibility(View.VISIBLE);
+                setText(binding.countText, "Point at the object!");
+//                startCount = true;
                 start_time = LocalDateTime.now();
-//                connect(getApplicationContext());
-//                startSendingData();
+                connect(getApplicationContext());
+                startSendingData();
                 Log.d("start_time", String.valueOf(start_time));
-                binding.statusCircle.setVisibility(View.VISIBLE);
-                setText(binding.countStatus, getResources().getString(R.string.status_idle));
+//                binding.statusCircle.setVisibility(View.VISIBLE);
+//                setText(binding.countStatus, getResources().getString(R.string.status_idle));
             }
         }.start();
     }

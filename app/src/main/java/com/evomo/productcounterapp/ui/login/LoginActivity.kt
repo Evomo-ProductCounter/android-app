@@ -123,11 +123,15 @@ class LoginActivity : AppCompatActivity() {
 
         viewModel.loginUser.observe(this) { // get user login response and save to datastore
                 login ->
-//            val currentDate = Date()
+
+//            if (login.data.isAgreeTnc == false) {
+//                // popup
+//
+//            }
+
             val currentDate = Calendar.getInstance().time
             val calendar = Calendar.getInstance()
             calendar.time = currentDate
-//            calendar.add(Calendar.HOUR_OF_DAY, 2)
             calendar.add(Calendar.MINUTE, 100)
             val expiredDate = calendar.time
             val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
