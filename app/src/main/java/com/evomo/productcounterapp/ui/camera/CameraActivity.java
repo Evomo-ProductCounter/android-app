@@ -314,8 +314,8 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
             public void onClick(View v) {
                 binding.chooseObject.setVisibility(View.INVISIBLE);
                 binding.stopCount.setVisibility(View.VISIBLE);
-                startCount = true;
-                start_time = LocalDateTime.now();
+//                startCount = true;
+//                start_time = LocalDateTime.now();
                 startTimer();
                 binding.statusCircle.setVisibility(View.VISIBLE);
                 setText(binding.countStatus, getResources().getString(R.string.status_idle));
@@ -487,6 +487,8 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 binding.blurBackground.setVisibility(View.INVISIBLE);
                 binding.timerCount.setVisibility(View.INVISIBLE);
                 binding.stopCount.setVisibility(View.VISIBLE);
+                startCount = true;
+                start_time = LocalDateTime.now();
                 connect(getApplicationContext());
                 startSendingData();
                 Log.d("start_time", String.valueOf(start_time));
