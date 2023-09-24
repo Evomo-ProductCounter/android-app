@@ -300,7 +300,11 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                         binding.dropdownParameter.setEnabled(false);
                         binding.dropdownUkuran.setEnabled(false);
                         binding.dropdownProduct.setEnabled(false);
-                        startTimer();
+//                        startTimer();
+
+                        binding.stopCount.setVisibility(View.INVISIBLE);
+                        binding.chooseObject.setVisibility(View.VISIBLE);
+                        setText(binding.countText, getResources().getString(R.string.choose_obj));
                     }
                 }
             }
@@ -313,6 +317,8 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 binding.stopCount.setVisibility(View.VISIBLE);
 //                objectChosen = true;
                 startCount = true;
+                start_time = LocalDateTime.now();
+                startTimer();
                 binding.statusCircle.setVisibility(View.VISIBLE);
                 setText(binding.countStatus, getResources().getString(R.string.status_idle));
             }
@@ -483,10 +489,10 @@ public class CameraActivity extends org.opencv.android.CameraActivity {
                 binding.blurBackground.setVisibility(View.INVISIBLE);
                 binding.timerCount.setVisibility(View.INVISIBLE);
 
-                binding.chooseObject.setVisibility(View.VISIBLE);
-                setText(binding.countText, "Point at the object!");
+//                binding.chooseObject.setVisibility(View.VISIBLE);
+                binding.stopCount.setVisibility(View.VISIBLE);
 //                startCount = true;
-                start_time = LocalDateTime.now();
+//                start_time = LocalDateTime.now();
                 connect(getApplicationContext());
                 startSendingData();
                 Log.d("start_time", String.valueOf(start_time));
