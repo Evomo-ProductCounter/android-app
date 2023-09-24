@@ -61,6 +61,7 @@
     <string name="btn_stop">Stop Count</string>
     <string name="modal_stop_desc">Are you sure you want to stop operation?</string>
     <string name="btn_choose_obj">Choose Object</string>
+    <string name="choose_obj">Point at the object!</string>
 
     <string name="error_start">Please fill all fields!</string>
 
