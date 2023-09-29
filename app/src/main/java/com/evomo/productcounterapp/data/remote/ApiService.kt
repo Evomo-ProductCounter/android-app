@@ -33,4 +33,9 @@ interface ApiService {
         @Query("end_date") endDate: String,
         @Query("user_id") userId: String
     ): Call<CurrentRuntimeResponse>
+
+    @POST("tnc")
+    fun isAgree (
+        @Header("x-authenticated-userid") userId: String,
+    ): Call<AgreeTnCResponse>
 }

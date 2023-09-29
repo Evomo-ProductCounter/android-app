@@ -5,16 +5,16 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import com.evomo.productcounterapp.R
 import com.evomo.productcounterapp.databinding.ActivityLoginBinding
@@ -23,7 +23,6 @@ import com.evomo.productcounterapp.ui.main.MainActivity
 import com.evomo.productcounterapp.utils.SettingPreferences
 import com.evomo.productcounterapp.utils.SettingViewModel
 import com.evomo.productcounterapp.utils.SettingViewModelFactory
-import java.io.RandomAccessFile
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -33,6 +32,8 @@ class LoginActivity : AppCompatActivity() {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
     private lateinit var username: String
     private lateinit var password: String
+    private val dialogFragment = ModalTnC()
+    private val isAgreeLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,26 +44,26 @@ class LoginActivity : AppCompatActivity() {
         val ramInMb = getTotalRAM()
         val numCores = getNumCores()
 
-        if (ramInMb < 4000 || numCores < 4) {
-            val builder = AlertDialog.Builder(this, R.style.LogoutDialog)
-            with(builder) {
-                setTitle(R.string.modal_device_error_title)
-                setMessage(R.string.modal_device_error)
-                setNegativeButton(R.string.btn_exit) { dialogInterface: DialogInterface, i: Int ->
-                    finishAffinity()
-                }
-                setIcon(R.drawable.ic_baseline_warning_24_yellow);
-            }
-
-            val alertDialog = builder.create()
-            alertDialog.show()
-
-            val negativeButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
-            with(negativeButton) {
-                isAllCaps = false
-                setTextColor(resources.getColor(R.color.red))
-            }
-        }
+//        if (ramInMb < 4000 || numCores < 4) {
+//            val builder = AlertDialog.Builder(this, R.style.LogoutDialog)
+//            with(builder) {
+//                setTitle(R.string.modal_device_error_title)
+//                setMessage(R.string.modal_device_error)
+//                setNegativeButton(R.string.btn_exit) { dialogInterface: DialogInterface, i: Int ->
+//                    finishAffinity()
+//                }
+//                setIcon(R.drawable.ic_baseline_warning_24_yellow);
+//            }
+//
+//            val alertDialog = builder.create()
+//            alertDialog.show()
+//
+//            val negativeButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+//            with(negativeButton) {
+//                isAllCaps = false
+//                setTextColor(resources.getColor(R.color.red))
+//            }
+//        }
 
         val viewModel = obtainViewModel(this)
         val pref = SettingPreferences.getInstance((this).dataStore)
@@ -123,28 +124,36 @@ class LoginActivity : AppCompatActivity() {
 
         viewModel.loginUser.observe(this) { // get user login response and save to datastore
                 login ->
+//            isAgree = login.data.isAgreeTnc == true
+            login.data.isAgreeTnc?.let { setIsAgree(it) }
+            isAgreeLiveData.observe(this) {
+                    isAgree ->
+                if (!isAgree) {
+                    // popup
+                    val bundle = Bundle()
+                    bundle.putString("UserId", login.data.userid)
+                    dialogFragment.arguments = bundle
+                    dialogFragment.show(supportFragmentManager, ModalTnC::class.java.simpleName)
+                }
+                else {
+                    val currentDate = Calendar.getInstance().time
+                    val calendar = Calendar.getInstance()
+                    calendar.time = currentDate
+                    calendar.add(Calendar.MINUTE, 100)
+                    val expiredDate = calendar.time
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+                    val formattedDate = dateFormat.format(expiredDate)
 
-//            if (login.data.isAgreeTnc == false) {
-//                // popup
-//
-//            }
-
-            val currentDate = Calendar.getInstance().time
-            val calendar = Calendar.getInstance()
-            calendar.time = currentDate
-            calendar.add(Calendar.MINUTE, 100)
-            val expiredDate = calendar.time
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-            val formattedDate = dateFormat.format(expiredDate)
-
-            settingViewModel.setUserPreferences(
-                login.data.accessToken,
-                login.data.name,
-                username,
-                login.data.userid,
+                    settingViewModel.setUserPreferences(
+                        login.data.accessToken,
+                        login.data.name,
+                        username,
+                        login.data.userid,
 //                login.data.expiredAt
-                formattedDate.toString()
-            )
+                        formattedDate.toString()
+                    )
+                }
+            }
         }
 
         showLoading(true)
@@ -155,6 +164,10 @@ class LoginActivity : AppCompatActivity() {
             }
             showLoading(false)
         }
+    }
+
+    fun setIsAgree(value: Boolean) {
+        isAgreeLiveData.value = value
     }
 
     private fun getTotalRAM(): Long {
