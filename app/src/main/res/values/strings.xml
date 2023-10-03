@@ -48,6 +48,54 @@
     <string name="btn_try_again">Try Again</string>
     <string name="btn_exit">Exit</string>
 
+    <string name="btn_agree">Agree</string>
+    <string name="modal_tnc_title">Terms and Condition</string>
+    <string name="terms_and_conditions">
+        Selamat datang di Aplikasi OEE Mobile!
+
+        Mohon perhatikan bahwa Aplikasi kami memprioritaskan privasi dan keamanan data pribadi Anda. Kami sangat menghormati dan melindungi hak-hak Anda terkait informasi pribadi yang Anda bagikan dengan kami. Dalam upaya untuk menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi data pribadi Anda, kami telah menyusun syarat dan ketentuan perlindungan data pribadi yang rinci berikut ini:
+
+        1. Pengumpulan Data Pribadi:
+        Kami hanya akan mengumpulkan data pribadi yang diperlukan untuk tujuan tertentu yang relevan dengan layanan kami. Ini mungkin termasuk informasi seperti nama, alamat email, nomor telepon, alamat, dan informasi profil lainnya.
+
+        2. Penggunaan Data Pribadi:
+        Data pribadi Anda akan digunakan dengan tujuan yang jelas dan sah, seperti:
+        - Memproses transaksi dan permintaan yang Anda ajukan melalui Aplikasi.
+        - Menyediakan layanan dan menggunakan fitur yang Anda pilih.
+        - Mengirimkan informasi terkait pembaruan, penawaran, dan komunikasi penting terkait layanan kami.
+
+        3. Keamanan Data Pribadi:
+        Kami telah menerapkan langkah-langkah keamanan teknis dan organisasional yang kuat untuk melindungi data pribadi Anda dari akses, penggunaan, atau pengungkapan yang tidak sah. Kami berkomitmen untuk menjaga kerahasiaan informasi Anda.
+
+        4. Penyimpanan Data Pribadi:
+        Data pribadi Anda akan disimpan hanya selama diperlukan untuk tujuan yang ditetapkan dalam T&amp;C ini. Setelah data tidak diperlukan lagi, kami akan menghapusnya dengan aman sesuai dengan kebijakan penyimpanan kami.
+
+        5. Berbagi Data Pribadi:
+        Kami tidak akan menjual, menyewakan, atau membagikan data pribadi Anda kepada pihak ketiga tanpa izin Anda, kecuali diperlukan oleh hukum atau untuk tujuan yang telah dijelaskan dalam T&amp;C ini.
+
+        6. Kebijakan dan Perlindungan Hukum:
+        Sebagai Aplikasi [Nama Aplikasi], kami tunduk pada kebijakan perlindungan data pribadi yang berlaku sesuai dengan peraturan hukum yang berlaku di wilayah kami. Kebijakan-kebijakan ini termasuk, namun tidak terbatas pada:
+
+        - Kepatuhan Hukum: Kami mematuhi dan menjalankan semua aktivitas dan pengambilan keputusan sesuai dengan peraturan hukum yang berlaku di Negara Kesatuan Republik Indonesia (NKRI).
+        - Perlindungan Data Pribadi: Sejalan dengan Peraturan Menteri Komunikasi dan Informatika Nomor 27 Tahun 2022 Tentang Perlindungan Data Pribadi Dalam Sistem Elektronik, kami melindungi semua informasi yang diberikan oleh pengguna saat mendaftar, mengakses, dan menggunakan seluruh layanan Aplikasi [Nama Aplikasi].
+        - Pemberitahuan dan Persetujuan: Kami hanya akan memberikan atau menggunakan data dan informasi yang dimiliki oleh pengguna sesuai dengan peraturan hukum yang berlaku, termasuk dalam hal diwajibkan oleh institusi yang berwenang berdasarkan ketentuan hukum yang berlaku, perintah resmi dari pengadilan, dan/atau perintah resmi dari instansi atau aparat yang bersangkutan.
+
+        7. Hak Anda:
+        Anda memiliki hak untuk:
+        - Mengakses data pribadi Anda yang kami simpan.
+        - Memperbaiki atau memperbarui data pribadi yang tidak akurat.
+        - Menghapus data pribadi Anda dari basis data kami.
+
+        8. Persetujuan:
+        Dengan menekan tombol "Setuju" di bawah ini, Anda secara aktif memberikan izin kepada kami untuk mengumpulkan, menggunakan, dan menyimpan data pribadi Anda sesuai dengan syarat dan ketentuan yang tertera dalam dokumen ini. Jika Anda tidak setuju dengan syarat dan ketentuan ini, Anda dapat menutup pop-up ini dan tidak melanjutkan penggunaan Aplikasi.
+
+        9. Kontak Kami
+
+        Jika Anda memiliki pertanyaan tentang Kebijakan Privasi, silahkan hubungi kami di evomo.jeager@gmail.com
+
+        Kami ingin menegaskan bahwa kami tidak bertanggung jawab atas pertukaran data yang dilakukan oleh pengguna sendiri di antara mereka. Kami berupaya untuk menjaga semua informasi yang Anda berikan dengan aman dan merahasiakannya
+    </string>
+
     <string name="modal_logout_title">Warning</string>
     <string name="modal_logout_desc">Are you sure you want to leave?</string>
     <string name="modal_login_error_title">Login Failed</string>

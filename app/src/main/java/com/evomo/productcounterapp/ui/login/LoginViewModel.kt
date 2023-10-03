@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.evomo.productcounterapp.data.model.AgreeTnCResponse
 import com.evomo.productcounterapp.data.model.LoginResponse
 import com.evomo.productcounterapp.data.remote.ApiConfig
 import kotlinx.coroutines.launch
@@ -25,6 +26,9 @@ class LoginViewModel : ViewModel() {
     private val _isError = MutableLiveData<Boolean>()
     val isError: LiveData<Boolean> = _isError
 
+    private val _isAgree = MutableLiveData<AgreeTnCResponse>()
+    val isAgree: LiveData<AgreeTnCResponse> = _isAgree
+
     fun login(email: String, password: String) {
         _isLoading.value = true
         _isError.value = false
@@ -44,6 +48,29 @@ class LoginViewModel : ViewModel() {
                 }
             }
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                _isLoading.value = false
+                Log.e(TAG, "onFailure: ${t.message.toString()}")
+            }
+        })
+    }
+
+    fun agreeTnC(userId: String) {
+        _isLoading.value = true
+        val client = ApiConfig.getApiService().isAgree(userId)
+        client.enqueue(object : Callback<AgreeTnCResponse> {
+            override fun onResponse(
+                call: Call<AgreeTnCResponse>,
+                response: Response<AgreeTnCResponse>
+            ) {
+                _isLoading.value = false
+                if (response.isSuccessful) {
+                    _isAgree.value = response.body()
+                } else {
+                    _isError.value = true
+                    Log.e(TAG, "onFailure: ${response.message()}")
+                }
+            }
+            override fun onFailure(call: Call<AgreeTnCResponse>, t: Throwable) {
                 _isLoading.value = false
                 Log.e(TAG, "onFailure: ${t.message.toString()}")
             }
